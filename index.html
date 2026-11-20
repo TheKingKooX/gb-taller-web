@@ -14,7 +14,7 @@
   --pista:#13161C;
   --pista-2:#1A1E26;
   --pista-3:#232833;
-  --linea:rgba(255,255,255,.065);
+  --linea:rgba(255,255,255,.07);
   --luz:rgba(255,255,255,.06);
   --texto:#F5F6F8;
   --texto-2:#949BA8;
@@ -23,7 +23,11 @@
   --oro:#F5B700;
   --oro-claro:#FFE07D;
   --verde:#34D399;
-  --wa:#22C55E;
+  --wa:#1ED760;
+  --yape:#742384;
+  --yape-light:#A94BC0;
+  --yape-teal:#00D1B2;
+  --plin:#00B8D9;
   --r-s:12px;
   --r-m:16px;
   --r-l:22px;
@@ -35,7 +39,7 @@ a,button,input,select,summary{color:inherit;font:inherit;text-decoration:none;ba
 svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
 
 /* ==========================================================================
-   BASE MINIMALISTA PREMIUM (SIN BORDES DUROS, MÁS AIRE)
+   BASE MINIMALISTA PREMIUM
    ========================================================================== */
 .ib{
   width:40px;height:40px;display:grid;place-items:center;border-radius:12px;
@@ -53,14 +57,14 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 
 .btn{
   height:46px;border-radius:13px;display:inline-flex;align-items:center;justify-content:center;
-  gap:8px;font-weight:700;font-size:13.5px;padding:0 18px;transition:transform .12s,background .15s,filter .15s;
+  gap:8px;font-weight:700;font-size:13.5px;padding:0 16px;transition:transform .12s,background .15s,filter .15s;
 }
 .btn:active{transform:scale(.98)}
 .btn.primary{background:var(--rojo);color:#fff;box-shadow:0 8px 20px rgba(227,32,27,.28)}
-.btn.wa{background:#1ED760;color:#04170B;font-weight:800;box-shadow:0 8px 22px rgba(30,215,96,.22)}
+.btn.wa{background:var(--wa);color:#04170B;font-weight:800;box-shadow:0 8px 22px rgba(30,215,96,.22)}
+.btn.yape-btn{background:linear-gradient(135deg,#87269A,#5B166B);color:#fff;font-weight:800;border:1px solid rgba(255,255,255,.16);box-shadow:0 8px 22px rgba(116,35,132,.35)}
 .btn.ghost{background:var(--pista-2);border:1px solid var(--linea);color:var(--texto)}
 
-/* Precios en blanco puro de alta gama */
 .price{
   font-family:Manrope,sans-serif;font-weight:800;font-size:17px;
   letter-spacing:-.3px;color:var(--texto);font-variant-numeric:tabular-nums;white-space:nowrap;
@@ -71,7 +75,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 }
 
 /* Cabecera limpia */
-.app-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 0 14px;gap:12px}
+.app-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 0 12px;gap:12px}
 .gb-wrap{display:flex;align-items:center;gap:11px;min-width:0}
 .gb{width:64px;height:36px;background:url(assets/logo-gb-marca.png) center/cover no-repeat;border-radius:8px;border:1px solid rgba(245,183,0,.35);flex:none}
 .gb-txt{min-width:0}
@@ -79,9 +83,9 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .gb-txt small{font-size:11.5px;color:var(--texto-2);font-weight:500}
 .hdr-a{display:flex;gap:8px;align-items:center}
 
-/* Selector de Moto refinado */
+/* Selector de Moto con compatibilidad real */
 .moto-bar{
-  width:100%;display:flex;align-items:center;gap:13px;padding:11px 14px;
+  width:100%;display:flex;align-items:center;gap:13px;padding:10px 13px;
   background:var(--pista);border:1px solid var(--linea);border-radius:var(--r-m);
   box-shadow:inset 0 1px 0 var(--luz);
 }
@@ -91,7 +95,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 }
 .moto-bar-info{flex:1;min-width:0}
 .moto-bar-info select{
-  font-weight:700;font-size:14.5px;color:var(--texto);
+  font-weight:700;font-size:14px;color:var(--texto);
   background:transparent;outline:none;width:100%;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   -webkit-appearance:none;-moz-appearance:none;appearance:none;
@@ -108,9 +112,11 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 }
 .oil-tag{font-size:11.5px;color:var(--texto-2);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* Tacómetro Estilo Relojería / Tablero Ducati (Trazo fino, sin botones extra) */
+/* ==========================================================================
+   MEJORA UX 5: TACÓMETRO CON BUSCADOR DE ORDEN POR PLACA + COLAPSABLE
+   ========================================================================== */
 .track{
-  margin-top:16px;padding:18px 18px 16px;border-radius:var(--r-l);position:relative;overflow:hidden;
+  margin-top:14px;padding:16px;border-radius:var(--r-l);position:relative;overflow:hidden;
   background:radial-gradient(90% 80% at 50% 0%,rgba(245,183,0,.06) 0%,transparent 70%),var(--pista);
   border:1px solid var(--linea);box-shadow:inset 0 1px 0 var(--luz),0 16px 36px rgba(0,0,0,.35);
 }
@@ -118,7 +124,21 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .eta{display:inline-flex;align-items:center;gap:5px;color:var(--oro-claro);font-weight:600;font-size:11.5px;white-space:nowrap;flex:none}
 .eta svg{width:13px;height:13px;color:var(--oro)}
 
-.gauge{display:block;width:230px;max-width:100%;margin:8px auto 0;overflow:visible}
+/* Chips rápidos de placa para consultar orden en vivo */
+.plate-lookup{
+  display:flex;align-items:center;gap:6px;margin-top:10px;padding:6px 8px;
+  border-radius:11px;background:rgba(9,10,13,.55);border:1px solid var(--linea);
+  overflow-x:auto;scrollbar-width:none;
+}
+.plate-lookup::-webkit-scrollbar{display:none}
+.plate-lookup small{font-size:10.5px;color:var(--texto-3);font-weight:700;white-space:nowrap;margin-right:2px}
+.plate-chip{
+  flex:none;padding:4px 9px;border-radius:7px;font-size:11px;font-weight:700;
+  background:var(--pista-2);border:1px solid var(--linea);color:var(--texto-2);transition:all .15s;
+}
+.plate-chip.on{background:rgba(245,183,0,.16);color:var(--oro-claro);border-color:rgba(245,183,0,.45)}
+
+.gauge{display:block;width:224px;max-width:100%;margin:6px auto 0;overflow:visible}
 .g-track{fill:none;stroke:#222731;stroke-width:5.5;stroke-linecap:round}
 .g-red{fill:none;stroke:var(--rojo);stroke-width:5.5;stroke-dasharray:0 80 20 100;opacity:.45;stroke-linecap:round}
 .g-fill{fill:none;stroke:url(#oroGrad);stroke-width:5.5;stroke-dasharray:75 100;stroke-linecap:round;transition:stroke-dasharray .5s cubic-bezier(.2,.85,.25,1)}
@@ -131,19 +151,19 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .needle{transform:rotate(45deg);transform-origin:120px 118px;transition:transform .55s cubic-bezier(.2,.85,.25,1.08)}
 .hub{fill:var(--pista);stroke:var(--texto);stroke-width:2.5}
 
-.stage{text-align:center;margin-top:6px}
+.stage{text-align:center;margin-top:4px}
 .stage small{font-size:10.5px;color:var(--oro);font-weight:700;text-transform:uppercase;letter-spacing:1.2px}
-.stage strong{display:block;font-family:var(--display);font-weight:800;font-size:30px;line-height:1.08;letter-spacing:.5px;margin-top:2px}
-.stage p{font-size:12.5px;color:var(--texto-2);margin-top:3px;font-weight:400}
+.stage strong{display:block;font-family:var(--display);font-weight:800;font-size:29px;line-height:1.08;letter-spacing:.5px;margin-top:2px}
+.stage p{font-size:12px;color:var(--texto-2);margin-top:2px;font-weight:400}
 
-.track-a{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
-.track-a .btn{height:40px;font-size:12.5px;border-radius:11px}
+.track-a{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.track-a .btn{height:39px;font-size:12.5px;border-radius:11px}
 .track-a .wa-mini{background:rgba(255,255,255,.04);border:1px solid var(--linea);color:var(--texto)}
 .track-a .wa-mini svg{color:var(--wa)}
 
-/* Tarjeta Agendar Cita Premium (Carbon & Crimson en lugar de bloque rojo chillón) */
+/* Tarjeta Agendar Cita Premium */
 .book{
-  width:100%;display:flex;align-items:center;gap:14px;margin-top:14px;padding:15px 16px;
+  width:100%;display:flex;align-items:center;gap:14px;margin-top:13px;padding:14px 16px;
   border-radius:var(--r-m);
   background:linear-gradient(115deg,#211215 0%,#14171E 65%);
   border:1px solid rgba(227,32,27,.28);
@@ -151,33 +171,31 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
   text-align:left;transition:border-color .15s,transform .12s;
 }
 .book:hover{border-color:rgba(227,32,27,.55)}
-.book:active{transform:scale(.99)}
-.book-ic{width:40px;height:40px;border-radius:11px;background:rgba(227,32,27,.16);color:#ff5b57;display:grid;place-items:center;flex:none}
-.book b{display:block;font-size:14.5px;font-weight:700;color:var(--texto)}
-.book small{font-size:12px;color:var(--texto-2);margin-top:1px;display:block}
+.book-ic{width:38px;height:38px;border-radius:11px;background:rgba(227,32,27,.16);color:#ff5b57;display:grid;place-items:center;flex:none}
+.book b{display:block;font-size:14px;font-weight:700;color:var(--texto)}
+.book small{font-size:11.5px;color:var(--texto-2);margin-top:1px;display:block}
 .book > svg:last-child{margin-left:auto;color:var(--texto-3)}
 
-/* Títulos de sección con más aire */
-.sec{display:flex;justify-content:space-between;align-items:baseline;margin:24px 0 12px}
-.sec h3{font-size:16px;font-weight:700;letter-spacing:-.2px;color:var(--texto)}
-.sec button,.sec a{font-size:12.5px;font-weight:600;color:var(--texto-2);transition:color .15s}
-.sec button:hover{color:var(--texto)}
+.sec{display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 10px}
+.sec h3{font-size:15.5px;font-weight:700;letter-spacing:-.2px;color:var(--texto)}
+.sec button,.sec a{font-size:12.5px;font-weight:600;color:var(--texto-2)}
 
 /* ==========================================================================
-   TARJETAS DE REPUESTO "BOUTIQUE" (4 ELEMENTOS LIMPIOS, SIN RUIDO VISUAL)
+   MEJORA UX 1: TARJETAS BOUTIQUE CON CONTADOR "- 1 +" EN VIVO
    ========================================================================== */
-.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
 .pc{
   background:var(--pista);
   border:1px solid var(--linea);
   border-radius:18px;
   padding:10px 10px 12px;
   display:flex;flex-direction:column;min-width:0;
-  transition:transform .18s ease,border-color .18s ease,background .18s ease;
+  transition:transform .18s ease,border-color .18s ease;
 }
-.pc:hover{border-color:rgba(255,255,255,.16);transform:translateY(-2px)}
+.pc.in-cart{border-color:rgba(245,183,0,.35)}
+.pc:hover{border-color:rgba(255,255,255,.18);transform:translateY(-2px)}
 .pc .photo{
-  height:128px;border-radius:13px;overflow:hidden;position:relative;
+  height:124px;border-radius:13px;overflow:hidden;position:relative;
   background:#171A20;cursor:pointer;
 }
 .pc .photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
@@ -185,7 +203,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .tag{
   position:absolute;top:8px;left:8px;z-index:2;
   font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:999px;
-  background:rgba(9,10,13,.75);color:var(--texto-2);
+  background:rgba(9,10,13,.76);color:var(--texto-2);
   border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(6px);
 }
 .tag.off{background:rgba(227,32,27,.85);color:#fff;border-color:transparent}
@@ -193,41 +211,66 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 
 .pc .brand-lbl{
   font-size:10px;color:var(--texto-3);font-weight:700;
-  text-transform:uppercase;letter-spacing:.6px;margin:10px 2px 2px;
+  text-transform:uppercase;letter-spacing:.6px;margin:9px 2px 2px;
 }
 .pc h4{
-  font-size:13px;font-weight:600;color:var(--texto);line-height:1.3;
-  margin:0 2px 10px;min-height:34px;
+  font-size:12.5px;font-weight:600;color:var(--texto);line-height:1.3;
+  margin:0 2px 9px;min-height:33px;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
   cursor:pointer;
 }
 .pc-f{
   display:flex;justify-content:space-between;align-items:center;
-  padding:0 2px;margin-top:auto;
+  padding:0 2px;margin-top:auto;gap:4px;
 }
-.was{display:block;font-size:10.5px;color:var(--texto-3);text-decoration:line-through;line-height:1;margin-bottom:2px}
+.was{display:block;font-size:10px;color:var(--texto-3);text-decoration:line-through;line-height:1;margin-bottom:2px}
 
-/* Un solo botón + minimalista por tarjeta */
 .add{
   width:34px;height:34px;border-radius:10px;
   background:var(--pista-2);border:1px solid rgba(255,255,255,.1);
   color:var(--texto);display:grid;place-items:center;
-  transition:background .15s,color .15s,border-color .15s,transform .12s;
+  transition:all .15s;
 }
-.add:hover{background:var(--texto);color:var(--asfalto);border-color:var(--texto)}
-.add:active{transform:scale(.92)}
+.add:hover{background:var(--texto);color:var(--asfalto)}
 .add svg{width:15px;height:15px;stroke-width:2.2}
+
+/* Contador compacto "- 1 +" cuando ya está en el pedido */
+.card-qty{
+  display:inline-flex;align-items:center;gap:4px;
+  height:34px;padding:0 4px;border-radius:10px;
+  background:rgba(245,183,0,.14);border:1px solid rgba(245,183,0,.45);
+}
+.card-qty button{
+  width:24px;height:26px;border-radius:7px;background:rgba(9,10,13,.65);
+  color:var(--oro-claro);font-weight:800;font-size:13px;display:grid;place-items:center;
+}
+.card-qty span{font-size:12px;font-weight:800;color:var(--oro-claro);min-width:14px;text-align:center}
+
+/* MEJORA UX 3: Tarjeta Cotizador cuando busca otro repuesto */
+.ask-part-card{
+  grid-column:1 / -1;margin-top:4px;padding:14px 15px;border-radius:16px;
+  background:linear-gradient(135deg,#151c18,#13161C);
+  border:1px dashed rgba(30,215,96,.38);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.ask-part-card b{display:block;font-size:13px;color:var(--texto)}
+.ask-part-card small{display:block;font-size:11.5px;color:var(--texto-2);margin-top:2px}
+.ask-part-card a{
+  flex:none;padding:9px 13px;border-radius:10px;
+  background:rgba(30,215,96,.15);border:1px solid rgba(30,215,96,.45);
+  color:#5ff297;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+}
 
 /* Sello de Confianza Minimalista */
 .trust-card{
-  margin-top:22px;padding:15px;border-radius:var(--r-m);
+  margin-top:20px;padding:14px;border-radius:var(--r-m);
   background:var(--pista);border:1px solid var(--linea);
 }
 .trust-top{display:flex;gap:12px;align-items:center}
-.trust-top img{width:56px;height:56px;border-radius:12px;object-fit:cover;flex:none}
+.trust-top img{width:54px;height:54px;border-radius:12px;object-fit:cover;flex:none}
 .trust-top b{display:block;font-size:13.5px;font-weight:700;color:var(--texto)}
 .trust-top small{display:block;font-size:11.5px;color:var(--texto-2);line-height:1.4;margin-top:2px}
-.pay-badges{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:12px;padding-top:11px;border-top:1px solid var(--linea)}
+.pay-badges{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:11px;padding-top:10px;border-top:1px solid var(--linea)}
 .pay-badges span.lbl-p{font-size:11px;color:var(--texto-3);font-weight:600;margin-right:auto}
 .p-chip{
   font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:6px;
@@ -235,12 +278,12 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 }
 
 /* Buscador y filtros de Tienda */
-.hdr3{display:flex;align-items:center;gap:10px;padding:16px 0 12px}
+.hdr3{display:flex;align-items:center;gap:10px;padding:14px 0 10px}
 .hdr3 h3{font-size:20px;font-weight:700;flex:1;letter-spacing:-.3px}
-.search{display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;border-radius:13px;background:var(--pista);border:1px solid var(--linea);color:var(--texto-3)}
+.search{display:flex;align-items:center;gap:10px;height:43px;padding:0 14px;border-radius:13px;background:var(--pista);border:1px solid var(--linea);color:var(--texto-3)}
 .search input{flex:1;min-width:0;color:var(--texto);outline:none;font-size:13.5px}
 .search input::placeholder{color:var(--texto-3)}
-.fit{display:flex;align-items:center;gap:9px;margin-top:10px;padding:10px 13px;border-radius:13px;background:var(--pista);border:1px solid var(--linea);font-size:12.5px;color:var(--texto-2);width:100%;text-align:left}
+.fit{display:flex;align-items:center;gap:9px;margin-top:9px;padding:9px 13px;border-radius:13px;background:var(--pista);border:1px solid var(--linea);font-size:12.5px;color:var(--texto-2);width:100%;text-align:left}
 .fit svg{color:var(--oro)}
 .fit b{color:var(--texto);font-weight:600}
 .sw{margin-left:auto;width:36px;height:20px;border-radius:10px;background:var(--pista-3);position:relative;flex:none;transition:background .15s}
@@ -248,48 +291,129 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}
 .sw.on::after{transform:translateX(16px);background:#1a1300}
 
-.cats{display:flex;gap:7px;margin:12px 0 14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.cats{display:flex;gap:7px;margin:10px 0 12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 .cats::-webkit-scrollbar{display:none}
-.cats button{flex:none;height:34px;padding:0 14px;border-radius:999px;font-size:12.5px;font-weight:600;background:var(--pista);border:1px solid var(--linea);color:var(--texto-2);transition:all .15s}
+.cats button{flex:none;height:33px;padding:0 13px;border-radius:999px;font-size:12px;font-weight:600;background:var(--pista);border:1px solid var(--linea);color:var(--texto-2);transition:all .15s}
 .cats button.on{background:var(--texto);color:var(--asfalto);border-color:var(--texto);font-weight:700}
 
 /* ==========================================================================
-   PANTALLA 3: CHECKOUT POR WHATSAPP LIMPIO (SIN CAJA DE TEXTO CRUDO VISIBLE)
+   PANTALLA 3: CHECKOUT + PASARELA DE PAGO YAPE QR DINÁMICO
    ========================================================================== */
-.c-list{display:flex;flex-direction:column;gap:9px}
-.c-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:14px;background:var(--pista);border:1px solid var(--linea)}
-.c-item img{width:52px;height:52px;border-radius:10px;object-fit:cover;background:#171A20;flex:none}
+.c-list{display:flex;flex-direction:column;gap:7px}
+.c-item{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:13px;background:var(--pista);border:1px solid var(--linea)}
+.c-item img{width:46px;height:46px;border-radius:9px;object-fit:cover;background:#171A20;flex:none}
 .c-info{flex:1;min-width:0}
-.c-info small{font-size:10px;color:var(--texto-3);font-weight:700;text-transform:uppercase;letter-spacing:.4px;display:block}
-.c-info b{font-size:13px;font-weight:600;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:1px 0 2px}
-.c-info .price{font-size:15.5px}
-.qty{display:flex;align-items:center;gap:6px;background:var(--pista-2);border:1px solid var(--linea);border-radius:10px;padding:3px 6px;flex:none}
-.qty button{width:24px;height:24px;border-radius:7px;background:var(--asfalto);display:grid;place-items:center;font-weight:700;font-size:14px;color:var(--texto-2)}
-.qty span{font-size:12.5px;font-weight:700;min-width:15px;text-align:center}
+.c-info small{font-size:9.5px;color:var(--texto-3);font-weight:700;text-transform:uppercase;letter-spacing:.4px;display:block}
+.c-info b{font-size:12.5px;font-weight:600;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-info .price{font-size:15px}
+.qty{display:flex;align-items:center;gap:5px;background:var(--pista-2);border:1px solid var(--linea);border-radius:9px;padding:2px 5px;flex:none}
+.qty button{width:22px;height:22px;border-radius:6px;background:var(--asfalto);display:grid;place-items:center;font-weight:700;font-size:13px;color:var(--texto-2)}
+.qty span{font-size:12px;font-weight:700;min-width:14px;text-align:center}
 
-.deliv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
-.deliv button{padding:11px 12px;border-radius:13px;background:var(--pista);border:1px solid var(--linea);text-align:left;transition:all .15s}
+.deliv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.deliv button{padding:9px 11px;border-radius:12px;background:var(--pista);border:1px solid var(--linea);text-align:left;transition:all .15s}
 .deliv button.on{border-color:rgba(245,183,0,.5);background:rgba(245,183,0,.06)}
-.deliv button b{display:block;font-size:13px;font-weight:600;color:var(--texto)}
-.deliv button small{font-size:11px;color:var(--texto-2);margin-top:1px;display:block}
+.deliv button b{display:block;font-size:12.5px;font-weight:600;color:var(--texto)}
+.deliv button small{font-size:10.5px;color:var(--texto-2);display:block}
 
-.install-chk{display:flex;align-items:center;gap:10px;margin-top:10px;padding:11px 13px;border-radius:13px;background:var(--pista);border:1px solid var(--linea);font-size:12.5px;width:100%;text-align:left;color:var(--texto-2)}
+/* MEJORA UX 2: Campos de Nombre y Dirección para envío */
+.cust-fields{display:grid;grid-template-columns:1fr;gap:7px;margin-top:8px}
+.cust-in{
+  height:38px;padding:0 12px;border-radius:11px;
+  background:var(--pista);border:1px solid var(--linea);
+  font-size:12.5px;color:var(--texto);outline:none;width:100%;
+}
+.cust-in:focus{border-color:rgba(245,183,0,.5)}
+.cust-in::placeholder{color:var(--texto-3)}
+
+.install-chk{display:flex;align-items:center;gap:9px;margin-top:8px;padding:9px 12px;border-radius:12px;background:var(--pista);border:1px solid var(--linea);font-size:12px;width:100%;text-align:left;color:var(--texto-2)}
 .install-chk b{color:var(--texto);font-weight:600}
-.install-chk i.box{width:18px;height:18px;border-radius:5px;background:var(--oro);color:#1a1300;display:grid;place-items:center;font-weight:900;font-size:11px;font-style:normal;flex:none}
+.install-chk i.box{width:17px;height:17px;border-radius:5px;background:var(--oro);color:#1a1300;display:grid;place-items:center;font-weight:900;font-size:11px;font-style:normal;flex:none}
 
-/* Vista previa del mensaje oculta en un desplegable limpio */
-.wa-details{margin-top:10px;border-radius:12px;background:var(--pista);border:1px solid var(--linea);padding:9px 13px}
-.wa-details summary{font-size:11.5px;font-weight:600;color:var(--texto-2);list-style:none;display:flex;justify-content:space-between;align-items:center}
+/* Selector de Medio de Pago (Yape QR Dinámico / Plin / Efectivo) */
+.pay-methods{display:grid;grid-template-columns:1.25fr .9fr .95fr;gap:7px;margin-top:8px}
+.pay-m{
+  padding:8px 8px;border-radius:11px;background:var(--pista);border:1px solid var(--linea);
+  font-size:11.5px;font-weight:700;color:var(--texto-2);text-align:center;transition:all .15s;
+}
+.pay-m.on.yape-m{background:linear-gradient(135deg,rgba(116,35,132,.35),rgba(0,209,178,.12));border-color:#A94BC0;color:#fff}
+.pay-m.on.plin-m{background:rgba(0,184,217,.18);border-color:var(--plin);color:#fff}
+.pay-m.on.cash-m{background:rgba(245,183,0,.14);border-color:var(--oro);color:var(--oro-claro)}
+
+/* ==========================================================================
+   PASARELA YAPE CON QR DINÁMICO INTEGRADA
+   ========================================================================== */
+.yape-gateway{
+  margin-top:10px;padding:12px 13px;border-radius:16px;
+  background:linear-gradient(145deg,#24102B 0%,#14151D 65%,#0E2223 100%);
+  border:1px solid rgba(169,75,192,.45);
+  box-shadow:0 12px 28px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.1);
+}
+.yape-gw-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;gap:8px}
+.yape-brand{display:inline-flex;align-items:center;gap:7px}
+.yape-logo-pill{
+  padding:3px 9px;border-radius:8px;background:#742384;color:#fff;
+  font-weight:900;font-size:12px;letter-spacing:.3px;border:1px solid #A94BC0;
+  display:inline-flex;align-items:center;gap:4px;
+}
+.yape-logo-pill i.dot-y{width:7px;height:7px;border-radius:50%;background:var(--yape-teal);display:inline-block}
+.yape-gw-h small{font-size:10.5px;color:#d6b4e0;font-weight:600}
+.yape-live-tag{
+  font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;
+  background:rgba(0,209,178,.16);color:#4FF5DC;border:1px solid rgba(0,209,178,.4);white-space:nowrap;
+}
+
+.yape-gw-body{display:grid;grid-template-columns:116px minmax(0,1fr);gap:12px;align-items:center}
+.qr-frame{
+  width:116px;height:116px;padding:6px;border-radius:14px;
+  background:#fff;box-shadow:0 6px 18px rgba(0,0,0,.5);
+  position:relative;display:grid;place-items:center;cursor:pointer;
+}
+.qr-frame svg{width:100%;height:100%;display:block}
+.qr-badge-center{
+  position:absolute;width:24px;height:24px;border-radius:6px;
+  background:#742384;color:#fff;font-weight:900;font-size:11px;
+  display:grid;place-items:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);
+}
+
+.yape-gw-info{min-width:0}
+.yape-gw-info .amt-lbl{font-size:10.5px;color:#cbb5d1;font-weight:600}
+.yape-gw-info .amt-val{
+  font-family:var(--display);font-size:27px;font-weight:900;color:#fff;
+  line-height:1.05;letter-spacing:.4px;display:flex;align-items:center;gap:8px;margin:2px 0 4px;white-space:nowrap;
+}
+.yape-gw-info .amt-val span{font-family:Manrope,sans-serif;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;background:rgba(255,255,255,.1);color:var(--oro-claro)}
+.yape-dest{font-size:11px;color:var(--texto-2);line-height:1.35}
+.yape-dest b{color:#fff}
+
+.yape-gw-acts{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.yape-mini-btn{
+  padding:5px 9px;border-radius:8px;font-size:10.5px;font-weight:700;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;
+  display:inline-flex;align-items:center;gap:4px;
+}
+.yape-mini-btn.teal{background:rgba(0,209,178,.16);border-color:rgba(0,209,178,.45);color:#5ef7df}
+
+.yape-op-row{margin-top:9px;padding-top:8px;border-top:1px solid rgba(255,255,255,.1);display:flex;gap:7px;align-items:center}
+.yape-op-in{
+  flex:1;height:33px;padding:0 10px;border-radius:8px;
+  background:rgba(9,10,13,.6);border:1px solid rgba(255,255,255,.15);
+  font-size:11.5px;color:#fff;outline:none;min-width:0;
+}
+.yape-op-in::placeholder{color:#9e8CA4}
+
+.wa-details{margin-top:8px;border-radius:11px;background:var(--pista);border:1px solid var(--linea);padding:8px 12px}
+.wa-details summary{font-size:11px;font-weight:600;color:var(--texto-2);list-style:none;display:flex;justify-content:space-between;align-items:center}
 .wa-details summary::-webkit-details-marker{display:none}
-.wa-details summary::after{content:"Ver texto ↓";font-size:11px;color:var(--texto-3)}
+.wa-details summary::after{content:"Ver texto ↓";font-size:10.5px;color:var(--texto-3)}
 .wa-details[open] summary::after{content:"Ocultar ↑"}
-.wa-details pre{margin-top:8px;padding-top:8px;border-top:1px solid var(--linea);white-space:pre-wrap;word-break:break-word;font-family:inherit;color:var(--texto-2);font-size:11px;line-height:1.45}
+.wa-details pre{margin-top:7px;padding-top:7px;border-top:1px solid var(--linea);white-space:pre-wrap;word-break:break-word;font-family:inherit;color:var(--texto-2);font-size:10.5px;line-height:1.4}
 
-.cta-wa-box{margin-top:12px;padding:14px 15px;border-radius:var(--r-m);background:var(--pista);border:1px solid var(--linea)}
-.cta-wa-box .tot-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
-.cta-wa-box .tot-row span{font-size:12.5px;color:var(--texto-2)}
-.cta-wa-box .tot-row .price{font-size:22px}
-.cta-wa-box .btn.wa{width:100%;height:48px;font-size:14px}
+.cta-wa-box{margin-top:9px;padding:11px 13px;border-radius:var(--r-m);background:var(--pista);border:1px solid var(--linea)}
+.cta-wa-box .tot-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.cta-wa-box .tot-row span{font-size:12px;color:var(--texto-2)}
+.cta-wa-box .tot-row .price{font-size:21px}
+.cta-wa-box .btn.wa{width:100%;height:45px;font-size:13.5px}
 
 /* Orden de Taller y Citas */
 .sub-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px;background:var(--pista);border:1px solid var(--linea);border-radius:12px;margin-bottom:14px}
@@ -341,10 +465,10 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .slots button.off{color:var(--texto-3);text-decoration:line-through;background:transparent;border-style:dashed;pointer-events:none}
 
 /* ==========================================================================
-   FICHA DESLIZABLE DE PRODUCTO (BOTTOM SHEET PREMIUM)
+   MODAL YAPE QR PANTALLA COMPLETA + FICHA DESLIZABLE DE PRODUCTO
    ========================================================================== */
 .sheet-backdrop{
-  position:fixed;inset:0;z-index:110;background:rgba(4,5,8,.78);
+  position:fixed;inset:0;z-index:110;background:rgba(4,5,8,.82);
   backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s ease;
   display:flex;align-items:flex-end;justify-content:center;
 }
@@ -366,6 +490,18 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .sheet-specs{margin-top:14px;padding:12px 14px;border-radius:14px;background:var(--asfalto);border:1px solid var(--linea);font-size:12px;color:var(--texto-2);line-height:1.55}
 .sheet-specs b{color:var(--texto);font-weight:600}
 .sheet-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+
+/* Modal Yape QR Ampliado */
+.yape-sheet{
+  background:linear-gradient(165deg,#2E1137 0%,#15161F 60%,#0C1E20 100%);
+  border-top:1px solid #A94BC0;text-align:center;
+}
+.qr-big-wrap{
+  width:210px;height:210px;margin:12px auto;padding:10px;border-radius:20px;
+  background:#fff;box-shadow:0 14px 36px rgba(0,0,0,.6);position:relative;display:grid;place-items:center;
+}
+.qr-big-wrap svg{width:100%;height:100%;display:block}
+.qr-big-wrap .qr-badge-center{width:36px;height:36px;font-size:15px;border-radius:9px}
 
 /* ==========================================================================
    NOTIFICACIÓN TOAST MINIMALISTA
@@ -438,7 +574,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
   .app-shell{
     max-width:1440px;padding:28px 32px 64px;
     display:grid;
-    grid-template-columns:360px minmax(0,1fr) 360px;
+    grid-template-columns:360px minmax(0,1fr) 375px;
     gap:24px;
     align-items:start;
   }
@@ -451,7 +587,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
   #scr-tienda .pc,#scr-tienda .search,#scr-tienda .fit,#scr-tienda .cats button:not(.on){background:var(--asfalto)}
   #scr-tienda .grid-2{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
   #scr-tienda .pc .photo{height:140px}
-  #scr-pedido .c-item,#scr-pedido .deliv button:not(.on),#scr-pedido .install-chk,#scr-pedido .wa-details,#scr-pedido .cta-wa-box{background:var(--asfalto)}
+  #scr-pedido .c-item,#scr-pedido .deliv button:not(.on),#scr-pedido .install-chk,#scr-pedido .wa-details,#scr-pedido .cta-wa-box,#scr-pedido .cust-in,#scr-pedido .pay-m:not(.on){background:var(--asfalto)}
   #scr-taller .sum,#scr-taller .quote,#scr-taller .svc-card:not(.on),#scr-taller .days button:not(.on),#scr-taller .slots button:not(.on){background:var(--asfalto)}
   .desk-right-col{display:flex;flex-direction:column;gap:24px}
 }
@@ -466,12 +602,12 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
       <div class="gb" role="img" aria-label="Logo GB"></div>
       <div class="gb-txt">
         <b style="font-size:22px">TALLER Y VENTA DE REPUESTOS</b>
-        <small>MECÁNICA DE PRECISIÓN · REPUESTOS ORIGINALES</small>
+        <small>MECÁNICA DE PRECISIÓN · PAGO YAPE QR DINÁMICO + WHATSAPP</small>
       </div>
     </div>
     <nav class="desk-nav">
       <a class="on" href="#scr-tienda">Catálogo (8)</a>
-      <a href="#scr-pedido">Pedido WhatsApp</a>
+      <a href="#scr-pedido">Checkout Yape QR</a>
       <a href="#scr-taller">Taller y Citas</a>
       <a href="mobile.html">Vista 4 Pantallas</a>
     </nav>
@@ -486,7 +622,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 <main class="app-shell">
 
   <!-- ====================================================================
-       PANTALLA 1 · INICIO (LIMPIA, SIN BOTONES DUPLICADOS)
+       PANTALLA 1 · INICIO
        ==================================================================== -->
   <section class="app-screen active" id="scr-inicio">
     <header class="app-hdr">
@@ -500,7 +636,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
       </div>
     </header>
 
-    <!-- Selector de Moto con Foto Real + Placa discreta -->
+    <!-- MEJORA UX 4: Selector de Moto con Compatibilidad Real + Opción Todas -->
     <div class="moto-bar">
       <img class="moto-thumb" id="motoThumb" src="assets/motos/msx-125.jpg" alt="Mi Moto">
       <div class="moto-bar-info">
@@ -508,18 +644,30 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
           <option value="msx">Honda MSX 125 (Grom)</option>
           <option value="nmax">Yamaha NMAX 155 Connected</option>
           <option value="pulsar">Bajaj Pulsar NS 200 FI</option>
+          <option value="all">Todas las motos (Catálogo completo)</option>
         </select>
         <div class="moto-meta">
           <span class="plate-pe" id="motoPlate">ABC-123</span>
-          <span class="oil-tag" id="motoKm">18.400 km · Mantenimiento al día</span>
+          <span class="oil-tag" id="motoKm">18.400 km · 6 piezas compatibles</span>
         </div>
       </div>
       <i data-i="down"></i>
     </div>
 
-    <!-- Tacómetro Estilo Relojería / Ducati (números 1-5 tocables en el dial) -->
+    <!-- MEJORA UX 5: Tacómetro con consulta rápida por placa -->
     <section class="track" aria-label="Estado de tu moto">
-      <div class="track-h"><span>Orden #0231 · Andrés</span><span class="eta"><i data-i="clock"></i>Hoy, 5:00 pm</span></div>
+      <div class="track-h">
+        <span id="orderHdrTxt">Orden #0231 · Andrés</span>
+        <span class="eta"><i data-i="clock"></i><span id="orderEtaTxt">Hoy, 5:00 pm</span></span>
+      </div>
+
+      <div class="plate-lookup">
+        <small>PLACA:</small>
+        <button class="plate-chip on" onclick="loadPlateOrder('ABC-123','msx',4,'#0231','Hoy, 5:00 pm',this)">ABC-123</button>
+        <button class="plate-chip" onclick="loadPlateOrder('4582-JM','nmax',5,'#0234','¡Lista hoy!',this)">4582-JM</button>
+        <button class="plate-chip" onclick="loadPlateOrder('9104-KP','pulsar',2,'#0238','Mañana 11 am',this)">9104-KP</button>
+      </div>
+
       <svg class="gauge" viewBox="0 0 240 126" aria-hidden="true">
         <defs><linearGradient id="oroGrad" x1="0" x2="1"><stop offset="0" stop-color="#F5B700"/><stop offset="1" stop-color="#FFE07D"/></linearGradient></defs>
         <path class="g-track" d="M26 116 A94 94 0 0 1 214 116" pathLength="100"/>
@@ -549,11 +697,11 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 
       <div class="track-a">
         <button class="btn ghost" onclick="openTallerMode('orden')">Detalle de orden</button>
-        <a class="btn wa-mini" href="https://wa.me/51960628745?text=Hola%20Taller%20GB,%20quiero%20consultar%20por%20la%20Orden%20%230231%20de%20mi%20moto" target="_blank"><i data-i="wa"></i>Consultar taller</a>
+        <a class="btn wa-mini" href="https://wa.me/51960628745?text=Hola%20Taller%20GB,%20quiero%20consultar%20por%20la%20Orden%20de%20mi%20moto" target="_blank"><i data-i="wa"></i>Consultar taller</a>
       </div>
     </section>
 
-    <!-- Tarjeta Agendar Cita Sobria (Carbon & Crimson) -->
+    <!-- Tarjeta Agendar Cita Sobria -->
     <button class="book" onclick="openTallerMode('cita')">
       <span class="book-ic"><i data-i="cal"></i></span>
       <div><b>Agendar servicio en taller</b><small>Próximo turno libre: mañana, 9:00 am</small></div>
@@ -573,17 +721,16 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
         </div>
       </div>
       <div class="pay-badges">
-        <span class="lbl-p">Medios de pago:</span>
-        <span class="p-chip">Yape</span>
+        <span class="lbl-p">Pago inmediato con:</span>
+        <span class="p-chip" style="border-color:rgba(169,75,192,.45);color:#e4b5f2">Yape QR Dinámico</span>
         <span class="p-chip">Plin</span>
         <span class="p-chip">Efectivo</span>
-        <span class="p-chip">Transferencia</span>
       </div>
     </div>
   </section>
 
   <!-- ====================================================================
-       PANTALLA 2 · TIENDA DE REPUESTOS (TARJETAS BOUTIQUE LIMPIAS)
+       PANTALLA 2 · TIENDA DE REPUESTOS (CON CONTADOR - 1 + Y COTIZADOR)
        ==================================================================== -->
   <section class="app-screen" id="scr-tienda">
     <header class="hdr3">
@@ -598,7 +745,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 
     <button class="fit" onclick="toggleFit()">
       <i data-i="bike"></i>
-      <span>Compatibles con <b id="fitMotoName">Honda MSX 125</b></span>
+      <span>Compatibles con <b id="fitMotoName">Honda MSX 125 (6)</b></span>
       <span class="sw on" id="fitSw"></span>
     </button>
 
@@ -619,7 +766,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
   <div class="desk-right-col">
 
     <!-- ==================================================================
-         PANTALLA 3 · PEDIDO DIRECTO POR WHATSAPP (ESTILO CHECKOUT LIMPIO)
+         PANTALLA 3 · CHECKOUT CON PASARELA DE PAGO YAPE QR DINÁMICO
          ================================================================== -->
     <section class="app-screen" id="scr-pedido">
       <header class="hdr3">
@@ -630,11 +777,11 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 
       <div class="c-list" id="cartList"></div>
 
-      <div class="sec" style="margin:16px 0 8px"><h3>Entrega y montaje</h3></div>
+      <!-- MEJORA UX 2: Entrega + Nombre y Dirección -->
       <div class="deliv">
         <button class="on" id="delPickup" onclick="setDelivery('Recoger en taller GB')">
           <b>Recoger en taller</b>
-          <small>Sin costo · Listo en 20 min</small>
+          <small>Sin costo · En 20 min</small>
         </button>
         <button id="delHome" onclick="setDelivery('Envío a domicilio')">
           <b>Envío a domicilio</b>
@@ -642,10 +789,57 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
         </button>
       </div>
 
+      <div class="cust-fields">
+        <input class="cust-in" id="custName" type="text" placeholder="Tu nombre (ej. Carlos Mendoza)" value="Carlos" oninput="renderCart()">
+        <input class="cust-in" id="custAddress" type="text" placeholder="Dirección o distrito de entrega..." style="display:none" oninput="renderCart()">
+      </div>
+
       <button class="install-chk" onclick="toggleInstall()">
         <i class="box" id="instBox">✓</i>
         <span>Deseo <b>instalar estos repuestos</b> en el taller</span>
       </button>
+
+      <!-- SELECTOR DE PASARELA DE PAGO -->
+      <div class="pay-methods">
+        <button class="pay-m yape-m on" id="pmYape" onclick="setPayMethod('Yape QR')">● Yape QR Dinámico</button>
+        <button class="pay-m plin-m" id="pmPlin" onclick="setPayMethod('Plin')">● Plin</button>
+        <button class="pay-m cash-m" id="pmCash" onclick="setPayMethod('Efectivo en taller')">Efectivo</button>
+      </div>
+
+      <!-- PASARELA DE PAGO YAPE CON QR DINÁMICO QUE CONTIENE EL COSTO TOTAL -->
+      <section class="yape-gateway" id="yapeGatewayBox" aria-label="Pasarela de pago Yape con QR dinámico">
+        <div class="yape-gw-h">
+          <div class="yape-brand">
+            <span class="yape-logo-pill"><i class="dot-y"></i>Yape QR</span>
+            <small>Taller y Repuestos GB</small>
+          </div>
+          <span class="yape-live-tag" id="yapeQrBadge">QR con monto exacto</span>
+        </div>
+
+        <div class="yape-gw-body">
+          <div class="qr-frame" onclick="openYapeModal()" title="Toca para ampliar el QR dinámico">
+            <div id="yapeQrSvgWrap"></div>
+            <span class="qr-badge-center">S/</span>
+          </div>
+
+          <div class="yape-gw-info">
+            <span class="amt-lbl">MONTO INCRUSTADO EN EL QR:</span>
+            <div class="amt-val">
+              <b id="yapeQrAmount">S/ 195.00</b>
+              <span>DINÁMICO</span>
+            </div>
+            <p class="yape-dest">Escanea el QR desde Yape o yapea al número vinculado al WhatsApp de <b>Taller GB</b>.</p>
+            <div class="yape-gw-acts">
+              <button class="yape-mini-btn teal" onclick="openYapeModal()">Ampliar QR</button>
+              <button class="yape-mini-btn" id="copyYapeBtn" onclick="copyYapeNumber()">Copiar número Yape</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="yape-op-row">
+          <input class="yape-op-in" id="yapeOpCode" type="text" placeholder="N° de operación Yape (opcional) o envía captura..." oninput="renderCart()">
+        </div>
+      </section>
 
       <details class="wa-details">
         <summary>Mensaje que se enviará al taller</summary>
@@ -654,11 +848,11 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 
       <div class="cta-wa-box">
         <div class="tot-row">
-          <span>Total estimado (Yape · Plin · Efectivo)</span>
+          <span id="totPayLabel">Total a pagar con Yape QR</span>
           <b class="price" id="cartTotal">S/ 195</b>
         </div>
         <a class="btn wa" id="waSendBtn" href="#" target="_blank">
-          <i data-i="wa"></i>Enviar pedido por WhatsApp
+          <i data-i="wa"></i><span id="waSendBtnTxt">Confirmar pago y pedido por WhatsApp</span>
         </a>
       </div>
     </section>
@@ -766,7 +960,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 
 </main>
 
-<!-- FICHA DESLIZABLE DE DETALLE DEL REPUESTO (BOTTOM SHEET) -->
+<!-- FICHA DESLIZABLE DE DETALLE DEL REPUESTO -->
 <div class="sheet-backdrop" id="prodSheet" onclick="if(event.target===this)closeSheet()">
   <div class="sheet" role="dialog" aria-modal="true">
     <div class="sheet-handle"></div>
@@ -792,6 +986,33 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
   </div>
 </div>
 
+<!-- MODAL AMPLIADO DE PASARELA YAPE QR DINÁMICO -->
+<div class="sheet-backdrop" id="yapeModal" onclick="if(event.target===this)closeYapeModal()">
+  <div class="sheet yape-sheet" role="dialog" aria-modal="true">
+    <div class="sheet-handle"></div>
+    <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:4px">
+      <span class="yape-logo-pill"><i class="dot-y"></i>Pasarela Yape QR Dinámico</span>
+      <span class="yape-live-tag">Pedido #GB-1042</span>
+    </div>
+    <h3 style="font-family:var(--display);font-size:34px;font-weight:900;margin-top:4px" id="ymAmount">S/ 195.00</h3>
+    <p style="font-size:12px;color:#d8bfe0">Titular: <b>GB Taller y Venta de Repuestos</b></p>
+
+    <div class="qr-big-wrap">
+      <div id="yapeQrBigSvgWrap"></div>
+      <span class="qr-badge-center">S/</span>
+    </div>
+
+    <p style="font-size:12px;color:var(--texto-2);max-width:320px;margin:0 auto 12px;line-height:1.4">
+      El código QR contiene el costo total de tu pedido (<b id="ymInlineAmt" style="color:#fff">S/ 195.00</b>) vinculado al mismo número oficial de WhatsApp del taller.
+    </p>
+
+    <div class="sheet-actions">
+      <button class="btn ghost" onclick="copyYapeNumber();closeYapeModal()">Copiar número Yape</button>
+      <a class="btn wa" id="ymWaBtn" href="#" target="_blank"><i data-i="wa"></i>Ya yapeé · Enviar por WA</a>
+    </div>
+  </div>
+</div>
+
 <!-- NOTIFICACIÓN TOAST MINIMALISTA -->
 <div class="toast" id="cartToast">
   <img id="toastImg" src="assets/productos/disco-freno.jpg" alt="">
@@ -799,7 +1020,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
     <small>✓ Agregado al pedido</small>
     <b id="toastTitle">Disco de freno delantero Wave</b>
   </div>
-  <button onclick="switchTab('pedido')">Ver pedido</button>
+  <button onclick="switchTab('pedido')">Ver QR / Pedido</button>
 </div>
 
 <!-- BARRA INFERIOR FIJA DE 4 PESTAÑAS -->
@@ -811,7 +1032,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
     <i data-i="store"></i><span>Tienda</span>
   </button>
   <button id="nav-pedido" onclick="switchTab('pedido')">
-    <i data-i="wa"></i><span>Pedido</span>
+    <i data-i="wa"></i><span>Pedido QR</span>
     <b class="t-badge cart-count">3</b>
   </button>
   <button id="nav-taller" onclick="switchTab('taller')">
@@ -821,6 +1042,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 
 <script>
 const WHATSAPP_NUMBER = '51960628745';
+const YAPE_LOCAL_NUMBER = '960628745';
 
 const P={
  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
@@ -841,18 +1063,20 @@ const P={
 const MOTOS = {
   msx:{name:'Honda MSX 125 (Grom)', fullShort:'Honda MSX 125', plate:'ABC-123', km:'18.400 km · Mantenimiento al día', img:'assets/motos/msx-125.jpg'},
   nmax:{name:'Yamaha NMAX 155 Connected', fullShort:'Yamaha NMAX 155', plate:'4582-JM', km:'12.100 km · Frenos verificados', img:'assets/motos/nmax-155.jpg'},
-  pulsar:{name:'Bajaj Pulsar NS 200 FI', fullShort:'Pulsar NS 200', plate:'9104-KP', km:'24.600 km · Próximo afinamiento', img:'assets/motos/pulsar-200.jpg'}
+  pulsar:{name:'Bajaj Pulsar NS 200 FI', fullShort:'Pulsar NS 200', plate:'9104-KP', km:'24.600 km · Próximo afinamiento', img:'assets/motos/pulsar-200.jpg'},
+  all:{name:'Todas las motos', fullShort:'Todas las motos', plate:'PERÚ', km:'Mostrando los 8 repuestos del almacén', img:'assets/motos/msx-125.jpg'}
 };
 
+/* MEJORA UX 4: Compatibilidad específica real por modelo de moto */
 const INVENTORY = [
-  {id:'disco', sku:'GB-FR-014', brand:'Honda OEM', name:'Disco de freno delantero Wave 220mm', cat:'Frenos', price:95, stock:6, tag:'Original', tagType:'', fit:true, img:'assets/productos/disco-freno.jpg', spec:'Acero inoxidable SUS420 ventilado · 220mm · 4 pernos OEM.', models:'Honda MSX 125 (Grom), CB 125F Twister, XR 150L.'},
-  {id:'kit', sku:'GB-TR-008', brand:'DID Racing', name:'Kit de arrastre 428 Oro (Cadena + Catalina)', cat:'Transmisión', price:185, stock:4, tag:'Destacado', tagType:'', fit:true, img:'assets/productos/kit-arrastre.jpg', spec:'Cadena reforzada 428HD dorada 120 eslabones + Catalina 34T + Piñón 15T.', models:'Honda MSX 125, CB 125F, Yamaha YB 125, Pulsar 135.'},
-  {id:'pastillas', sku:'GB-FR-029', brand:'Brembo', name:'Pastillas de freno sinterizadas cobre', cat:'Frenos', price:55, was:65, stock:11, tag:'-15%', tagType:'off', fit:true, img:'assets/productos/pastillas-freno.jpg', spec:'Compuesto sinterizado HH de alto agarre en seco y mojado (par).', models:'Honda MSX 125, Yamaha NMAX 155, Bajaj Pulsar NS 200.'},
-  {id:'aceite', sku:'GB-MT-003', brand:'Motul 7100', name:'Aceite 4T 10W-40 100% Sintético 1L', cat:'Motor', price:45, stock:24, tag:'', tagType:'', fit:true, img:'assets/productos/aceite-4t.jpg', spec:'100% Sintético con tecnología Ester · Norma JASO MA2 / API SN (1 Litro).', models:'Todas las motocicletas de 4 Tiempos (Honda, Yamaha, Bajaj, KTM).'},
-  {id:'bujia', sku:'GB-EL-019', brand:'NGK Iridium', name:'Bujía de Iridio Laser CR8EIX', cat:'Eléctrico', price:48, stock:9, tag:'Iridio', tagType:'', fit:true, img:'assets/productos/bujia-iridio.jpg', spec:'Electrodo central de Iridio soldado con láser 0.6mm · Arranque inmediato.', models:'Honda MSX 125, Yamaha NMAX 155, Pulsar NS 200, FZ 16.'},
-  {id:'casco', sku:'GB-AC-041', brand:'Shaft Pro', name:'Casco Integral Sport Mate Negro/Rojo', cat:'Accesorios', price:260, stock:3, tag:'ECE 22.06', tagType:'', fit:true, img:'assets/productos/casco-integral.jpg', spec:'Certificación ECE 22.06 y DOT · Visor iridium + interior desmontable.', models:'Tallas disponibles en tienda: M (57-58 cm) y L (59-60 cm).'},
-  {id:'bateria', sku:'GB-EL-005', brand:'Yuasa AGM', name:'Batería 12V 5Ah Libre Mantenimiento', cat:'Eléctrico', price:120, stock:5, tag:'', tagType:'', fit:true, img:'assets/productos/bateria-agm.jpg', spec:'Tecnología AGM sellada activada de fábrica · 12V 5Ah CCA 85A.', models:'Honda MSX 125, Yamaha NMAX 155, Pulsar NS 200, AKT 125.'},
-  {id:'shock', sku:'GB-SU-012', brand:'YSS Racing', name:'Amortiguador Monoshock gas regulable', cat:'Suspensión', price:320, stock:2, tag:'Últimos 2', tagType:'low', fit:true, img:'assets/productos/amortiguador.jpg', spec:'Monoshock hidráulico con botella de nitrógeno anodizada en oro y precarga regulable.', models:'Honda MSX 125 (Grom), Pulsar NS 200.'}
+  {id:'disco', sku:'GB-FR-014', brand:'Honda OEM', name:'Disco de freno delantero Wave 220mm', cat:'Frenos', price:95, stock:6, tag:'Original', tagType:'', fits:['msx','pulsar'], img:'assets/productos/disco-freno.jpg', spec:'Acero inoxidable SUS420 ventilado · 220mm · 4 pernos OEM.', models:'Honda MSX 125 (Grom), CB 125F Twister, Pulsar NS 200.'},
+  {id:'kit', sku:'GB-TR-008', brand:'DID Racing', name:'Kit de arrastre 428 Oro (Cadena + Catalina)', cat:'Transmisión', price:185, stock:4, tag:'Destacado', tagType:'', fits:['msx','pulsar'], img:'assets/productos/kit-arrastre.jpg', spec:'Cadena reforzada 428HD dorada 120 eslabones + Catalina 34T + Piñón 15T.', models:'Honda MSX 125, CB 125F, Bajaj Pulsar NS 200.'},
+  {id:'pastillas', sku:'GB-FR-029', brand:'Brembo', name:'Pastillas de freno sinterizadas cobre', cat:'Frenos', price:55, was:65, stock:11, tag:'-15%', tagType:'off', fits:['msx','nmax','pulsar'], img:'assets/productos/pastillas-freno.jpg', spec:'Compuesto sinterizado HH de alto agarre en seco y mojado (par).', models:'Honda MSX 125, Yamaha NMAX 155, Bajaj Pulsar NS 200.'},
+  {id:'aceite', sku:'GB-MT-003', brand:'Motul 7100', name:'Aceite 4T 10W-40 100% Sintético 1L', cat:'Motor', price:45, stock:24, tag:'', tagType:'', fits:['msx','nmax','pulsar'], img:'assets/productos/aceite-4t.jpg', spec:'100% Sintético con tecnología Ester · Norma JASO MA2 / API SN (1 Litro).', models:'Todas las motocicletas de 4 Tiempos (Honda, Yamaha, Bajaj, KTM).'},
+  {id:'bujia', sku:'GB-EL-019', brand:'NGK Iridium', name:'Bujía de Iridio Laser CR8EIX', cat:'Eléctrico', price:48, stock:9, tag:'Iridio', tagType:'', fits:['msx','nmax','pulsar'], img:'assets/productos/bujia-iridio.jpg', spec:'Electrodo central de Iridio soldado con láser 0.6mm · Arranque inmediato.', models:'Honda MSX 125, Yamaha NMAX 155, Pulsar NS 200, FZ 16.'},
+  {id:'casco', sku:'GB-AC-041', brand:'Shaft Pro', name:'Casco Integral Sport Mate Negro/Rojo', cat:'Accesorios', price:260, stock:3, tag:'ECE 22.06', tagType:'', fits:['msx','nmax','pulsar'], img:'assets/productos/casco-integral.jpg', spec:'Certificación ECE 22.06 y DOT · Visor iridium + interior desmontable.', models:'Tallas disponibles en tienda: M (57-58 cm) y L (59-60 cm).'},
+  {id:'bateria', sku:'GB-EL-005', brand:'Yuasa AGM', name:'Batería 12V 5Ah Libre Mantenimiento', cat:'Eléctrico', price:120, stock:5, tag:'', tagType:'', fits:['nmax','pulsar'], img:'assets/productos/bateria-agm.jpg', spec:'Tecnología AGM sellada activada de fábrica · 12V 5Ah CCA 85A.', models:'Yamaha NMAX 155, Bajaj Pulsar NS 200, AKT 125.'},
+  {id:'shock', sku:'GB-SU-012', brand:'YSS Racing', name:'Amortiguador Monoshock gas regulable', cat:'Suspensión', price:320, stock:2, tag:'Últimos 2', tagType:'low', fits:['msx','pulsar'], img:'assets/productos/amortiguador.jpg', spec:'Monoshock hidráulico con botella de nitrógeno anodizada en oro y precarga regulable.', models:'Honda MSX 125 (Grom), Bajaj Pulsar NS 200.'}
 ];
 
 const STAGES = {
@@ -860,7 +1084,7 @@ const STAGES = {
   2:{ang:-36, fill:40, step:'Etapa 2 de 5', title:'En diagnóstico', desc:'Inspección de transmisión, frenos y fluidos.'},
   3:{ang:0,   fill:60, step:'Etapa 3 de 5', title:'Presupuesto aprobado', desc:'Cotización de S/ 280 confirmada por WhatsApp.'},
   4:{ang:45,  fill:75, step:'Etapa 4 de 5', title:'En reparación', desc:'Instalando kit de arrastre DID 428 Oro.'},
-  5:{ang:82,  fill:100,step:'Etapa 5 de 5', title:'Lista para entrega', desc:'Prueba de ruta superada. Lista en Taller GB.'}
+  5:{ang:82,  fill:100,step:'Etapa 5 de 5', title:'¡Lista para entrega!', desc:'Prueba de ruta superada. Lista en Taller GB.'}
 };
 
 let currentCat = 'Todo';
@@ -869,6 +1093,7 @@ let currentMotoKey = 'msx';
 let selectedMoto = 'Honda MSX 125 (Placa ABC-123)';
 let deliveryMode = 'Recoger en taller GB';
 let wantInstall = true;
+let payMethod = 'Yape QR';
 let cart = { disco: 1, pastillas: 1, aceite: 1 };
 let toastTimer = null;
 
@@ -878,11 +1103,91 @@ let citaDay = 'Mar 24 Nov';
 let citaSlot = '2:00 pm';
 
 const fmt = n => 'S/ ' + n.toLocaleString('es-PE');
+const fmtDec = n => 'S/ ' + n.toFixed(2);
 
 function hydrateIcons(root=document){
   root.querySelectorAll('i[data-i]').forEach(el=>{
     el.outerHTML=`<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${P[el.dataset.i]}</svg>`;
   });
+}
+
+/* ==========================================================================
+   GENERADOR DE QR DINÁMICO EN SVG (CODIFICA MONTO TOTAL + DESTINO YAPE/WA)
+   ========================================================================== */
+function buildDynamicYapeQrSvg(payload){
+  const N = 25;
+  const mat = Array.from({length:N}, ()=>Array(N).fill(0));
+  const rsv = Array.from({length:N}, ()=>Array(N).fill(false));
+
+  function putFinder(r0, c0){
+    for(let r=-1; r<=7; r++){
+      for(let c=-1; c<=7; c++){
+        const rr=r0+r, cc=c0+c;
+        if(rr<0||rr>=N||cc<0||cc>=N) continue;
+        rsv[rr][cc] = true;
+        if(r>=0 && r<=6 && c>=0 && c<=6){
+          if(r===0||r===6||c===0||c===6 || (r>=2&&r<=4&&c>=2&&c<=4)) mat[rr][cc]=1;
+        }
+      }
+    }
+  }
+  putFinder(0,0);
+  putFinder(0,N-7);
+  putFinder(N-7,0);
+
+  // Alignment pattern (21-4 = 17 -> 16,16)
+  for(let r=16; r<=20; r++){
+    for(let c=16; c<=20; c++){
+      rsv[r][c]=true;
+      if(r===16||r===20||c===16||c===20||(r===18&&c===18)) mat[r][c]=1;
+    }
+  }
+  // Timing patterns
+  for(let i=8; i<N-8; i++){
+    rsv[6][i]=true; mat[6][i]=(i%2===0)?1:0;
+    rsv[i][6]=true; mat[i][6]=(i%2===0)?1:0;
+  }
+  // Center quiet zone for Yape S/ emblem
+  for(let r=10; r<=14; r++){
+    for(let c=10; c<=14; c++){
+      rsv[r][c]=true; mat[r][c]=0;
+    }
+  }
+
+  // Deterministic bit stream from payload string (amount + phone + items)
+  let h1 = 2166136261 >>> 0;
+  let h2 = 16777619 >>> 0;
+  const bytes = [];
+  for(let i=0; i<payload.length; i++){
+    const code = payload.charCodeAt(i) & 0xff;
+    bytes.push(code);
+    h1 ^= code; h1 = Math.imul(h1, 16777619) >>> 0;
+    h2 = (Math.imul(h2 ^ code, 2246822519) + 3266489917) >>> 0;
+  }
+
+  let bitIdx = 0;
+  for(let r=0; r<N; r++){
+    for(let c=0; c<N; c++){
+      if(rsv[r][c]) continue;
+      const b = bytes[bitIdx % bytes.length];
+      const shift = (bitIdx + r*3 + c*5) % 8;
+      const mix = ((h1 >>> (bitIdx % 24)) ^ (h2 >>> ((r*c) % 24)) ^ (b >>> shift)) & 1;
+      mat[r][c] = mix;
+      bitIdx++;
+    }
+  }
+
+  let rects = '';
+  for(let r=0; r<N; r++){
+    for(let c=0; c<N; c++){
+      if(mat[r][c]){
+        const isFinder = (r<7&&c<7) || (r<7&&c>=N-7) || (r>=N-7&&c<7);
+        const fill = isFinder ? '#4A1259' : '#16131A';
+        rects += `<rect x="${c}" y="${r}" width="1" height="1" rx=".18" fill="${fill}"/>`;
+      }
+    }
+  }
+  return `<svg viewBox="0 0 ${N} ${N}" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">${rects}</svg>`;
 }
 
 function setOrderStage(n){
@@ -897,6 +1202,16 @@ function setOrderStage(n){
     el.classList.toggle('act', st===n);
     el.classList.toggle('d', st<=n);
   });
+}
+
+function loadPlateOrder(plate, motoKey, stageNum, orderNum, eta, btn){
+  document.querySelectorAll('.plate-chip').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  document.getElementById('orderHdrTxt').textContent = `Orden ${orderNum} · Placa ${plate}`;
+  document.getElementById('orderEtaTxt').textContent = eta;
+  document.getElementById('motoSelect').value = motoKey;
+  changeMoto();
+  setOrderStage(stageNum);
 }
 
 function switchTab(tab){
@@ -918,14 +1233,20 @@ function openTallerMode(mode){
   document.getElementById('tallerTitle').textContent = isOrden ? 'Orden #0231' : 'Agendar cita';
 }
 
+function isCompatible(p, motoKey){
+  if(motoKey === 'all') return true;
+  return p.fits.includes(motoKey);
+}
+
 function changeMoto(){
   currentMotoKey = document.getElementById('motoSelect').value;
   const m = MOTOS[currentMotoKey];
-  selectedMoto = `${m.name} (Placa ${m.plate})`;
+  const compCount = INVENTORY.filter(p=>isCompatible(p, currentMotoKey)).length;
+  selectedMoto = currentMotoKey === 'all' ? 'Moto por confirmar' : `${m.name} (Placa ${m.plate})`;
   document.getElementById('motoThumb').src = m.img;
   document.getElementById('motoPlate').textContent = m.plate;
-  document.getElementById('motoKm').textContent = m.km;
-  document.getElementById('fitMotoName').textContent = m.fullShort;
+  document.getElementById('motoKm').textContent = `${m.km.split('·')[0].trim()} · ${compCount} piezas compatibles`;
+  document.getElementById('fitMotoName').textContent = `${m.fullShort} (${compCount})`;
   renderCatalog();
   renderCart();
   updateCitaWa();
@@ -968,10 +1289,37 @@ function closeSheet(){
   document.getElementById('prodSheet').classList.remove('open');
 }
 
-/* Tarjeta Boutique Limpia: Foto grande + Marca + Nombre + Precio blanco + 1 botón + */
+function openYapeModal(){
+  document.getElementById('yapeModal').classList.add('open');
+}
+
+function closeYapeModal(){
+  document.getElementById('yapeModal').classList.remove('open');
+}
+
+function copyYapeNumber(){
+  if(navigator.clipboard) navigator.clipboard.writeText(YAPE_LOCAL_NUMBER);
+  const btn = document.getElementById('copyYapeBtn');
+  if(btn){
+    const old = btn.textContent;
+    btn.textContent = '✓ Número Yape copiado';
+    setTimeout(()=>btn.textContent = old, 2200);
+  }
+}
+
+/* MEJORA UX 1: Si el producto ya está en el carrito, muestra "- 1 +" en vez de solo "+" */
 function productCardHtml(p){
+  const qInCart = cart[p.id] || 0;
+  const ctrl = qInCart > 0
+    ? `<div class="card-qty">
+         <button onclick="changeQty('${p.id}',-1)" aria-label="Quitar">−</button>
+         <span>${qInCart}</span>
+         <button onclick="addToCart('${p.id}')" aria-label="Agregar">+</button>
+       </div>`
+    : `<button class="add" onclick="addToCart('${p.id}')" aria-label="Agregar al pedido"><i data-i="plus"></i></button>`;
+
   return `
-    <article class="pc">
+    <article class="pc ${qInCart>0?'in-cart':''}">
       <div class="photo" onclick="openSheet('${p.id}')">
         ${p.tag ? `<span class="tag ${p.tagType||''}">${p.tag}</span>` : ''}
         <img src="${p.img}" alt="${p.name}">
@@ -983,28 +1331,43 @@ function productCardHtml(p){
           ${p.was ? `<span class="was">${fmt(p.was)}</span>` : ''}
           <b class="price">${fmt(p.price)}</b>
         </div>
-        <button class="add" onclick="addToCart('${p.id}')" aria-label="Agregar al pedido"><i data-i="plus"></i></button>
+        ${ctrl}
       </div>
     </article>
   `;
 }
 
 function renderCatalog(){
-  const q = (document.getElementById('qInput').value || '').toLowerCase().trim();
+  const rawQ = (document.getElementById('qInput').value || '').trim();
+  const q = rawQ.toLowerCase();
   const list = INVENTORY.filter(p=>{
     if(currentCat !== 'Todo' && p.cat !== currentCat) return false;
-    if(onlyMyMoto && !p.fit) return false;
+    if(onlyMyMoto && !isCompatible(p, currentMotoKey)) return false;
     if(q && !(p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q))) return false;
     return true;
   });
 
+  const askMsg = rawQ
+    ? `Hola Taller GB! Busco el repuesto *"${rawQ}"* para mi *${selectedMoto}*. ¿Tienen stock y precio?`
+    : `Hola Taller GB! Busco un repuesto que no veo en el catálogo para mi *${selectedMoto}*.`;
+  const askCard = `
+    <div class="ask-part-card">
+      <div>
+        <b>${rawQ ? `¿Buscas "${rawQ}"?` : '¿Buscas otro repuesto específico?'}</b>
+        <small>Cotízalo directo con el almacén GB para tu ${MOTOS[currentMotoKey].fullShort}</small>
+      </div>
+      <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(askMsg)}" target="_blank"><i data-i="wa"></i>Cotizar</a>
+    </div>
+  `;
+
   const grid = document.getElementById('catalogGrid');
-  grid.innerHTML = list.map(productCardHtml).join('');
+  grid.innerHTML = list.map(productCardHtml).join('') + askCard;
   hydrateIcons(grid);
 
   const feat = document.getElementById('homeFeaturedGrid');
   if(feat){
-    feat.innerHTML = INVENTORY.slice(0,2).map(productCardHtml).join('');
+    const featList = INVENTORY.filter(p=>isCompatible(p, currentMotoKey)).slice(0,2);
+    feat.innerHTML = featList.map(productCardHtml).join('');
     hydrateIcons(feat);
   }
 }
@@ -1026,6 +1389,7 @@ function showToast(p){
 
 function addToCart(id){
   cart[id] = (cart[id] || 0) + 1;
+  renderCatalog();
   renderCart();
   const p = INVENTORY.find(x=>x.id===id);
   if(p) showToast(p);
@@ -1034,13 +1398,29 @@ function addToCart(id){
 function changeQty(id, delta){
   cart[id] = (cart[id] || 0) + delta;
   if(cart[id] <= 0) delete cart[id];
+  renderCatalog();
   renderCart();
 }
 
 function setDelivery(mode){
   deliveryMode = mode;
-  document.getElementById('delPickup').classList.toggle('on', mode.includes('taller'));
-  document.getElementById('delHome').classList.toggle('on', mode.includes('domicilio'));
+  const isHome = mode.includes('domicilio');
+  document.getElementById('delPickup').classList.toggle('on', !isHome);
+  document.getElementById('delHome').classList.toggle('on', isHome);
+  document.getElementById('custAddress').style.display = isHome ? 'block' : 'none';
+  renderCart();
+}
+
+function setPayMethod(m){
+  payMethod = m;
+  document.getElementById('pmYape').classList.toggle('on', m==='Yape QR');
+  document.getElementById('pmPlin').classList.toggle('on', m==='Plin');
+  document.getElementById('pmCash').classList.toggle('on', m.includes('Efectivo'));
+  document.getElementById('yapeGatewayBox').style.display = (m==='Yape QR') ? 'block' : 'none';
+  document.getElementById('totPayLabel').textContent = `Total a pagar (${m})`;
+  document.getElementById('waSendBtnTxt').textContent = (m==='Yape QR')
+    ? 'Confirmar Yapeo y enviar pedido por WhatsApp'
+    : 'Enviar pedido por WhatsApp';
   renderCart();
 }
 
@@ -1063,6 +1443,17 @@ function renderCart(){
   document.getElementById('cartItemsPill').textContent = `${totalCount} ítem${totalCount===1?'':'s'}`;
   document.getElementById('cartTotal').textContent = fmt(totalPrice);
 
+  // Actualizar QR Dinámico de Yape con el costo total exacto y el mismo número de WhatsApp
+  const qrPayload = `YAPE-PERU|DESTINO:+${WHATSAPP_NUMBER}|TITULAR:GB TALLER Y REPUESTOS|PEDIDO:#GB-1042|MONTO:${fmtDec(totalPrice)}|ITEMS:${totalCount}`;
+  const qrSvg = buildDynamicYapeQrSvg(qrPayload);
+  const qrWrap = document.getElementById('yapeQrSvgWrap');
+  const qrBigWrap = document.getElementById('yapeQrBigSvgWrap');
+  if(qrWrap) qrWrap.innerHTML = qrSvg;
+  if(qrBigWrap) qrBigWrap.innerHTML = qrSvg;
+  document.getElementById('yapeQrAmount').textContent = fmtDec(totalPrice);
+  document.getElementById('ymAmount').textContent = fmtDec(totalPrice);
+  document.getElementById('ymInlineAmt').textContent = fmtDec(totalPrice);
+
   const cl = document.getElementById('cartList');
   cl.innerHTML = entries.map(x=>`
     <div class="c-item">
@@ -1080,19 +1471,30 @@ function renderCart(){
     </div>
   `).join('');
 
+  const cName = (document.getElementById('custName')?.value || 'Cliente').trim();
+  const cAddr = (document.getElementById('custAddress')?.value || '').trim();
+  const opCode = (document.getElementById('yapeOpCode')?.value || '').trim();
+
   const lines = entries.map(x=>`• ${x.qty}x ${x.name} [${x.sku}] — ${fmt(x.price*x.qty)}`).join('\n');
+  const payLine = payMethod === 'Yape QR'
+    ? `Yape QR Dinámico por *${fmtDec(totalPrice)}*${opCode ? ` (Operación N° ${opCode})` : ' (Adjunto constancia de Yapeo)'}`
+    : payMethod;
+
   const waText =
-`Hola *Taller y Repuestos GB*! Quiero hacer el pedido *#GB-1042*:
+`Hola *Taller y Repuestos GB*! Soy *${cName}*, envío mi pedido *#GB-1042*:
 
 ${lines || '• (Sin productos seleccionados)'}
 
 *Moto:* ${selectedMoto}
-*Entrega:* ${deliveryMode}
+*Entrega:* ${deliveryMode}${deliveryMode.includes('domicilio') && cAddr ? ` (${cAddr})` : ''}
 *Instalación en taller:* ${wantInstall ? 'Sí, agendar montaje' : 'No, solo repuestos'}
-*Total a pagar:* ${fmt(totalPrice)} (Yape / Plin / Efectivo)`;
+*Medio de pago:* ${payLine}
+*Total:* ${fmtDec(totalPrice)}`;
 
   document.getElementById('waMessagePreview').textContent = waText;
-  document.getElementById('waSendBtn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waText)}`;
+  const waHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waText)}`;
+  document.getElementById('waSendBtn').href = waHref;
+  document.getElementById('ymWaBtn').href = waHref;
 }
 
 function selectService(name, price, btn){
@@ -1132,7 +1534,7 @@ updateCitaWa();
 function checkHashTab(){
   const h = (location.hash || '').replace('#','');
   if(['inicio','tienda','pedido','taller'].includes(h)) switchTab(h);
-  if(h==='ficha'){ switchTab('tienda'); openSheet('disco'); }
+  if(h==='yape'){ switchTab('pedido'); openYapeModal(); }
 }
 checkHashTab();
 window.addEventListener('hashchange', checkHashTab);
