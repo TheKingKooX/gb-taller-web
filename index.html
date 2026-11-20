@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="assets/qrcode.min.js"></script>
 <style>
 :root{
   --asfalto:#090A0D;
@@ -62,7 +63,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .btn:active{transform:scale(.98)}
 .btn.primary{background:var(--rojo);color:#fff;box-shadow:0 8px 20px rgba(227,32,27,.28)}
 .btn.wa{background:var(--wa);color:#04170B;font-weight:800;box-shadow:0 8px 22px rgba(30,215,96,.22)}
-.btn.yape-btn{background:linear-gradient(135deg,#87269A,#5B166B);color:#fff;font-weight:800;border:1px solid rgba(255,255,255,.16);box-shadow:0 8px 22px rgba(116,35,132,.35)}
+.btn.yape-btn{background:linear-gradient(135deg,#87269A,#5B166B);color:#fff;font-weight:800;border:1px solid rgba(255,255,255,.18);box-shadow:0 8px 22px rgba(116,35,132,.4)}
 .btn.ghost{background:var(--pista-2);border:1px solid var(--linea);color:var(--texto)}
 
 .price{
@@ -112,9 +113,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 }
 .oil-tag{font-size:11.5px;color:var(--texto-2);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* ==========================================================================
-   MEJORA UX 5: TACÓMETRO CON BUSCADOR DE ORDEN POR PLACA + COLAPSABLE
-   ========================================================================== */
+/* Tacómetro Estilo Relojería con buscador por placa */
 .track{
   margin-top:14px;padding:16px;border-radius:var(--r-l);position:relative;overflow:hidden;
   background:radial-gradient(90% 80% at 50% 0%,rgba(245,183,0,.06) 0%,transparent 70%),var(--pista);
@@ -124,7 +123,6 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .eta{display:inline-flex;align-items:center;gap:5px;color:var(--oro-claro);font-weight:600;font-size:11.5px;white-space:nowrap;flex:none}
 .eta svg{width:13px;height:13px;color:var(--oro)}
 
-/* Chips rápidos de placa para consultar orden en vivo */
 .plate-lookup{
   display:flex;align-items:center;gap:6px;margin-top:10px;padding:6px 8px;
   border-radius:11px;background:rgba(9,10,13,.55);border:1px solid var(--linea);
@@ -181,7 +179,35 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .sec button,.sec a{font-size:12.5px;font-weight:600;color:var(--texto-2)}
 
 /* ==========================================================================
-   MEJORA UX 1: TARJETAS BOUTIQUE CON CONTADOR "- 1 +" EN VIVO
+   BARRA VISUAL DE FILTRO POR MOTOCICLETA EN ESPECÍFICO (TIENDA)
+   ========================================================================== */
+.moto-filter-strip{
+  display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
+  margin:10px 0 8px;padding-bottom:2px;
+}
+.moto-filter-strip::-webkit-scrollbar{display:none}
+.mf-btn{
+  flex:none;display:flex;align-items:center;gap:8px;
+  padding:6px 11px 6px 7px;border-radius:13px;
+  background:var(--pista);border:1px solid var(--linea);
+  color:var(--texto-2);transition:all .15s;text-align:left;
+}
+.mf-btn img{width:34px;height:26px;border-radius:7px;object-fit:cover;background:#171A20;flex:none}
+.mf-btn .mf-ic{width:32px;height:26px;border-radius:7px;background:var(--pista-2);display:grid;place-items:center;color:var(--oro);font-size:11px;font-weight:800}
+.mf-btn b{display:block;font-size:11.5px;font-weight:700;color:var(--texto);line-height:1.15;white-space:nowrap}
+.mf-btn small{display:block;font-size:10px;color:var(--texto-3);font-weight:600;white-space:nowrap}
+.mf-btn.on{border-color:var(--oro);background:rgba(245,183,0,.1)}
+.mf-btn.on small{color:var(--oro-claro)}
+
+.compat-banner{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:8px 12px;border-radius:11px;background:rgba(245,183,0,.07);
+  border:1px solid rgba(245,183,0,.22);font-size:11.5px;color:var(--texto-2);margin-bottom:10px;
+}
+.compat-banner b{color:var(--oro-claro)}
+
+/* ==========================================================================
+   TARJETAS BOUTIQUE CON ETIQUETA DE MOTO ESPECÍFICA Y CONTADOR "- 1 +"
    ========================================================================== */
 .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
 .pc{
@@ -192,10 +218,10 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
   display:flex;flex-direction:column;min-width:0;
   transition:transform .18s ease,border-color .18s ease;
 }
-.pc.in-cart{border-color:rgba(245,183,0,.35)}
+.pc.in-cart{border-color:rgba(245,183,0,.38)}
 .pc:hover{border-color:rgba(255,255,255,.18);transform:translateY(-2px)}
 .pc .photo{
-  height:124px;border-radius:13px;overflow:hidden;position:relative;
+  height:122px;border-radius:13px;overflow:hidden;position:relative;
   background:#171A20;cursor:pointer;
 }
 .pc .photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
@@ -203,22 +229,33 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .tag{
   position:absolute;top:8px;left:8px;z-index:2;
   font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:999px;
-  background:rgba(9,10,13,.76);color:var(--texto-2);
-  border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(6px);
+  background:rgba(9,10,13,.78);color:var(--texto-2);
+  border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(6px);
 }
-.tag.off{background:rgba(227,32,27,.85);color:#fff;border-color:transparent}
-.tag.low{background:rgba(245,183,0,.18);color:var(--oro-claro);border-color:rgba(245,183,0,.35)}
+.tag.off{background:rgba(227,32,27,.88);color:#fff;border-color:transparent}
+.tag.low{background:rgba(245,183,0,.2);color:var(--oro-claro);border-color:rgba(245,183,0,.4)}
+.tag.excl{background:rgba(0,209,178,.18);color:#5ef7df;border-color:rgba(0,209,178,.4)}
 
 .pc .brand-lbl{
-  font-size:10px;color:var(--texto-3);font-weight:700;
-  text-transform:uppercase;letter-spacing:.6px;margin:9px 2px 2px;
+  font-size:9.5px;color:var(--texto-3);font-weight:700;
+  text-transform:uppercase;letter-spacing:.6px;margin:8px 2px 2px;
 }
 .pc h4{
-  font-size:12.5px;font-weight:600;color:var(--texto);line-height:1.3;
-  margin:0 2px 9px;min-height:33px;
+  font-size:12.5px;font-weight:600;color:var(--texto);line-height:1.28;
+  margin:0 2px 4px;min-height:32px;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
   cursor:pointer;
 }
+/* Línea sutil que muestra a qué moto específica le hace */
+.fit-for{
+  font-size:10.5px;color:var(--texto-2);font-weight:600;
+  margin:0 2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  display:flex;align-items:center;gap:4px;
+}
+.fit-for i.dot-f{width:5px;height:5px;border-radius:50%;background:var(--oro);flex:none}
+.fit-for.excl-f{color:#65f0d8}
+.fit-for.excl-f i.dot-f{background:#00D1B2}
+
 .pc-f{
   display:flex;justify-content:space-between;align-items:center;
   padding:0 2px;margin-top:auto;gap:4px;
@@ -234,7 +271,6 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .add:hover{background:var(--texto);color:var(--asfalto)}
 .add svg{width:15px;height:15px;stroke-width:2.2}
 
-/* Contador compacto "- 1 +" cuando ya está en el pedido */
 .card-qty{
   display:inline-flex;align-items:center;gap:4px;
   height:34px;padding:0 4px;border-radius:10px;
@@ -246,7 +282,6 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 }
 .card-qty span{font-size:12px;font-weight:800;color:var(--oro-claro);min-width:14px;text-align:center}
 
-/* MEJORA UX 3: Tarjeta Cotizador cuando busca otro repuesto */
 .ask-part-card{
   grid-column:1 / -1;margin-top:4px;padding:14px 15px;border-radius:16px;
   background:linear-gradient(135deg,#151c18,#13161C);
@@ -283,21 +318,14 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .search{display:flex;align-items:center;gap:10px;height:43px;padding:0 14px;border-radius:13px;background:var(--pista);border:1px solid var(--linea);color:var(--texto-3)}
 .search input{flex:1;min-width:0;color:var(--texto);outline:none;font-size:13.5px}
 .search input::placeholder{color:var(--texto-3)}
-.fit{display:flex;align-items:center;gap:9px;margin-top:9px;padding:9px 13px;border-radius:13px;background:var(--pista);border:1px solid var(--linea);font-size:12.5px;color:var(--texto-2);width:100%;text-align:left}
-.fit svg{color:var(--oro)}
-.fit b{color:var(--texto);font-weight:600}
-.sw{margin-left:auto;width:36px;height:20px;border-radius:10px;background:var(--pista-3);position:relative;flex:none;transition:background .15s}
-.sw.on{background:var(--oro)}
-.sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}
-.sw.on::after{transform:translateX(16px);background:#1a1300}
 
-.cats{display:flex;gap:7px;margin:10px 0 12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.cats{display:flex;gap:7px;margin:8px 0 12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 .cats::-webkit-scrollbar{display:none}
 .cats button{flex:none;height:33px;padding:0 13px;border-radius:999px;font-size:12px;font-weight:600;background:var(--pista);border:1px solid var(--linea);color:var(--texto-2);transition:all .15s}
 .cats button.on{background:var(--texto);color:var(--asfalto);border-color:var(--texto);font-weight:700}
 
 /* ==========================================================================
-   PANTALLA 3: CHECKOUT + PASARELA DE PAGO YAPE QR DINÁMICO
+   PANTALLA 3: CHECKOUT + PASARELA DE PAGO YAPE QR DINÁMICO REAL ISO/IEC 18004
    ========================================================================== */
 .c-list{display:flex;flex-direction:column;gap:7px}
 .c-item{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:13px;background:var(--pista);border:1px solid var(--linea)}
@@ -316,7 +344,6 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .deliv button b{display:block;font-size:12.5px;font-weight:600;color:var(--texto)}
 .deliv button small{font-size:10.5px;color:var(--texto-2);display:block}
 
-/* MEJORA UX 2: Campos de Nombre y Dirección para envío */
 .cust-fields{display:grid;grid-template-columns:1fr;gap:7px;margin-top:8px}
 .cust-in{
   height:38px;padding:0 12px;border-radius:11px;
@@ -330,7 +357,6 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .install-chk b{color:var(--texto);font-weight:600}
 .install-chk i.box{width:17px;height:17px;border-radius:5px;background:var(--oro);color:#1a1300;display:grid;place-items:center;font-weight:900;font-size:11px;font-style:normal;flex:none}
 
-/* Selector de Medio de Pago (Yape QR Dinámico / Plin / Efectivo) */
 .pay-methods{display:grid;grid-template-columns:1.25fr .9fr .95fr;gap:7px;margin-top:8px}
 .pay-m{
   padding:8px 8px;border-radius:11px;background:var(--pista);border:1px solid var(--linea);
@@ -340,9 +366,6 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .pay-m.on.plin-m{background:rgba(0,184,217,.18);border-color:var(--plin);color:#fff}
 .pay-m.on.cash-m{background:rgba(245,183,0,.14);border-color:var(--oro);color:var(--oro-claro)}
 
-/* ==========================================================================
-   PASARELA YAPE CON QR DINÁMICO INTEGRADA
-   ========================================================================== */
 .yape-gateway{
   margin-top:10px;padding:12px 13px;border-radius:16px;
   background:linear-gradient(145deg,#24102B 0%,#14151D 65%,#0E2223 100%);
@@ -363,36 +386,31 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
   background:rgba(0,209,178,.16);color:#4FF5DC;border:1px solid rgba(0,209,178,.4);white-space:nowrap;
 }
 
-.yape-gw-body{display:grid;grid-template-columns:116px minmax(0,1fr);gap:12px;align-items:center}
+.yape-gw-body{display:grid;grid-template-columns:122px minmax(0,1fr);gap:12px;align-items:center}
 .qr-frame{
-  width:116px;height:116px;padding:6px;border-radius:14px;
+  width:122px;height:122px;padding:6px;border-radius:14px;
   background:#fff;box-shadow:0 6px 18px rgba(0,0,0,.5);
-  position:relative;display:grid;place-items:center;cursor:pointer;
+  position:relative;display:grid;place-items:center;cursor:pointer;overflow:hidden;
 }
-.qr-frame svg{width:100%;height:100%;display:block}
-.qr-badge-center{
-  position:absolute;width:24px;height:24px;border-radius:6px;
-  background:#742384;color:#fff;font-weight:900;font-size:11px;
-  display:grid;place-items:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);
-}
+.qr-frame svg,.qr-frame img{width:100%;height:100%;display:block;object-fit:contain}
 
 .yape-gw-info{min-width:0}
-.yape-gw-info .amt-lbl{font-size:10.5px;color:#cbb5d1;font-weight:600}
+.yape-gw-info .amt-lbl{font-size:10px;color:#cbb5d1;font-weight:700;letter-spacing:.3px}
 .yape-gw-info .amt-val{
   font-family:var(--display);font-size:27px;font-weight:900;color:#fff;
   line-height:1.05;letter-spacing:.4px;display:flex;align-items:center;gap:8px;margin:2px 0 4px;white-space:nowrap;
 }
-.yape-gw-info .amt-val span{font-family:Manrope,sans-serif;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;background:rgba(255,255,255,.1);color:var(--oro-claro)}
+.yape-gw-info .amt-val span{font-family:Manrope,sans-serif;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;background:rgba(0,209,178,.18);color:#5ef7df}
 .yape-dest{font-size:11px;color:var(--texto-2);line-height:1.35}
 .yape-dest b{color:#fff}
 
-.yape-gw-acts{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.yape-gw-acts{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
 .yape-mini-btn{
   padding:5px 9px;border-radius:8px;font-size:10.5px;font-weight:700;
   background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;
   display:inline-flex;align-items:center;gap:4px;
 }
-.yape-mini-btn.teal{background:rgba(0,209,178,.16);border-color:rgba(0,209,178,.45);color:#5ef7df}
+.yape-mini-btn.teal{background:rgba(0,209,178,.18);border:1px solid rgba(0,209,178,.45);color:#5ef7df}
 
 .yape-op-row{margin-top:9px;padding-top:8px;border-top:1px solid rgba(255,255,255,.1);display:flex;gap:7px;align-items:center}
 .yape-op-in{
@@ -465,10 +483,10 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .slots button.off{color:var(--texto-3);text-decoration:line-through;background:transparent;border-style:dashed;pointer-events:none}
 
 /* ==========================================================================
-   MODAL YAPE QR PANTALLA COMPLETA + FICHA DESLIZABLE DE PRODUCTO
+   MODALES: FICHA DE PRODUCTO + PASARELA YAPE QR VERIFICADA
    ========================================================================== */
 .sheet-backdrop{
-  position:fixed;inset:0;z-index:110;background:rgba(4,5,8,.82);
+  position:fixed;inset:0;z-index:110;background:rgba(4,5,8,.84);
   backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s ease;
   display:flex;align-items:flex-end;justify-content:center;
 }
@@ -481,7 +499,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
   transition:transform .26s cubic-bezier(.2,.9,.25,1);
 }
 .sheet-backdrop.open .sheet{transform:translateY(0)}
-.sheet-handle{width:38px;height:4px;border-radius:2px;background:rgba(255,255,255,.2);margin:0 auto 16px}
+.sheet-handle{width:38px;height:4px;border-radius:2px;background:rgba(255,255,255,.2);margin:0 auto 14px}
 .sheet-top{display:flex;gap:16px;align-items:center}
 .sheet-top img{width:116px;height:116px;border-radius:18px;object-fit:cover;background:#171A20;border:1px solid var(--linea);flex:none}
 .sheet-info{flex:1;min-width:0}
@@ -491,17 +509,22 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .sheet-specs b{color:var(--texto);font-weight:600}
 .sheet-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
 
-/* Modal Yape QR Ampliado */
 .yape-sheet{
   background:linear-gradient(165deg,#2E1137 0%,#15161F 60%,#0C1E20 100%);
   border-top:1px solid #A94BC0;text-align:center;
 }
 .qr-big-wrap{
-  width:210px;height:210px;margin:12px auto;padding:10px;border-radius:20px;
-  background:#fff;box-shadow:0 14px 36px rgba(0,0,0,.6);position:relative;display:grid;place-items:center;
+  width:220px;height:220px;margin:10px auto;padding:10px;border-radius:20px;
+  background:#fff;box-shadow:0 14px 36px rgba(0,0,0,.6);position:relative;display:grid;place-items:center;overflow:hidden;
 }
-.qr-big-wrap svg{width:100%;height:100%;display:block}
-.qr-big-wrap .qr-badge-center{width:36px;height:36px;font-size:15px;border-radius:9px}
+.qr-big-wrap svg,.qr-big-wrap img{width:100%;height:100%;display:block;object-fit:contain}
+
+.yape-steps-box{
+  text-align:left;margin:10px auto 12px;padding:10px 13px;border-radius:13px;
+  background:rgba(9,10,13,.55);border:1px solid rgba(255,255,255,.12);
+  font-size:11.5px;color:var(--texto-2);line-height:1.45;
+}
+.yape-steps-box b{color:#fff}
 
 /* ==========================================================================
    NOTIFICACIÓN TOAST MINIMALISTA
@@ -574,8 +597,8 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
   .app-shell{
     max-width:1440px;padding:28px 32px 64px;
     display:grid;
-    grid-template-columns:360px minmax(0,1fr) 375px;
-    gap:24px;
+    grid-template-columns:355px minmax(0,1fr) 370px;
+    gap:22px;
     align-items:start;
   }
   .app-screen{display:block !important;background:transparent}
@@ -584,12 +607,12 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
     border-radius:24px;padding:20px;
   }
   #scr-inicio .moto-bar,#scr-inicio .track,#scr-inicio .pc,#scr-inicio .trust-card{background:var(--asfalto)}
-  #scr-tienda .pc,#scr-tienda .search,#scr-tienda .fit,#scr-tienda .cats button:not(.on){background:var(--asfalto)}
-  #scr-tienda .grid-2{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-  #scr-tienda .pc .photo{height:140px}
+  #scr-tienda .pc,#scr-tienda .search,#scr-tienda .mf-btn:not(.on),#scr-tienda .cats button:not(.on){background:var(--asfalto)}
+  #scr-tienda .grid-2{grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+  #scr-tienda .pc .photo{height:136px}
   #scr-pedido .c-item,#scr-pedido .deliv button:not(.on),#scr-pedido .install-chk,#scr-pedido .wa-details,#scr-pedido .cta-wa-box,#scr-pedido .cust-in,#scr-pedido .pay-m:not(.on){background:var(--asfalto)}
   #scr-taller .sum,#scr-taller .quote,#scr-taller .svc-card:not(.on),#scr-taller .days button:not(.on),#scr-taller .slots button:not(.on){background:var(--asfalto)}
-  .desk-right-col{display:flex;flex-direction:column;gap:24px}
+  .desk-right-col{display:flex;flex-direction:column;gap:22px}
 }
 </style>
 </head>
@@ -602,11 +625,11 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
       <div class="gb" role="img" aria-label="Logo GB"></div>
       <div class="gb-txt">
         <b style="font-size:22px">TALLER Y VENTA DE REPUESTOS</b>
-        <small>MECÁNICA DE PRECISIÓN · PAGO YAPE QR DINÁMICO + WHATSAPP</small>
+        <small>16 REPUESTOS POR MOTO · PASARELA YAPE QR DINÁMICO VERIFICADA</small>
       </div>
     </div>
     <nav class="desk-nav">
-      <a class="on" href="#scr-tienda">Catálogo (8)</a>
+      <a class="on" href="#scr-tienda">Catálogo (16)</a>
       <a href="#scr-pedido">Checkout Yape QR</a>
       <a href="#scr-taller">Taller y Citas</a>
       <a href="mobile.html">Vista 4 Pantallas</a>
@@ -636,25 +659,27 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
       </div>
     </header>
 
-    <!-- MEJORA UX 4: Selector de Moto con Compatibilidad Real + Opción Todas -->
+    <!-- Selector de Moto con 5 Modelos Específicos + Todas -->
     <div class="moto-bar">
       <img class="moto-thumb" id="motoThumb" src="assets/motos/msx-125.jpg" alt="Mi Moto">
       <div class="moto-bar-info">
-        <select id="motoSelect" onchange="changeMoto()">
+        <select id="motoSelect" onchange="changeMoto(this.value)">
           <option value="msx">Honda MSX 125 (Grom)</option>
-          <option value="nmax">Yamaha NMAX 155 Connected</option>
-          <option value="pulsar">Bajaj Pulsar NS 200 FI</option>
-          <option value="all">Todas las motos (Catálogo completo)</option>
+          <option value="nmax">Yamaha NMAX 155 (Scooter CVT)</option>
+          <option value="pulsar">Bajaj Pulsar NS 200 FI (DTS-i)</option>
+          <option value="xr">Honda XR 190L / Tornado (Enduro)</option>
+          <option value="duke">KTM Duke 200 / 250 NG</option>
+          <option value="all">Todas las motos (16 repuestos)</option>
         </select>
         <div class="moto-meta">
           <span class="plate-pe" id="motoPlate">ABC-123</span>
-          <span class="oil-tag" id="motoKm">18.400 km · 6 piezas compatibles</span>
+          <span class="oil-tag" id="motoKm">18.400 km · 9 piezas compatibles</span>
         </div>
       </div>
       <i data-i="down"></i>
     </div>
 
-    <!-- MEJORA UX 5: Tacómetro con consulta rápida por placa -->
+    <!-- Tacómetro con consulta rápida por placa -->
     <section class="track" aria-label="Estado de tu moto">
       <div class="track-h">
         <span id="orderHdrTxt">Orden #0231 · Andrés</span>
@@ -701,17 +726,15 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
       </div>
     </section>
 
-    <!-- Tarjeta Agendar Cita Sobria -->
     <button class="book" onclick="openTallerMode('cita')">
       <span class="book-ic"><i data-i="cal"></i></span>
       <div><b>Agendar servicio en taller</b><small>Próximo turno libre: mañana, 9:00 am</small></div>
       <i data-i="right"></i>
     </button>
 
-    <div class="sec"><h3>Recomendados para tu moto</h3><button onclick="switchTab('tienda')">Ver catálogo →</button></div>
+    <div class="sec"><h3 id="homeFeatTitle">Compatibles con tu MSX 125</h3><button onclick="switchTab('tienda')">Ver catálogo (16) →</button></div>
     <div class="grid-2" id="homeFeaturedGrid"></div>
 
-    <!-- Sello de Confianza Sobrio -->
     <div class="trust-card">
       <div class="trust-top">
         <img src="assets/motos/taller-box.jpg" alt="Box Taller GB">
@@ -730,33 +753,60 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
   </section>
 
   <!-- ====================================================================
-       PANTALLA 2 · TIENDA DE REPUESTOS (CON CONTADOR - 1 + Y COTIZADOR)
+       PANTALLA 2 · TIENDA (16 PRODUCTOS CON FILTRO VISUAL POR MOTOCICLETA)
        ==================================================================== -->
   <section class="app-screen" id="scr-tienda">
     <header class="hdr3">
-      <h3>Catálogo</h3>
+      <h3>Catálogo por Moto</h3>
       <button class="ib" onclick="switchTab('pedido')" aria-label="Carrito"><i data-i="cart"></i><b class="cnt cart-count">3</b></button>
     </header>
 
     <label class="search">
       <i data-i="search"></i>
-      <input id="qInput" type="text" placeholder="Buscar pieza, marca o código..." oninput="renderCatalog()">
+      <input id="qInput" type="text" placeholder="Buscar faja CVT, bujías, escape, llanta, SKU..." oninput="renderCatalog()">
     </label>
 
-    <button class="fit" onclick="toggleFit()">
-      <i data-i="bike"></i>
-      <span>Compatibles con <b id="fitMotoName">Honda MSX 125 (6)</b></span>
-      <span class="sw on" id="fitSw"></span>
-    </button>
+    <!-- BARRA VISUAL DE SELECCIÓN DE MOTOCICLETA EN ESPECÍFICO -->
+    <div class="moto-filter-strip" id="motoFilterStrip">
+      <button class="mf-btn" data-m="all" onclick="changeMoto('all')">
+        <span class="mf-ic">16</span>
+        <div><b>Todas las motos</b><small>16 repuestos</small></div>
+      </button>
+      <button class="mf-btn on" data-m="msx" onclick="changeMoto('msx')">
+        <img src="assets/motos/msx-125.jpg" alt="MSX 125">
+        <div><b>Honda MSX 125</b><small>9 compatibles</small></div>
+      </button>
+      <button class="mf-btn" data-m="nmax" onclick="changeMoto('nmax')">
+        <img src="assets/motos/nmax-155.jpg" alt="NMAX 155">
+        <div><b>Yamaha NMAX 155</b><small>8 compatibles (CVT)</small></div>
+      </button>
+      <button class="mf-btn" data-m="pulsar" onclick="changeMoto('pulsar')">
+        <img src="assets/motos/pulsar-200.jpg" alt="Pulsar NS 200">
+        <div><b>Pulsar NS 200</b><small>11 compatibles (200cc)</small></div>
+      </button>
+      <button class="mf-btn" data-m="xr" onclick="changeMoto('xr')">
+        <img src="assets/productos/llanta-cocada.jpg" alt="Honda XR 190L">
+        <div><b>Honda XR 190L</b><small>8 compatibles (Enduro)</small></div>
+      </button>
+      <button class="mf-btn" data-m="duke" onclick="changeMoto('duke')">
+        <img src="assets/productos/escape-carbono.jpg" alt="KTM Duke 200">
+        <div><b>KTM Duke 200</b><small>9 compatibles (Racing)</small></div>
+      </button>
+    </div>
+
+    <div class="compat-banner" id="compatBanner">
+      <span>Filtro activo: <b id="compatBannerName">Honda MSX 125 (9 piezas específicas)</b></span>
+      <button style="color:var(--oro);font-weight:700;font-size:11px" onclick="changeMoto(currentMotoKey==='all'?'msx':'all')" id="compatResetBtn">Ver todas (16)</button>
+    </div>
 
     <div class="cats" id="catBar">
       <button class="on" onclick="setCat('Todo',this)">Todo</button>
+      <button onclick="setCat('Transmisión',this)">Transmisión / CVT</button>
+      <button onclick="setCat('Motor',this)">Motor / Refrigeración</button>
       <button onclick="setCat('Frenos',this)">Frenos</button>
-      <button onclick="setCat('Transmisión',this)">Transmisión</button>
-      <button onclick="setCat('Motor',this)">Motor</button>
-      <button onclick="setCat('Eléctrico',this)">Eléctrico</button>
-      <button onclick="setCat('Suspensión',this)">Suspensión</button>
-      <button onclick="setCat('Accesorios',this)">Accesorios</button>
+      <button onclick="setCat('Eléctrico',this)">Eléctrico / Luces</button>
+      <button onclick="setCat('Suspensión',this)">Suspensión y Llantas</button>
+      <button onclick="setCat('Accesorios',this)">Escapes y Accesorios</button>
     </div>
 
     <div class="grid-2" id="catalogGrid"></div>
@@ -766,7 +816,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
   <div class="desk-right-col">
 
     <!-- ==================================================================
-         PANTALLA 3 · CHECKOUT CON PASARELA DE PAGO YAPE QR DINÁMICO
+         PANTALLA 3 · CHECKOUT CON PASARELA DE PAGO YAPE QR DINÁMICO REAL
          ================================================================== -->
     <section class="app-screen" id="scr-pedido">
       <header class="hdr3">
@@ -777,7 +827,6 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 
       <div class="c-list" id="cartList"></div>
 
-      <!-- MEJORA UX 2: Entrega + Nombre y Dirección -->
       <div class="deliv">
         <button class="on" id="delPickup" onclick="setDelivery('Recoger en taller GB')">
           <b>Recoger en taller</b>
@@ -799,45 +848,47 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
         <span>Deseo <b>instalar estos repuestos</b> en el taller</span>
       </button>
 
-      <!-- SELECTOR DE PASARELA DE PAGO -->
       <div class="pay-methods">
         <button class="pay-m yape-m on" id="pmYape" onclick="setPayMethod('Yape QR')">● Yape QR Dinámico</button>
         <button class="pay-m plin-m" id="pmPlin" onclick="setPayMethod('Plin')">● Plin</button>
         <button class="pay-m cash-m" id="pmCash" onclick="setPayMethod('Efectivo en taller')">Efectivo</button>
       </div>
 
-      <!-- PASARELA DE PAGO YAPE CON QR DINÁMICO QUE CONTIENE EL COSTO TOTAL -->
+      <!-- PASARELA YAPE CON QR DINÁMICO REAL ISO/IEC 18004 ESCANEABLE -->
       <section class="yape-gateway" id="yapeGatewayBox" aria-label="Pasarela de pago Yape con QR dinámico">
         <div class="yape-gw-h">
           <div class="yape-brand">
             <span class="yape-logo-pill"><i class="dot-y"></i>Yape QR</span>
             <small>Taller y Repuestos GB</small>
           </div>
-          <span class="yape-live-tag" id="yapeQrBadge">QR con monto exacto</span>
+          <span class="yape-live-tag" id="yapeQrBadge">QR ISO Verificado</span>
         </div>
 
         <div class="yape-gw-body">
-          <div class="qr-frame" onclick="openYapeModal()" title="Toca para ampliar el QR dinámico">
+          <div class="qr-frame" onclick="openYapeModal()" title="Toca para ampliar el QR">
             <div id="yapeQrSvgWrap"></div>
-            <span class="qr-badge-center">S/</span>
           </div>
 
           <div class="yape-gw-info">
-            <span class="amt-lbl">MONTO INCRUSTADO EN EL QR:</span>
+            <span class="amt-lbl">COSTO TOTAL EN EL QR:</span>
             <div class="amt-val">
               <b id="yapeQrAmount">S/ 195.00</b>
-              <span>DINÁMICO</span>
+              <span>EN VIVO</span>
             </div>
-            <p class="yape-dest">Escanea el QR desde Yape o yapea al número vinculado al WhatsApp de <b>Taller GB</b>.</p>
+            <p class="yape-dest">Escanea con la <b>cámara de tu celular</b> para abrir la orden de pago exacta o copia el número directo a Yape.</p>
             <div class="yape-gw-acts">
-              <button class="yape-mini-btn teal" onclick="openYapeModal()">Ampliar QR</button>
-              <button class="yape-mini-btn" id="copyYapeBtn" onclick="copyYapeNumber()">Copiar número Yape</button>
+              <button class="yape-mini-btn teal" onclick="copyAndOpenYape()">Abrir Yape + Copiar N°</button>
+              <button class="yape-mini-btn" onclick="openYapeModal()">Ampliar QR</button>
             </div>
           </div>
         </div>
 
         <div class="yape-op-row">
           <input class="yape-op-in" id="yapeOpCode" type="text" placeholder="N° de operación Yape (opcional) o envía captura..." oninput="renderCart()">
+          <label class="yape-mini-btn" style="cursor:pointer;white-space:nowrap" title="Sube la captura de 'Mi QR' desde tu app Yape si deseas escaneo interno BCP">
+            Mi QR Yape
+            <input type="file" accept="image/*" style="display:none" onchange="uploadOfficialYapeQr(event)">
+          </label>
         </div>
       </section>
 
@@ -852,7 +903,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
           <b class="price" id="cartTotal">S/ 195</b>
         </div>
         <a class="btn wa" id="waSendBtn" href="#" target="_blank">
-          <i data-i="wa"></i><span id="waSendBtnTxt">Confirmar pago y pedido por WhatsApp</span>
+          <i data-i="wa"></i><span id="waSendBtnTxt">Confirmar Yapeo y enviar pedido por WhatsApp</span>
         </a>
       </div>
     </section>
@@ -872,7 +923,6 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
         <button id="tabBtnCita" onclick="openTallerMode('cita')">Agendar Cita</button>
       </div>
 
-      <!-- SUB-VISTA A: SEGUIMIENTO DE ORDEN #0231 -->
       <div id="viewOrden">
         <div class="sum"><div><small>Honda MSX 125 · ABC-123</small><strong>En reparación</strong></div><span class="pill">Etapa 4 de 5</span></div>
 
@@ -905,16 +955,15 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
         </a>
       </div>
 
-      <!-- SUB-VISTA B: AGENDAR CITA EN TALLER -->
       <div id="viewCita" style="display:none">
         <button class="svc-card on" onclick="selectService('Mantenimiento general completo',120,this)">
           <span class="svc-ic"><i data-i="wrench"></i></span>
           <div><b>Mantenimiento general</b><small>2 horas · Revisión de 25 puntos</small></div>
           <span class="price">S/ 120</span>
         </button>
-        <button class="svc-card" onclick="selectService('Instalación de Kit de Arrastre',40,this)">
+        <button class="svc-card" onclick="selectService('Instalación de Kit de Arrastre / Faja CVT',40,this)">
           <span class="svc-ic"><i data-i="gear"></i></span>
-          <div><b>Cambio de Kit de Arrastre</b><small>45 min · Ajuste y lubricación</small></div>
+          <div><b>Cambio de Kit de Arrastre / Faja CVT</b><small>45 min · Ajuste y calibración</small></div>
           <span class="price">S/ 40</span>
         </button>
         <button class="svc-card" onclick="selectService('Servicio de Frenos y Líquido',35,this)">
@@ -977,7 +1026,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
     </div>
     <div class="sheet-specs">
       <div><b>Especificación:</b> <span id="shSpec">Acero inoxidable SUS420 ventilado · 220mm · 4 pernos OEM.</span></div>
-      <div style="margin-top:4px"><b>Modelos compatibles:</b> <span id="shModels">Honda MSX 125 (Grom), CB 125F Twister, XR 150L.</span></div>
+      <div style="margin-top:4px"><b>Motocicletas compatibles:</b> <span id="shModels">Honda MSX 125 (Grom), Honda XR 190L.</span></div>
     </div>
     <div class="sheet-actions">
       <button class="btn ghost" id="shAddBtn"><i data-i="plus"></i>Agregar al pedido</button>
@@ -986,28 +1035,28 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
   </div>
 </div>
 
-<!-- MODAL AMPLIADO DE PASARELA YAPE QR DINÁMICO -->
+<!-- MODAL AMPLIADO DE PASARELA YAPE QR DINÁMICO (TAMBIÉN SE ABRE AL ESCANEAR EL QR) -->
 <div class="sheet-backdrop" id="yapeModal" onclick="if(event.target===this)closeYapeModal()">
   <div class="sheet yape-sheet" role="dialog" aria-modal="true">
     <div class="sheet-handle"></div>
     <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:4px">
       <span class="yape-logo-pill"><i class="dot-y"></i>Pasarela Yape QR Dinámico</span>
-      <span class="yape-live-tag">Pedido #GB-1042</span>
+      <span class="yape-live-tag" id="ymOrderTag">Pedido #GB-1042</span>
     </div>
-    <h3 style="font-family:var(--display);font-size:34px;font-weight:900;margin-top:4px" id="ymAmount">S/ 195.00</h3>
-    <p style="font-size:12px;color:#d8bfe0">Titular: <b>GB Taller y Venta de Repuestos</b></p>
+    <h3 style="font-family:var(--display);font-size:36px;font-weight:900;margin-top:4px" id="ymAmount">S/ 195.00</h3>
+    <p style="font-size:12px;color:#d8bfe0">Destino: <b>GB Taller y Venta de Repuestos</b></p>
 
     <div class="qr-big-wrap">
       <div id="yapeQrBigSvgWrap"></div>
-      <span class="qr-badge-center">S/</span>
     </div>
 
-    <p style="font-size:12px;color:var(--texto-2);max-width:320px;margin:0 auto 12px;line-height:1.4">
-      El código QR contiene el costo total de tu pedido (<b id="ymInlineAmt" style="color:#fff">S/ 195.00</b>) vinculado al mismo número oficial de WhatsApp del taller.
-    </p>
+    <div class="yape-steps-box">
+      <div><b>1. Escaneo con Cámara / Lector QR:</b> abre esta orden con el monto exacto (<b id="ymInlineAmt">S/ 195.00</b>) y envía el comprobante directo al WhatsApp del taller.</div>
+      <div style="margin-top:5px"><b>2. Pago directo en App Yape:</b> pulsa <b>"Abrir Yape y copiar N°"</b> para copiar el número oficial del taller y yapear el monto exacto en 1 toque.</div>
+    </div>
 
     <div class="sheet-actions">
-      <button class="btn ghost" onclick="copyYapeNumber();closeYapeModal()">Copiar número Yape</button>
+      <button class="btn yape-btn" id="ymCopyOpenBtn" onclick="copyAndOpenYape()">Abrir Yape y copiar N°</button>
       <a class="btn wa" id="ymWaBtn" href="#" target="_blank"><i data-i="wa"></i>Ya yapeé · Enviar por WA</a>
     </div>
   </div>
@@ -1017,7 +1066,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 <div class="toast" id="cartToast">
   <img id="toastImg" src="assets/productos/disco-freno.jpg" alt="">
   <div>
-    <small>✓ Agregado al pedido</small>
+    <small id="toastSmall">✓ Agregado al pedido</small>
     <b id="toastTitle">Disco de freno delantero Wave</b>
   </div>
   <button onclick="switchTab('pedido')">Ver QR / Pedido</button>
@@ -1029,7 +1078,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
     <i data-i="home"></i><span>Inicio</span>
   </button>
   <button id="nav-tienda" onclick="switchTab('tienda')">
-    <i data-i="store"></i><span>Tienda</span>
+    <i data-i="store"></i><span>Tienda (16)</span>
   </button>
   <button id="nav-pedido" onclick="switchTab('pedido')">
     <i data-i="wa"></i><span>Pedido QR</span>
@@ -1061,22 +1110,34 @@ const P={
 };
 
 const MOTOS = {
-  msx:{name:'Honda MSX 125 (Grom)', fullShort:'Honda MSX 125', plate:'ABC-123', km:'18.400 km · Mantenimiento al día', img:'assets/motos/msx-125.jpg'},
-  nmax:{name:'Yamaha NMAX 155 Connected', fullShort:'Yamaha NMAX 155', plate:'4582-JM', km:'12.100 km · Frenos verificados', img:'assets/motos/nmax-155.jpg'},
-  pulsar:{name:'Bajaj Pulsar NS 200 FI', fullShort:'Pulsar NS 200', plate:'9104-KP', km:'24.600 km · Próximo afinamiento', img:'assets/motos/pulsar-200.jpg'},
-  all:{name:'Todas las motos', fullShort:'Todas las motos', plate:'PERÚ', km:'Mostrando los 8 repuestos del almacén', img:'assets/motos/msx-125.jpg'}
+  msx:{name:'Honda MSX 125 (Grom)', fullShort:'Honda MSX 125', plate:'ABC-123', km:'18.400 km', img:'assets/motos/msx-125.jpg'},
+  nmax:{name:'Yamaha NMAX 155 (Scooter CVT)', fullShort:'Yamaha NMAX 155', plate:'4582-JM', km:'12.100 km', img:'assets/motos/nmax-155.jpg'},
+  pulsar:{name:'Bajaj Pulsar NS 200 FI', fullShort:'Pulsar NS 200', plate:'9104-KP', km:'24.600 km', img:'assets/motos/pulsar-200.jpg'},
+  xr:{name:'Honda XR 190L / Tornado', fullShort:'Honda XR 190L', plate:'7320-XR', km:'15.800 km', img:'assets/productos/llanta-cocada.jpg'},
+  duke:{name:'KTM Duke 200 / 250 NG', fullShort:'KTM Duke 200', plate:'6018-KT', km:'9.400 km', img:'assets/productos/escape-carbono.jpg'},
+  all:{name:'Todas las motos', fullShort:'Todas las motos', plate:'PERÚ', km:'Catálogo completo', img:'assets/motos/msx-125.jpg'}
 };
 
-/* MEJORA UX 4: Compatibilidad específica real por modelo de moto */
+/* ==========================================================================
+   CATÁLOGO AMPLIADO A 16 PRODUCTOS CON COMPATIBILIDAD ESPECÍFICA POR MODELO
+   ========================================================================== */
 const INVENTORY = [
-  {id:'disco', sku:'GB-FR-014', brand:'Honda OEM', name:'Disco de freno delantero Wave 220mm', cat:'Frenos', price:95, stock:6, tag:'Original', tagType:'', fits:['msx','pulsar'], img:'assets/productos/disco-freno.jpg', spec:'Acero inoxidable SUS420 ventilado · 220mm · 4 pernos OEM.', models:'Honda MSX 125 (Grom), CB 125F Twister, Pulsar NS 200.'},
-  {id:'kit', sku:'GB-TR-008', brand:'DID Racing', name:'Kit de arrastre 428 Oro (Cadena + Catalina)', cat:'Transmisión', price:185, stock:4, tag:'Destacado', tagType:'', fits:['msx','pulsar'], img:'assets/productos/kit-arrastre.jpg', spec:'Cadena reforzada 428HD dorada 120 eslabones + Catalina 34T + Piñón 15T.', models:'Honda MSX 125, CB 125F, Bajaj Pulsar NS 200.'},
-  {id:'pastillas', sku:'GB-FR-029', brand:'Brembo', name:'Pastillas de freno sinterizadas cobre', cat:'Frenos', price:55, was:65, stock:11, tag:'-15%', tagType:'off', fits:['msx','nmax','pulsar'], img:'assets/productos/pastillas-freno.jpg', spec:'Compuesto sinterizado HH de alto agarre en seco y mojado (par).', models:'Honda MSX 125, Yamaha NMAX 155, Bajaj Pulsar NS 200.'},
-  {id:'aceite', sku:'GB-MT-003', brand:'Motul 7100', name:'Aceite 4T 10W-40 100% Sintético 1L', cat:'Motor', price:45, stock:24, tag:'', tagType:'', fits:['msx','nmax','pulsar'], img:'assets/productos/aceite-4t.jpg', spec:'100% Sintético con tecnología Ester · Norma JASO MA2 / API SN (1 Litro).', models:'Todas las motocicletas de 4 Tiempos (Honda, Yamaha, Bajaj, KTM).'},
-  {id:'bujia', sku:'GB-EL-019', brand:'NGK Iridium', name:'Bujía de Iridio Laser CR8EIX', cat:'Eléctrico', price:48, stock:9, tag:'Iridio', tagType:'', fits:['msx','nmax','pulsar'], img:'assets/productos/bujia-iridio.jpg', spec:'Electrodo central de Iridio soldado con láser 0.6mm · Arranque inmediato.', models:'Honda MSX 125, Yamaha NMAX 155, Pulsar NS 200, FZ 16.'},
-  {id:'casco', sku:'GB-AC-041', brand:'Shaft Pro', name:'Casco Integral Sport Mate Negro/Rojo', cat:'Accesorios', price:260, stock:3, tag:'ECE 22.06', tagType:'', fits:['msx','nmax','pulsar'], img:'assets/productos/casco-integral.jpg', spec:'Certificación ECE 22.06 y DOT · Visor iridium + interior desmontable.', models:'Tallas disponibles en tienda: M (57-58 cm) y L (59-60 cm).'},
-  {id:'bateria', sku:'GB-EL-005', brand:'Yuasa AGM', name:'Batería 12V 5Ah Libre Mantenimiento', cat:'Eléctrico', price:120, stock:5, tag:'', tagType:'', fits:['nmax','pulsar'], img:'assets/productos/bateria-agm.jpg', spec:'Tecnología AGM sellada activada de fábrica · 12V 5Ah CCA 85A.', models:'Yamaha NMAX 155, Bajaj Pulsar NS 200, AKT 125.'},
-  {id:'shock', sku:'GB-SU-012', brand:'YSS Racing', name:'Amortiguador Monoshock gas regulable', cat:'Suspensión', price:320, stock:2, tag:'Últimos 2', tagType:'low', fits:['msx','pulsar'], img:'assets/productos/amortiguador.jpg', spec:'Monoshock hidráulico con botella de nitrógeno anodizada en oro y precarga regulable.', models:'Honda MSX 125 (Grom), Bajaj Pulsar NS 200.'}
+  {id:'disco', sku:'GB-FR-014', brand:'Honda OEM', name:'Disco de freno delantero Wave 220mm', cat:'Frenos', price:95, stock:6, tag:'Original', tagType:'', fits:['msx','xr'], fitText:'Honda MSX 125 · XR 190L', img:'assets/productos/disco-freno.jpg', spec:'Acero inoxidable SUS420 ventilado · 220mm · 4 pernos OEM.', models:'Honda MSX 125 (Grom), Honda XR 190L, CB 125F Twister.'},
+  {id:'faja', sku:'GB-TR-021', brand:'Yamaha Genuine', name:'Faja / Correa de Transmisión CVT Reforzada', cat:'Transmisión', price:145, stock:5, tag:'Scooter CVT', tagType:'excl', excl:true, fits:['nmax'], fitText:'Exclusivo Yamaha NMAX 155', img:'assets/productos/faja-cvt.jpg', spec:'Correa trapezoidal dentada de kevlar y caucho EPDM original para transmisión automática CVT.', models:'Exclusivo Yamaha NMAX 155 Connected / Aerox 155.'},
+  {id:'bujias3', sku:'GB-MT-031', brand:'Bajaj Original', name:'Kit 3 Bujías Iridio Triple Chispa DTS-i', cat:'Motor', price:68, stock:8, tag:'Triple Chispa', tagType:'excl', excl:true, fits:['pulsar'], fitText:'Exclusivo Pulsar NS 200', img:'assets/productos/kit-3-bujias.jpg', spec:'Juego de 3 bujías calibradas (2 laterales + 1 central) para motor 200cc Triple Spark.', models:'Exclusivo Bajaj Pulsar NS 200 FI / AS 200 / RS 200.'},
+  {id:'llanta', sku:'GB-SU-042', brand:'Pirelli MT60', name:'Llanta Doble Propósito 110/90-17 Cocada', cat:'Suspensión', price:245, stock:4, tag:'Enduro / Trail', tagType:'excl', excl:true, fits:['xr'], fitText:'Exclusivo Honda XR 190L', img:'assets/productos/llanta-cocada.jpg', spec:'Compuesto mixto asfalto/trocha con tacos profundos de tracción y carcasa reforzada.', models:'Honda XR 190L, XR 150L, Tornado 250, Yamaha XTZ 150.'},
+  {id:'kit', sku:'GB-TR-008', brand:'DID Racing', name:'Kit de arrastre 428 Oro (Cadena + Catalina)', cat:'Transmisión', price:185, stock:4, tag:'Destacado', tagType:'', fits:['msx','xr','pulsar'], fitText:'MSX 125 · XR 190L · Pulsar', img:'assets/productos/kit-arrastre.jpg', spec:'Cadena reforzada 428HD dorada 120 eslabones + Catalina de acero al carbono + Piñón.', models:'Honda MSX 125, Honda XR 190L, Bajaj Pulsar NS 200.'},
+  {id:'rodillos', sku:'GB-TR-024', brand:'Dr. Pulley', name:'Kit 6 Rodillos / Polines de Variador 13g', cat:'Transmisión', price:75, stock:7, tag:'Racing CVT', tagType:'excl', excl:true, fits:['nmax'], fitText:'Exclusivo Yamaha NMAX 155', img:'assets/productos/rodillos-variador.jpg', spec:'Juego de 6 polines autolubricados de baja fricción para mayor salida y velocidad final en variador.', models:'Exclusivo Yamaha NMAX 155 / BWS 125 / Cygnus.'},
+  {id:'radiador', sku:'GB-MT-035', brand:'KTM / Bajaj OEM', name:'Radiador Aluminio + Electroventilador 200cc', cat:'Motor', price:290, stock:3, tag:'Refrig. Líquida', tagType:'excl', excl:true, fits:['pulsar','duke'], fitText:'Pulsar NS 200 · KTM Duke 200', img:'assets/productos/radiador-200.jpg', spec:'Panal de aluminio de alto flujo térmico con electroventilador sellado 12V incluido.', models:'Bajaj Pulsar NS 200 FI, RS 200 y KTM Duke 200 / 250 NG.'},
+  {id:'escape', sku:'GB-AC-048', brand:'Akra Style Carbon', name:'Escape Deportivo Slip-On Fibra de Carbono', cat:'Accesorios', price:380, stock:3, tag:'Fibra Carbono', tagType:'', fits:['msx','pulsar','duke'], fitText:'MSX 125 · Pulsar · KTM Duke', img:'assets/productos/escape-carbono.jpg', spec:'Silenciador deportivo en fibra de carbono real y acero inoxidable 304 con DB-Killer desmontable.', models:'Honda MSX 125, Bajaj Pulsar NS 200, KTM Duke 200 / 250.'},
+  {id:'pastillas', sku:'GB-FR-029', brand:'Brembo', name:'Pastillas de freno sinterizadas cobre', cat:'Frenos', price:55, was:65, stock:11, tag:'-15%', tagType:'off', fits:['msx','nmax','pulsar','duke'], fitText:'MSX · NMAX · Pulsar · Duke', img:'assets/productos/pastillas-freno.jpg', spec:'Compuesto sinterizado HH de alto agarre en seco y mojado (par delantero).', models:'Honda MSX 125, Yamaha NMAX 155, Bajaj Pulsar NS 200, KTM Duke 200.'},
+  {id:'faro', sku:'GB-EL-052', brand:'LED Moto Pro', name:'Faro Proyector LED Ojo de Ángel 6000K', cat:'Eléctrico', price:135, stock:6, tag:'LED 6000K', tagType:'', fits:['msx','pulsar','xr','duke'], fitText:'MSX · Pulsar · XR · Duke', img:'assets/productos/faro-led.jpg', spec:'Proyector Bi-LED alta/baja 45W con aro DRL blanco y direccional ámbar integrada IP67.', models:'Honda MSX 125, Bajaj Pulsar NS 200, Honda XR 190L, KTM Duke.'},
+  {id:'shock', sku:'GB-SU-012', brand:'YSS Racing', name:'Amortiguador Monoshock gas regulable', cat:'Suspensión', price:320, stock:2, tag:'Últimos 2', tagType:'low', fits:['msx','pulsar','duke'], fitText:'MSX 125 · Pulsar · KTM Duke', img:'assets/productos/amortiguador.jpg', spec:'Monoshock hidráulico con botella de nitrógeno anodizada en oro y precarga regulable.', models:'Honda MSX 125 (Grom), Bajaj Pulsar NS 200, KTM Duke 200.'},
+  {id:'aceite', sku:'GB-MT-003', brand:'Motul 7100', name:'Aceite 4T 10W-40 100% Sintético 1L', cat:'Motor', price:45, stock:24, tag:'Universal 4T', tagType:'', fits:['msx','nmax','pulsar','xr','duke'], fitText:'Universal 4T (Todas las motos)', img:'assets/productos/aceite-4t.jpg', spec:'100% Sintético con tecnología Ester · Norma JASO MA2 / API SN (1 Litro).', models:'Todas las motocicletas de 4 Tiempos (Honda, Yamaha, Bajaj, KTM).'},
+  {id:'bujia', sku:'GB-EL-019', brand:'NGK Iridium', name:'Bujía de Iridio Laser CR8EIX', cat:'Eléctrico', price:48, stock:9, tag:'Iridio', tagType:'', fits:['msx','nmax','xr','duke'], fitText:'MSX · NMAX · XR 190L · Duke', img:'assets/productos/bujia-iridio.jpg', spec:'Electrodo central de Iridio soldado con láser 0.6mm · Arranque inmediato.', models:'Honda MSX 125, Yamaha NMAX 155, Honda XR 190L, KTM Duke 200.'},
+  {id:'bateria', sku:'GB-EL-005', brand:'Yuasa AGM', name:'Batería 12V 5Ah Libre Mantenimiento', cat:'Eléctrico', price:120, stock:5, tag:'Garantía 6M', tagType:'', fits:['msx','nmax','pulsar','xr','duke'], fitText:'Compatible con los 5 modelos', img:'assets/productos/bateria-agm.jpg', spec:'Tecnología AGM sellada activada de fábrica · 12V 5Ah CCA 85A.', models:'Honda MSX 125, Yamaha NMAX 155, Pulsar NS 200, Honda XR 190L, KTM Duke.'},
+  {id:'casco', sku:'GB-AC-041', brand:'Shaft Pro', name:'Casco Integral Sport Mate Negro/Rojo', cat:'Accesorios', price:260, stock:3, tag:'ECE 22.06', tagType:'', fits:['msx','nmax','pulsar','xr','duke'], fitText:'Universal · Tallas M y L', img:'assets/productos/casco-integral.jpg', spec:'Certificación ECE 22.06 y DOT · Visor iridium + interior desmontable.', models:'Tallas disponibles en tienda: M (57-58 cm) y L (59-60 cm).'},
+  {id:'guantes', sku:'GB-AC-059', brand:'Racing Carbon', name:'Guantes Tácticos con Nudillos de Carbono', cat:'Accesorios', price:85, stock:10, tag:'Protección', tagType:'', fits:['msx','nmax','pulsar','xr','duke'], fitText:'Universal · Tallas M, L, XL', img:'assets/productos/guantes-carbono.jpg', spec:'Cuero sintético respirable con protector rígido de fibra de carbono en nudillos y palma antideslizante.', models:'Universal para todo tipo de motociclista (Tallas M, L, XL).'}
 ];
 
 const STAGES = {
@@ -1088,12 +1149,12 @@ const STAGES = {
 };
 
 let currentCat = 'Todo';
-let onlyMyMoto = true;
 let currentMotoKey = 'msx';
 let selectedMoto = 'Honda MSX 125 (Placa ABC-123)';
 let deliveryMode = 'Recoger en taller GB';
 let wantInstall = true;
 let payMethod = 'Yape QR';
+let customYapeQrDataUrl = localStorage.getItem('gb_custom_yape_qr') || null;
 let cart = { disco: 1, pastillas: 1, aceite: 1 };
 let toastTimer = null;
 
@@ -1112,82 +1173,59 @@ function hydrateIcons(root=document){
 }
 
 /* ==========================================================================
-   GENERADOR DE QR DINÁMICO EN SVG (CODIFICA MONTO TOTAL + DESTINO YAPE/WA)
+   GENERADOR DE QR DINÁMICO REAL ISO/IEC 18004 (REED-SOLOMON ESTÁNDAR)
+   Se escanea sin error con cualquier cámara o lector QR
    ========================================================================== */
-function buildDynamicYapeQrSvg(payload){
-  const N = 25;
-  const mat = Array.from({length:N}, ()=>Array(N).fill(0));
-  const rsv = Array.from({length:N}, ()=>Array(N).fill(false));
-
-  function putFinder(r0, c0){
-    for(let r=-1; r<=7; r++){
-      for(let c=-1; c<=7; c++){
-        const rr=r0+r, cc=c0+c;
-        if(rr<0||rr>=N||cc<0||cc>=N) continue;
-        rsv[rr][cc] = true;
-        if(r>=0 && r<=6 && c>=0 && c<=6){
-          if(r===0||r===6||c===0||c===6 || (r>=2&&r<=4&&c>=2&&c<=4)) mat[rr][cc]=1;
+function buildDynamicYapeQrSvg(urlPayload){
+  if(customYapeQrDataUrl){
+    return `<img src="${customYapeQrDataUrl}" alt="Mi QR Oficial Yape">`;
+  }
+  if(typeof qrcode === 'function'){
+    const qr = qrcode(0, 'M');
+    qr.addData(urlPayload);
+    qr.make();
+    const count = qr.getModuleCount();
+    const margin = 2;
+    const size = count + margin * 2;
+    let paths = '';
+    for(let r=0; r<count; r++){
+      for(let c=0; c<count; c++){
+        if(qr.isDark(r, c)){
+          const isFinder = (r<7 && c<7) || (r<7 && c>=count-7) || (r>=count-7 && c<7);
+          const color = isFinder ? '#5B166B' : '#121016';
+          paths += `<rect x="${c+margin}" y="${r+margin}" width="1" height="1" fill="${color}"/>`;
         }
       }
     }
+    return `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><rect width="${size}" height="${size}" fill="#ffffff"/>${paths}</svg>`;
   }
-  putFinder(0,0);
-  putFinder(0,N-7);
-  putFinder(N-7,0);
+  return '';
+}
 
-  // Alignment pattern (21-4 = 17 -> 16,16)
-  for(let r=16; r<=20; r++){
-    for(let c=16; c<=20; c++){
-      rsv[r][c]=true;
-      if(r===16||r===20||c===16||c===20||(r===18&&c===18)) mat[r][c]=1;
-    }
-  }
-  // Timing patterns
-  for(let i=8; i<N-8; i++){
-    rsv[6][i]=true; mat[6][i]=(i%2===0)?1:0;
-    rsv[i][6]=true; mat[i][6]=(i%2===0)?1:0;
-  }
-  // Center quiet zone for Yape S/ emblem
-  for(let r=10; r<=14; r++){
-    for(let c=10; c<=14; c++){
-      rsv[r][c]=true; mat[r][c]=0;
-    }
-  }
+function uploadOfficialYapeQr(ev){
+  const file = ev.target.files?.[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    customYapeQrDataUrl = e.target.result;
+    try{ localStorage.setItem('gb_custom_yape_qr', customYapeQrDataUrl); }catch(_){}
+    document.getElementById('yapeQrBadge').textContent = 'QR Oficial BCP Activo';
+    renderCart();
+  };
+  reader.readAsDataURL(file);
+}
 
-  // Deterministic bit stream from payload string (amount + phone + items)
-  let h1 = 2166136261 >>> 0;
-  let h2 = 16777619 >>> 0;
-  const bytes = [];
-  for(let i=0; i<payload.length; i++){
-    const code = payload.charCodeAt(i) & 0xff;
-    bytes.push(code);
-    h1 ^= code; h1 = Math.imul(h1, 16777619) >>> 0;
-    h2 = (Math.imul(h2 ^ code, 2246822519) + 3266489917) >>> 0;
-  }
-
-  let bitIdx = 0;
-  for(let r=0; r<N; r++){
-    for(let c=0; c<N; c++){
-      if(rsv[r][c]) continue;
-      const b = bytes[bitIdx % bytes.length];
-      const shift = (bitIdx + r*3 + c*5) % 8;
-      const mix = ((h1 >>> (bitIdx % 24)) ^ (h2 >>> ((r*c) % 24)) ^ (b >>> shift)) & 1;
-      mat[r][c] = mix;
-      bitIdx++;
-    }
-  }
-
-  let rects = '';
-  for(let r=0; r<N; r++){
-    for(let c=0; c<N; c++){
-      if(mat[r][c]){
-        const isFinder = (r<7&&c<7) || (r<7&&c>=N-7) || (r>=N-7&&c<7);
-        const fill = isFinder ? '#4A1259' : '#16131A';
-        rects += `<rect x="${c}" y="${r}" width="1" height="1" rx=".18" fill="${fill}"/>`;
-      }
-    }
-  }
-  return `<svg viewBox="0 0 ${N} ${N}" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">${rects}</svg>`;
+function copyAndOpenYape(){
+  if(navigator.clipboard) navigator.clipboard.writeText(YAPE_LOCAL_NUMBER);
+  const t = document.getElementById('cartToast');
+  document.getElementById('toastImg').src = 'assets/logo-gb-marca.png';
+  document.getElementById('toastSmall').textContent = '✓ NÚMERO YAPE COPIADO AL PORTAPAPELES';
+  document.getElementById('toastTitle').textContent = `Pega el número en Yape · Monto: ${document.getElementById('yapeQrAmount').textContent}`;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3800);
+  // Intenta abrir el esquema nativo de la app Yape en celulares si está instalada
+  setTimeout(()=>{ window.location.href = 'yape://'; }, 350);
 }
 
 function setOrderStage(n){
@@ -1209,8 +1247,7 @@ function loadPlateOrder(plate, motoKey, stageNum, orderNum, eta, btn){
   if(btn) btn.classList.add('on');
   document.getElementById('orderHdrTxt').textContent = `Orden ${orderNum} · Placa ${plate}`;
   document.getElementById('orderEtaTxt').textContent = eta;
-  document.getElementById('motoSelect').value = motoKey;
-  changeMoto();
+  changeMoto(motoKey);
   setOrderStage(stageNum);
 }
 
@@ -1238,15 +1275,30 @@ function isCompatible(p, motoKey){
   return p.fits.includes(motoKey);
 }
 
-function changeMoto(){
-  currentMotoKey = document.getElementById('motoSelect').value;
+function changeMoto(val){
+  currentMotoKey = val || document.getElementById('motoSelect').value;
+  document.getElementById('motoSelect').value = currentMotoKey;
   const m = MOTOS[currentMotoKey];
   const compCount = INVENTORY.filter(p=>isCompatible(p, currentMotoKey)).length;
   selectedMoto = currentMotoKey === 'all' ? 'Moto por confirmar' : `${m.name} (Placa ${m.plate})`;
   document.getElementById('motoThumb').src = m.img;
   document.getElementById('motoPlate').textContent = m.plate;
-  document.getElementById('motoKm').textContent = `${m.km.split('·')[0].trim()} · ${compCount} piezas compatibles`;
-  document.getElementById('fitMotoName').textContent = `${m.fullShort} (${compCount})`;
+  document.getElementById('motoKm').textContent = `${m.km} · ${compCount} piezas compatibles`;
+  document.getElementById('homeFeatTitle').textContent = currentMotoKey === 'all' ? 'Destacados del catálogo' : `Compatibles con tu ${m.fullShort}`;
+
+  // Actualizar barra visual de motos en Tienda y centrar chip activo
+  document.querySelectorAll('#motoFilterStrip .mf-btn').forEach(b=>{
+    const isAct = b.dataset.m === currentMotoKey;
+    b.classList.toggle('on', isAct);
+    if(isAct && b.scrollIntoView) b.scrollIntoView({inline:'center', block:'nearest'});
+  });
+  document.getElementById('compatBannerName').textContent = currentMotoKey === 'all'
+    ? 'Todas las motos (16 repuestos en almacén)'
+    : `${m.fullShort} (${compCount} piezas compatibles)`;
+  document.getElementById('compatResetBtn').textContent = currentMotoKey === 'all'
+    ? 'Filtrar mi MSX 125'
+    : 'Ver todas (16)';
+
   renderCatalog();
   renderCart();
   updateCitaWa();
@@ -1256,12 +1308,6 @@ function setCat(c, btn){
   currentCat = c;
   document.querySelectorAll('#catBar button').forEach(b=>b.classList.remove('on'));
   if(btn) btn.classList.add('on');
-  renderCatalog();
-}
-
-function toggleFit(){
-  onlyMyMoto = !onlyMyMoto;
-  document.getElementById('fitSw').classList.toggle('on', onlyMyMoto);
   renderCatalog();
 }
 
@@ -1297,17 +1343,6 @@ function closeYapeModal(){
   document.getElementById('yapeModal').classList.remove('open');
 }
 
-function copyYapeNumber(){
-  if(navigator.clipboard) navigator.clipboard.writeText(YAPE_LOCAL_NUMBER);
-  const btn = document.getElementById('copyYapeBtn');
-  if(btn){
-    const old = btn.textContent;
-    btn.textContent = '✓ Número Yape copiado';
-    setTimeout(()=>btn.textContent = old, 2200);
-  }
-}
-
-/* MEJORA UX 1: Si el producto ya está en el carrito, muestra "- 1 +" en vez de solo "+" */
 function productCardHtml(p){
   const qInCart = cart[p.id] || 0;
   const ctrl = qInCart > 0
@@ -1326,6 +1361,7 @@ function productCardHtml(p){
       </div>
       <span class="brand-lbl">${p.brand}</span>
       <h4 onclick="openSheet('${p.id}')">${p.name}</h4>
+      <div class="fit-for ${p.excl?'excl-f':''}"><i class="dot-f"></i><span>${p.fitText}</span></div>
       <div class="pc-f">
         <div>
           ${p.was ? `<span class="was">${fmt(p.was)}</span>` : ''}
@@ -1341,19 +1377,19 @@ function renderCatalog(){
   const rawQ = (document.getElementById('qInput').value || '').trim();
   const q = rawQ.toLowerCase();
   const list = INVENTORY.filter(p=>{
-    if(currentCat !== 'Todo' && p.cat !== currentCat) return false;
-    if(onlyMyMoto && !isCompatible(p, currentMotoKey)) return false;
-    if(q && !(p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q))) return false;
+    if(currentCat !== 'Todo' && !cMatches(p.cat, currentCat)) return false;
+    if(!isCompatible(p, currentMotoKey)) return false;
+    if(q && !(p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q) || p.fitText.toLowerCase().includes(q))) return false;
     return true;
   });
 
   const askMsg = rawQ
     ? `Hola Taller GB! Busco el repuesto *"${rawQ}"* para mi *${selectedMoto}*. ¿Tienen stock y precio?`
-    : `Hola Taller GB! Busco un repuesto que no veo en el catálogo para mi *${selectedMoto}*.`;
+    : `Hola Taller GB! Busco un repuesto específico para mi *${selectedMoto}*.`;
   const askCard = `
     <div class="ask-part-card">
       <div>
-        <b>${rawQ ? `¿Buscas "${rawQ}"?` : '¿Buscas otro repuesto específico?'}</b>
+        <b>${rawQ ? `¿Buscas "${rawQ}"?` : '¿Buscas otro repuesto para tu moto?'}</b>
         <small>Cotízalo directo con el almacén GB para tu ${MOTOS[currentMotoKey].fullShort}</small>
       </div>
       <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(askMsg)}" target="_blank"><i data-i="wa"></i>Cotizar</a>
@@ -1372,9 +1408,15 @@ function renderCatalog(){
   }
 }
 
+function cMatches(itemCat, selectedCat){
+  if(selectedCat.startsWith(itemCat)) return true;
+  return itemCat === selectedCat;
+}
+
 function showToast(p){
   const t = document.getElementById('cartToast');
   document.getElementById('toastImg').src = p.img;
+  document.getElementById('toastSmall').textContent = '✓ Agregado al pedido';
   document.getElementById('toastTitle').textContent = `${p.name} · ${fmt(p.price)}`;
   t.classList.add('show');
   document.querySelectorAll('.cart-count').forEach(el=>{
@@ -1443,9 +1485,31 @@ function renderCart(){
   document.getElementById('cartItemsPill').textContent = `${totalCount} ítem${totalCount===1?'':'s'}`;
   document.getElementById('cartTotal').textContent = fmt(totalPrice);
 
-  // Actualizar QR Dinámico de Yape con el costo total exacto y el mismo número de WhatsApp
-  const qrPayload = `YAPE-PERU|DESTINO:+${WHATSAPP_NUMBER}|TITULAR:GB TALLER Y REPUESTOS|PEDIDO:#GB-1042|MONTO:${fmtDec(totalPrice)}|ITEMS:${totalCount}`;
-  const qrSvg = buildDynamicYapeQrSvg(qrPayload);
+  const cName = (document.getElementById('custName')?.value || 'Cliente').trim();
+  const cAddr = (document.getElementById('custAddress')?.value || '').trim();
+  const opCode = (document.getElementById('yapeOpCode')?.value || '').trim();
+
+  const lines = entries.map(x=>`• ${x.qty}x ${x.name} [${x.sku}] — ${fmt(x.price*x.qty)}`).join('\n');
+  const payLine = payMethod === 'Yape QR'
+    ? `Yape QR Dinámico por *${fmtDec(totalPrice)}*${opCode ? ` (Operación N° ${opCode})` : ' (Adjunto constancia de Yapeo)'}`
+    : payMethod;
+
+  const waText =
+`Hola *Taller y Repuestos GB*! Soy *${cName}*, envío mi pedido *#GB-1042*:
+
+${lines || '• (Sin productos seleccionados)'}
+
+*Moto:* ${selectedMoto}
+*Entrega:* ${deliveryMode}${deliveryMode.includes('domicilio') && cAddr ? ` (${cAddr})` : ''}
+*Instalación en taller:* ${wantInstall ? 'Sí, agendar montaje' : 'No, solo repuestos'}
+*Medio de pago:* ${payLine}
+*Total:* ${fmtDec(totalPrice)}`;
+
+  // El QR Dinámico codifica una URL real ISO/IEC 18004 compacta (33x33 módulos grandes) para lectura instantánea
+  const shortQrWaText = `Pago Yape Pedido #GB-1042 - Total: ${fmtDec(totalPrice)} (${MOTOS[currentMotoKey].fullShort})`;
+  const qrValidUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(shortQrWaText)}`;
+
+  const qrSvg = buildDynamicYapeQrSvg(qrValidUrl);
   const qrWrap = document.getElementById('yapeQrSvgWrap');
   const qrBigWrap = document.getElementById('yapeQrBigSvgWrap');
   if(qrWrap) qrWrap.innerHTML = qrSvg;
@@ -1470,26 +1534,6 @@ function renderCart(){
       </div>
     </div>
   `).join('');
-
-  const cName = (document.getElementById('custName')?.value || 'Cliente').trim();
-  const cAddr = (document.getElementById('custAddress')?.value || '').trim();
-  const opCode = (document.getElementById('yapeOpCode')?.value || '').trim();
-
-  const lines = entries.map(x=>`• ${x.qty}x ${x.name} [${x.sku}] — ${fmt(x.price*x.qty)}`).join('\n');
-  const payLine = payMethod === 'Yape QR'
-    ? `Yape QR Dinámico por *${fmtDec(totalPrice)}*${opCode ? ` (Operación N° ${opCode})` : ' (Adjunto constancia de Yapeo)'}`
-    : payMethod;
-
-  const waText =
-`Hola *Taller y Repuestos GB*! Soy *${cName}*, envío mi pedido *#GB-1042*:
-
-${lines || '• (Sin productos seleccionados)'}
-
-*Moto:* ${selectedMoto}
-*Entrega:* ${deliveryMode}${deliveryMode.includes('domicilio') && cAddr ? ` (${cAddr})` : ''}
-*Instalación en taller:* ${wantInstall ? 'Sí, agendar montaje' : 'No, solo repuestos'}
-*Medio de pago:* ${payLine}
-*Total:* ${fmtDec(totalPrice)}`;
 
   document.getElementById('waMessagePreview').textContent = waText;
   const waHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waText)}`;
@@ -1534,6 +1578,8 @@ updateCitaWa();
 function checkHashTab(){
   const h = (location.hash || '').replace('#','');
   if(['inicio','tienda','pedido','taller'].includes(h)) switchTab(h);
+  if(h==='nmax'){ switchTab('tienda'); changeMoto('nmax'); }
+  if(h==='pulsar'){ switchTab('tienda'); changeMoto('pulsar'); }
   if(h==='yape'){ switchTab('pedido'); openYapeModal(); }
 }
 checkHashTab();
