@@ -1,0 +1,631 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GB · Pista GB — Inventario Real + Venta por WhatsApp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --asfalto:#0E1014; --pista:#171A20; --pista-2:#1F232B; --linea:#2A2F39;
+  --texto:#F4F4F2; --texto-2:#A3A9B3; --texto-3:#6E7580;
+  --rojo:#E3201B; --granate:#7E1015;
+  --oro:#F5B700; --oro-claro:#FFD86B; --verde:#3DDC84; --wa:#25D366; --wa-dark:#128C7E;
+  --r-s:10px; --r-m:14px; --r-l:20px;
+  --display:'Big Shoulders Display',Impact,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#07080A;color:var(--texto);font-family:Manrope,system-ui,sans-serif;padding:28px 20px 64px}
+a,button,input,select{color:inherit;font:inherit;text-decoration:none;background:none;border:0;cursor:pointer}
+svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ---------- cabecera de página ---------- */
+.page-h{max-width:1480px;margin:0 auto 24px;display:flex;gap:24px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}
+.page-h h1{font-family:var(--display);font-weight:800;font-size:40px;line-height:1}
+.page-h p{color:var(--texto-2);font-size:13.5px;margin-top:8px;max-width:650px;line-height:1.5}
+.pill-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pill-info{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;background:var(--pista);border:1px solid var(--linea);font-size:12px;font-weight:700;color:var(--texto-2)}
+.pill-info b{color:var(--oro)}
+.pill-info.wa-pill{border-color:#25d36655;background:#25d36614;color:#6df09f}
+
+/* ---------- layout 4 pantallas ---------- */
+.screens{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;max-width:1520px;margin:0 auto}
+.scr h2{font-size:13px;font-weight:700;color:var(--texto-2);margin:0 0 10px 8px;display:flex;align-items:center;justify-content:space-between}
+.scr h2 span{font-size:11px;color:var(--oro);font-weight:700}
+.phone{width:348px;height:790px;border-radius:42px;border:8px solid #000;background:var(--asfalto);overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 0 0 1px #2a2f39,0 28px 55px #000c}
+.sb{display:flex;justify-content:space-between;padding:11px 22px 4px;font-size:11.5px;font-weight:700;flex:none}
+.body{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 15px 16px;position:relative;scrollbar-width:thin;scrollbar-color:var(--linea) transparent}
+.body::-webkit-scrollbar{width:4px}
+.body::-webkit-scrollbar-thumb{background:var(--linea);border-radius:4px}
+
+/* ---------- comunes ---------- */
+.ib{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;position:relative;background:var(--pista);border:1px solid var(--linea)}
+.cnt{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--rojo);color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center}
+.dot{position:absolute;top:8px;right:9px;width:8px;height:8px;border-radius:50%;background:var(--oro);box-shadow:0 0 0 2px var(--pista)}
+.btn{height:44px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:13.5px;padding:0 16px;transition:transform .12s ease}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--rojo);color:#fff;box-shadow:0 6px 18px #e3201b40}
+.btn.wa{background:linear-gradient(135deg,#25D366,#16A34A);color:#061a0e;font-weight:800;box-shadow:0 6px 20px #25d36638}
+.btn.ghost{background:var(--pista-2);border:1px solid var(--linea)}
+.price{font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:.3px;background:linear-gradient(180deg,var(--oro-claro),var(--oro));-webkit-background-clip:text;background-clip:text;color:transparent;font-variant-numeric:tabular-nums}
+.sec{display:flex;justify-content:space-between;align-items:baseline;margin:16px 0 9px}
+.sec h3{font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:.3px}
+.sec a{font-size:12.5px;font-weight:700;color:var(--oro)}
+.hdr3{display:flex;align-items:center;gap:8px;padding:4px 0 10px}
+.hdr3 h3{font-family:var(--display);font-weight:800;font-size:24px;flex:1;letter-spacing:.3px}
+.tab{flex:none;display:flex;justify-content:space-around;background:#0A0B0E;border-top:1px solid var(--linea);padding:7px 6px 12px}
+.tab a{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:var(--texto-3);min-width:60px;padding-top:5px;position:relative}
+.tab a.on{color:var(--oro)}
+.tab a.on::before{content:"";position:absolute;top:-8px;width:24px;height:3px;border-radius:0 0 3px 3px;background:var(--oro)}
+
+/* ---------- 1. inicio ---------- */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:4px 0 8px}
+.gb-wrap{display:flex;align-items:center;gap:9px}
+.gb{width:70px;height:38px;background:url(assets/logo-gb-marca.png) center/cover no-repeat;border-radius:8px;border:1px solid #f5b70055}
+.gb-txt b{display:block;font-family:var(--display);font-size:17px;letter-spacing:.4px;line-height:1}
+.gb-txt small{font-size:11px;color:var(--texto-2)}
+.hdr-a{display:flex;gap:6px}
+.moto{width:100%;display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--pista);border:1px solid var(--linea);border-radius:var(--r-m);text-align:left}
+.moto-ic{width:34px;height:34px;border-radius:10px;background:var(--pista-2);display:grid;place-items:center;color:var(--oro)}
+.moto b{display:block;font-size:13.5px}
+.moto small{font-size:11.5px;color:var(--texto-2)}
+.moto > svg:last-child{margin-left:auto;color:var(--texto-2)}
+
+.track{margin-top:10px;padding:12px 14px 14px;border-radius:var(--r-l);position:relative;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 100%,#2a0b0d 0%,transparent 60%),var(--pista);border:1px solid var(--linea)}
+.track-h{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--texto-2);font-weight:600;position:relative}
+.eta{display:inline-flex;align-items:center;gap:4px;color:var(--oro);font-weight:700}
+.eta svg{width:14px;height:14px}
+.gauge{display:block;width:210px;margin:2px auto 0;overflow:visible}
+.g-track{fill:none;stroke:#262A33;stroke-width:12}
+.g-red{fill:none;stroke:var(--rojo);stroke-width:12;stroke-dasharray:0 80 20 100;opacity:.35}
+.g-fill{fill:none;stroke:url(#oro);stroke-width:12;stroke-dasharray:75 100}
+.g-tick{stroke:var(--texto-3);stroke-width:2.5;stroke-linecap:round}
+.g-tick.d{stroke:var(--oro)}
+.g-num{fill:var(--texto-3);font:800 13px var(--display);text-anchor:middle;dominant-baseline:middle}
+.g-num.d{fill:var(--texto)}
+.needle line{stroke:var(--rojo);stroke-width:4;stroke-linecap:round}
+.needle{transform:rotate(45deg);transform-origin:120px 120px}
+.hub{fill:var(--asfalto);stroke:var(--rojo);stroke-width:4}
+.stage{text-align:center;margin-top:4px;position:relative}
+.stage small{font-size:11.5px;color:var(--texto-2);font-weight:600}
+.stage strong{display:block;font-family:var(--display);font-weight:900;font-size:30px;line-height:1.05;letter-spacing:.3px}
+.stage p{font-size:12px;color:var(--texto-2);margin-top:2px}
+.track-a{display:flex;gap:8px;margin-top:10px;position:relative}
+.track-a .btn{flex:1;height:38px;font-size:12.5px}
+.track-a .wa-mini{background:#25d3661a;border:1px solid #25d36655;color:#57e88e}
+
+.book{display:flex;align-items:center;gap:11px;margin-top:10px;padding:12px;border-radius:var(--r-m);background:linear-gradient(110deg,var(--rojo),#B5140F);color:#fff;box-shadow:0 8px 20px #e3201b33}
+.book-ic{width:38px;height:38px;border-radius:10px;background:#ffffff26;display:grid;place-items:center}
+.book b{display:block;font-size:15px}
+.book small{font-size:12px;opacity:.92}
+.book > svg:last-child{margin-left:auto}
+
+.rail{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.mini{background:var(--pista);border:1px solid var(--linea);border-radius:var(--r-m);padding:8px;display:flex;flex-direction:column}
+.mini .photo{height:92px;border-radius:10px;overflow:hidden;background:#14171c;position:relative}
+.mini .photo img{width:100%;height:100%;object-fit:cover;display:block}
+.mini small.sku{font-size:10px;color:var(--texto-3);font-weight:700;margin-top:6px}
+.mini h4{font-size:12.5px;font-weight:700;line-height:1.25;margin:2px 0 6px;min-height:31px}
+.mini .row{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+
+/* ---------- 2. tienda con fotos reales ---------- */
+.search{display:flex;align-items:center;gap:8px;height:42px;padding:0 12px;border-radius:12px;background:var(--pista);border:1px solid var(--linea);color:var(--texto-2);font-size:13px}
+.search input{flex:1;color:var(--texto);outline:none;font-size:13px}
+.search input::placeholder{color:var(--texto-3)}
+.fit{display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px 11px;border-radius:12px;background:#f5b70012;border:1px solid #f5b70040;font-size:12px;color:var(--texto-2);width:100%;text-align:left}
+.fit svg{color:var(--oro)}
+.fit b{color:var(--texto)}
+.sw{margin-left:auto;width:36px;height:20px;border-radius:10px;background:var(--linea);position:relative;flex:none;transition:background .15s}
+.sw.on{background:var(--oro)}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}
+.sw.on::after{transform:translateX(16px);background:#1a1300}
+
+.cats{display:flex;gap:6px;margin:10px 0;overflow-x:auto;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cats button{flex:none;height:31px;padding:0 11px;border-radius:16px;font-size:12px;font-weight:700;background:var(--pista);border:1px solid var(--linea);color:var(--texto-2)}
+.cats button.on{background:var(--oro);color:#1a1300;border-color:var(--oro)}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.pc{background:var(--pista);border:1px solid var(--linea);border-radius:var(--r-m);padding:8px;display:flex;flex-direction:column;transition:border-color .15s}
+.pc:hover{border-color:#f5b70066}
+.pc .photo{height:98px;border-radius:10px;overflow:hidden;position:relative;background:#14171C}
+.pc .photo img{width:100%;height:100%;object-fit:cover;display:block}
+.tag{position:absolute;top:6px;left:6px;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:6px;background:#0E1014d9;color:var(--oro);border:1px solid #f5b70055}
+.tag.off{background:var(--rojo);color:#fff;border-color:var(--rojo)}
+.tag.low{background:#7E1015;color:#ffd2d0;border-color:var(--rojo)}
+.stk{position:absolute;bottom:5px;right:5px;font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:5px;background:#0E1014d9;color:var(--texto-2)}
+.pc .meta{display:flex;justify-content:space-between;gap:4px;font-size:9.5px;color:var(--texto-3);font-weight:700;margin:6px 1px 0;white-space:nowrap;overflow:hidden}
+.pc h4{font-size:12px;font-weight:700;line-height:1.22;margin:2px 1px 0;min-height:30px}
+.ok{display:flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:var(--verde);margin:4px 1px 6px}
+.ok.uni{color:var(--oro-claro)}
+.ok svg{width:12px;height:12px;stroke-width:3}
+.pc-f{display:flex;justify-content:space-between;align-items:center;padding:0 1px;margin-top:auto;gap:4px}
+.pc-f .price{font-size:18.5px}
+.was{display:block;font-size:9.5px;color:var(--texto-3);text-decoration:line-through;line-height:1}
+.act-btns{display:flex;gap:4px;flex:none}
+.wa-ic{width:28px;height:28px;border-radius:8px;background:#25d3661f;border:1px solid #25d36666;color:var(--wa);display:grid;place-items:center}
+.wa-ic svg{width:14px;height:14px}
+.add{width:28px;height:28px;border-radius:8px;background:var(--rojo);color:#fff;display:grid;place-items:center}
+.add svg{width:14px;height:14px;stroke-width:2.6}
+
+/* ---------- tira de los 8 productos abajo ---------- */
+.inv-strip{max-width:1460px;margin:26px auto 0;padding:16px 18px;border-radius:var(--r-l);background:var(--asfalto);border:1px solid var(--linea)}
+.inv-strip-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.inv-strip-h h3{font-family:var(--display);font-size:24px;font-weight:800;letter-spacing:.3px}
+.inv-strip-h span{font-size:12.5px;color:var(--texto-2)}
+.inv-row{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
+@media (max-width:1300px){.inv-row{grid-template-columns:repeat(4,1fr)}}
+@media (max-width:700px){.inv-row{grid-template-columns:repeat(2,1fr)}}
+
+/* ---------- 3. carrito y pedido por WhatsApp ---------- */
+.wa-banner{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-m);background:linear-gradient(120deg,#0f291a,#13221c);border:1px solid #25d36655;margin-bottom:10px}
+.wa-banner .ic{width:36px;height:36px;border-radius:10px;background:#25D366;color:#061a0e;display:grid;place-items:center;flex:none}
+.wa-banner b{display:block;font-size:13px;color:#7bf1a8}
+.wa-banner small{font-size:11.5px;color:var(--texto-2);line-height:1.3;display:block}
+
+.c-list{display:flex;flex-direction:column;gap:8px}
+.c-item{display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;background:var(--pista);border:1px solid var(--linea)}
+.c-item img{width:54px;height:54px;border-radius:9px;object-fit:cover;background:#14171c;flex:none}
+.c-info{flex:1;min-width:0}
+.c-info small{font-size:10px;color:var(--texto-3);font-weight:700;display:block}
+.c-info b{font-size:12.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-info .price{font-size:18px}
+.qty{display:flex;align-items:center;gap:6px;background:var(--pista-2);border:1px solid var(--linea);border-radius:9px;padding:3px 5px}
+.qty button{width:22px;height:22px;border-radius:6px;background:var(--asfalto);display:grid;place-items:center;font-weight:800;font-size:13px}
+.qty span{font-size:12.5px;font-weight:800;min-width:14px;text-align:center}
+
+.deliv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.deliv button{padding:9px 10px;border-radius:12px;background:var(--pista);border:1px solid var(--linea);text-align:left;font-size:12px}
+.deliv button.on{border-color:var(--oro);background:#f5b70014}
+.deliv button b{display:block;font-size:12.5px;color:var(--texto)}
+.deliv button small{font-size:11px;color:var(--texto-2)}
+
+.install-chk{display:flex;align-items:center;gap:9px;margin-top:8px;padding:9px 11px;border-radius:12px;background:var(--pista);border:1px solid var(--linea);font-size:12px;width:100%;text-align:left}
+.install-chk i.box{width:18px;height:18px;border-radius:5px;background:var(--oro);color:#1a1300;display:grid;place-items:center;font-weight:900;font-size:12px;font-style:normal}
+
+.wa-preview{margin-top:10px;padding:11px 12px;border-radius:14px;background:#0b1811;border:1px solid #25d36644;font-size:11.5px;line-height:1.45;color:#d6f5e0;position:relative}
+.wa-preview .wh{display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:800;color:#57e88e;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.wa-preview pre{white-space:pre-wrap;font-family:inherit;color:#d8E8dd;font-size:11.5px}
+
+.cta-wa{flex:none;padding:10px 15px 14px;background:#0A0B0E;border-top:1px solid var(--linea)}
+.cta-wa .tot-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.cta-wa .tot-row span{font-size:12px;color:var(--texto-2)}
+.cta-wa .btn.wa{width:100%;height:48px;font-size:14.5px}
+
+/* ---------- 4. seguimiento + aprobación WhatsApp ---------- */
+.sum{display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:var(--r-m);background:var(--pista);border:1px solid var(--linea)}
+.sum small{font-size:11.5px;color:var(--texto-2)}
+.sum strong{display:block;font-family:var(--display);font-size:25px;font-weight:900;line-height:1.1}
+.pill{font-size:11.5px;font-weight:800;padding:5px 10px;border-radius:999px;background:var(--oro);color:#1a1300;white-space:nowrap}
+.tl{list-style:none;margin:14px 0 0 4px}
+.tl li{position:relative;padding:0 0 14px 28px}
+.tl li::before{content:"";position:absolute;left:5px;top:15px;bottom:-2px;width:2px;background:var(--linea)}
+.tl li:last-child::before{display:none}
+.tl li.d::before{background:var(--oro)}
+.tl li::after{content:"";position:absolute;left:0;top:3px;width:12px;height:12px;border-radius:50%;background:var(--asfalto);border:2px solid var(--texto-3)}
+.tl li.d::after{background:var(--oro);border-color:var(--oro)}
+.tl li.now::after{background:var(--rojo);border-color:var(--rojo);box-shadow:0 0 0 5px #e3201b33}
+.tl .h{display:flex;justify-content:space-between;gap:8px}
+.tl b{font-size:13.5px}
+.tl li:not(.d):not(.now) b{color:var(--texto-2)}
+.tl time{font-size:11.5px;color:var(--texto-3);font-weight:600;white-space:nowrap}
+.tl li.now time{color:var(--rojo);font-weight:800}
+.tl p{font-size:12px;color:var(--texto-2);margin-top:2px;line-height:1.35}
+.ph{display:flex;gap:6px;margin-top:6px}
+.ph img{width:64px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--linea)}
+.quote{padding:12px;border-radius:var(--r-m);background:var(--pista);border:1px solid var(--linea)}
+.quote h4{font-size:13.5px;margin-bottom:6px;display:flex;justify-content:space-between}
+.quote h4 span{font-size:11px;color:var(--verde)}
+.ln{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--texto-2);padding:4px 0;font-variant-numeric:tabular-nums}
+.ln.tot{border-top:1px dashed var(--linea);margin-top:6px;padding-top:8px;color:var(--texto);font-weight:700}
+.foot{flex:none;padding:10px 15px 14px;background:#0A0B0E;border-top:1px solid var(--linea);display:flex;gap:8px}
+.foot .btn{flex:1}
+</style>
+</head>
+<body>
+
+<div class="page-h">
+  <div>
+    <h1>Pista GB · Inventario con fotos reales + Venta por WhatsApp</h1>
+    <p>Catálogo de prueba con 8 repuestos y accesorios fotografiados en fondo oscuro de estudio, filtro inteligente por moto y carrito que arma el pedido con códigos SKU, moto del cliente y total listo para enviar al WhatsApp del taller.</p>
+  </div>
+  <div class="pill-bar">
+    <a class="pill-info" href="index.html" style="border-color:var(--oro);color:var(--oro)">← Ir a la Versión Web</a>
+    <span class="pill-info">Inventario activo: <b>8 productos reales</b></span>
+    <span class="pill-info">Moneda: <b>Soles (S/) · Perú</b></span>
+    <span class="pill-info wa-pill">Checkout: <b>Directo al chat de WhatsApp</b></span>
+  </div>
+</div>
+
+<div class="screens">
+
+<!-- 1. INICIO -->
+<div class="scr"><h2>1 · Inicio del cliente <span>Tacómetro + Destacados</span></h2>
+<div class="phone">
+  <div class="sb"><span>9:41</span><span>5G · 100%</span></div>
+  <div class="body">
+    <header class="hdr">
+      <div class="gb-wrap">
+        <div class="gb" role="img" aria-label="Logo GB"></div>
+        <div class="gb-txt"><b>TALLER Y REPUESTOS</b><small>Hola, Carlos</small></div>
+      </div>
+      <div class="hdr-a">
+        <button class="ib" aria-label="Notificaciones"><i data-i="bell"></i><span class="dot"></span></button>
+        <button class="ib" aria-label="Carrito"><i data-i="cart"></i><b class="cnt cart-count">3</b></button>
+      </div>
+    </header>
+
+    <button class="moto"><span class="moto-ic"><i data-i="bike"></i></span><span><b>Honda MSX 125 (Grom)</b><small>Placa ABC-123 · 18.400 km</small></span><i data-i="down"></i></button>
+
+    <section class="track" aria-label="Estado de tu moto">
+      <div class="track-h"><span>Orden #0231 · Mecánico: Andrés</span><span class="eta"><i data-i="clock"></i>Hoy 5:00 pm</span></div>
+      <svg class="gauge" viewBox="0 0 240 128" aria-hidden="true">
+        <defs><linearGradient id="oro" x1="0" x2="1"><stop offset="0" stop-color="#F5B700"/><stop offset="1" stop-color="#FFD86B"/></linearGradient></defs>
+        <path class="g-track" d="M24 118 A96 96 0 0 1 216 118" pathLength="100"/>
+        <path class="g-red"   d="M24 118 A96 96 0 0 1 216 118" pathLength="100"/>
+        <path class="g-fill"  d="M24 118 A96 96 0 0 1 216 118" pathLength="100"/>
+        <line class="g-tick d" x1="38" y1="118" x2="48" y2="118"/>
+        <line class="g-tick d" x1="62" y1="60" x2="69" y2="67"/>
+        <line class="g-tick d" x1="120" y1="36" x2="120" y2="46"/>
+        <line class="g-tick d" x1="178" y1="60" x2="171" y2="67"/>
+        <line class="g-tick"   x1="202" y1="118" x2="192" y2="118"/>
+        <text class="g-num d" x="60" y="116">1</text>
+        <text class="g-num d" x="79" y="77">2</text>
+        <text class="g-num d" x="120" y="60">3</text>
+        <text class="g-num d" x="161" y="77">4</text>
+        <text class="g-num"   x="180" y="116">5</text>
+        <g class="needle"><line x1="120" y1="118" x2="120" y2="44"/></g>
+        <circle class="hub" cx="120" cy="118" r="8"/>
+      </svg>
+      <div class="stage"><small>Paso 4 de 5 · En taller</small><strong>En reparación</strong><p>Instalando kit de arrastre DID 428</p></div>
+      <div class="track-a">
+        <a class="btn ghost">Ver orden</a>
+        <a class="btn wa-mini" href="https://wa.me/51960628745?text=Hola%20Taller%20GB,%20quiero%20consultar%20por%20la%20Orden%20%230231%20de%20mi%20Honda%20MSX%20125" target="_blank"><i data-i="wa"></i>WhatsApp taller</a>
+      </div>
+    </section>
+
+    <a class="book"><span class="book-ic"><i data-i="cal"></i></span><span><b>Agendar cita en taller</b><small>Próximo cupo: mañana 9:00 am</small></span><i data-i="right"></i></a>
+
+    <div class="sec"><h3>Repuestos para tu MSX 125</h3><a>Ver los 8 →</a></div>
+    <div class="rail">
+      <article class="mini">
+        <div class="photo"><span class="tag">Original</span><img src="assets/productos/disco-freno.jpg" alt="Disco de freno"></div>
+        <small class="sku">HONDA · GB-FR-014</small>
+        <h4>Disco freno delantero Wave 220mm</h4>
+        <div class="row"><b class="price">S/ 95</b><button class="add" onclick="addToCart('disco')" aria-label="Agregar"><i data-i="plus"></i></button></div>
+      </article>
+      <article class="mini">
+        <div class="photo"><span class="tag">Más vendido</span><img src="assets/productos/kit-arrastre.jpg" alt="Kit de arrastre"></div>
+        <small class="sku">DID ORO · GB-TR-008</small>
+        <h4>Kit de arrastre 428 reforzado</h4>
+        <div class="row"><b class="price">S/ 185</b><button class="add" onclick="addToCart('kit')" aria-label="Agregar"><i data-i="plus"></i></button></div>
+      </article>
+    </div>
+  </div>
+  <nav class="tab"><a class="on"><i data-i="home"></i>Inicio</a><a><i data-i="store"></i>Tienda</a><a><i data-i="wa"></i>Pedido WA</a><a><i data-i="bike"></i>Taller</a></nav>
+</div></div>
+
+<!-- 2. TIENDA CON INVENTARIO REAL -->
+<div class="scr"><h2>2 · Inventario de prueba (8 ítems) <span>Interactivo</span></h2>
+<div class="phone">
+  <div class="sb"><span>9:41</span><span>5G · 100%</span></div>
+  <div class="body">
+    <header class="hdr3">
+      <h3>Repuestos y Accesorios</h3>
+      <button class="ib" aria-label="Carrito"><i data-i="cart"></i><b class="cnt cart-count">3</b></button>
+    </header>
+
+    <label class="search">
+      <i data-i="search"></i>
+      <input id="qInput" type="text" placeholder="Buscar repuesto, marca o código SKU..." oninput="renderCatalog()">
+    </label>
+
+    <button class="fit" id="fitBtn" onclick="toggleFit()">
+      <i data-i="bike"></i>
+      <span>Compatibles con <b>Honda MSX 125</b></span>
+      <span class="sw on" id="fitSw"></span>
+    </button>
+
+    <div class="cats" id="catBar">
+      <button class="on" onclick="setCat('Todo',this)">Todo (8)</button>
+      <button onclick="setCat('Frenos',this)">Frenos</button>
+      <button onclick="setCat('Transmisión',this)">Transmisión</button>
+      <button onclick="setCat('Motor',this)">Motor</button>
+      <button onclick="setCat('Eléctrico',this)">Eléctrico</button>
+      <button onclick="setCat('Suspensión',this)">Suspensión</button>
+      <button onclick="setCat('Accesorios',this)">Accesorios</button>
+    </div>
+
+    <div class="grid" id="catalogGrid"></div>
+  </div>
+  <nav class="tab"><a><i data-i="home"></i>Inicio</a><a class="on"><i data-i="store"></i>Tienda</a><a><i data-i="wa"></i>Pedido WA</a><a><i data-i="bike"></i>Taller</a></nav>
+</div></div>
+
+<!-- 3. CARRITO Y CIERRE DE VENTA POR WHATSAPP -->
+<div class="scr"><h2>3 · Venta directa por WhatsApp <span>Mensaje automático</span></h2>
+<div class="phone">
+  <div class="sb"><span>9:41</span><span>5G · 100%</span></div>
+  <div class="body">
+    <header class="hdr3">
+      <button class="ib" aria-label="Volver"><i data-i="back"></i></button>
+      <h3>Tu pedido #GB-1042</h3>
+      <span class="pill" id="cartItemsPill">3 ítems</span>
+    </header>
+
+    <div class="wa-banner">
+      <span class="ic"><i data-i="wa"></i></span>
+      <div>
+        <b>Compra rápida por WhatsApp</b>
+        <small>Apartamos tus repuestos al instante y pagas al recoger o contra entrega.</small>
+      </div>
+    </div>
+
+    <div class="c-list" id="cartList"></div>
+
+    <div class="sec"><h3>¿Cómo lo recibes?</h3></div>
+    <div class="deliv">
+      <button class="on" id="delPickup" onclick="setDelivery('Recoger en taller GB')">
+        <b>Recoger en taller</b>
+        <small>Gratis · Listo en 20 min</small>
+      </button>
+      <button id="delHome" onclick="setDelivery('Envío a domicilio')">
+        <b>Envío a domicilio</b>
+        <small>Mensajero local</small>
+      </button>
+    </div>
+
+    <button class="install-chk" onclick="toggleInstall()">
+      <i class="box" id="instBox">✓</i>
+      <span>Quiero <b>instalar estos repuestos</b> en el taller</span>
+    </button>
+
+    <div class="wa-preview">
+      <div class="wh"><span>Vista previa del mensaje a Taller GB</span><span>WhatsApp</span></div>
+      <pre id="waMessagePreview"></pre>
+    </div>
+  </div>
+  <footer class="cta-wa">
+    <div class="tot-row">
+      <span>Total estimado (pagas en taller/entrega)</span>
+      <b class="price" id="cartTotal">S/ 195</b>
+    </div>
+    <a class="btn wa" id="waSendBtn" href="#" target="_blank">
+      <i data-i="wa"></i>Enviar pedido por WhatsApp
+    </a>
+  </footer>
+</div></div>
+
+<!-- 4. SEGUIMIENTO DE ORDEN + FOTOS REALES -->
+<div class="scr"><h2>4 · Orden de taller + WhatsApp <span>Aprobación rápida</span></h2>
+<div class="phone">
+  <div class="sb"><span>9:41</span><span>5G · 100%</span></div>
+  <div class="body">
+    <header class="hdr3">
+      <button class="ib" aria-label="Volver"><i data-i="back"></i></button>
+      <h3>Orden #0231</h3>
+      <button class="ib" aria-label="Compartir"><i data-i="share"></i></button>
+    </header>
+    <div class="sum"><div><small>Honda MSX 125 · ABC-123</small><strong>En reparación</strong></div><span class="pill">Hoy 5:00 pm</span></div>
+
+    <ol class="tl">
+      <li class="d"><div class="h"><b>Recibida en taller GB</b><time>8:12 am</time></div><p>Ingreso por ruido en transmisión y revisión de frenos</p></li>
+      <li class="d">
+        <div class="h"><b>Diagnóstico con fotos</b><time>9:40 am</time></div>
+        <p>Cadena estirada y pastillas al 15%. Repuestos en stock:</p>
+        <div class="ph">
+          <img src="assets/productos/kit-arrastre.jpg" alt="Kit de arrastre">
+          <img src="assets/productos/pastillas-freno.jpg" alt="Pastillas de freno">
+          <img src="assets/productos/aceite-4t.jpg" alt="Aceite 4T">
+        </div>
+      </li>
+      <li class="d"><div class="h"><b>Cotización aprobada por WhatsApp</b><time>10:05 am</time></div><p>Aprobaste S/ 280 con Andrés</p></li>
+      <li class="now"><div class="h"><b>En reparación</b><time>Ahora</time></div><p>Montando kit de arrastre DID Oro y pastillas Brembo</p></li>
+      <li><div class="h"><b>Lista para recoger y pagar</b><time>5:00 pm aprox.</time></div></li>
+    </ol>
+
+    <section class="quote">
+      <h4><span>● Repuestos apartados</span>Cotización #0231</h4>
+      <div class="ln"><span>1x Kit de arrastre DID 428 (GB-TR-008)</span><span>S/ 185</span></div>
+      <div class="ln"><span>1x Pastillas Brembo cobre (GB-FR-029)</span><span>S/ 55</span></div>
+      <div class="ln"><span>Mano de obra e instalación</span><span>S/ 40</span></div>
+      <div class="ln tot"><span>Total al recoger</span><b class="price">S/ 280</b></div>
+    </section>
+  </div>
+  <footer class="foot">
+    <a class="btn wa" href="https://wa.me/51960628745?text=Hola%20GB,%20escribo%20por%20mi%20Orden%20%230231%20(Honda%20MSX%20125%20placa%20ABC-123)" target="_blank"><i data-i="wa"></i>Escribir al mecánico por WhatsApp</a>
+  </footer>
+</div></div>
+
+</div>
+
+<section class="inv-strip">
+  <div class="inv-strip-h">
+    <h3>Inventario completo de prueba · 8 repuestos y accesorios con fotografía real</h3>
+    <span>Haz clic en <b>+</b> para agregarlos al pedido #GB-1042 o en el ícono de WhatsApp para pedir esa pieza directo</span>
+  </div>
+  <div class="inv-row" id="fullInvRow"></div>
+</section>
+
+<script>
+const P={
+ bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+ cart:'<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/>',
+ bike:'<circle cx="5.5" cy="17" r="3.5"/><circle cx="18.5" cy="17" r="3.5"/><path d="M5.5 17 9 9h5l4.5 8M14 9l-2-3h-2"/>',
+ down:'<path d="m6 9 6 6 6-6"/>', right:'<path d="m9 6 6 6-6 6"/>', back:'<path d="m15 18-6-6 6-6"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ cal:'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+ home:'<path d="M3 11 12 3l9 8v10h-6v-6H9v6H3z"/>',
+ store:'<path d="M4 9 5 4h14l1 5M4 9v11h16V9M4 9a3 3 0 0 0 5.3 1.9A3 3 0 0 0 14.7 11 3 3 0 0 0 20 9"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>', plus:'<path d="M12 5v14M5 12h14"/>',
+ share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
+ wa:'<path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/>'
+};
+
+// Número oficial de WhatsApp del Taller GB (Perú +51 960628745)
+const WHATSAPP_NUMBER = '51960628745';
+
+// Pequeño inventario real de prueba (8 productos con fotos reales en Soles S/)
+const INVENTORY = [
+  {id:'disco', sku:'GB-FR-014', brand:'Honda OEM', name:'Disco de freno delantero Wave 220mm', cat:'Frenos', price:95, stock:6, tag:'Original', tagType:'', fit:true, fitLabel:'Sirve a tu MSX 125', img:'assets/productos/disco-freno.jpg'},
+  {id:'kit', sku:'GB-TR-008', brand:'DID Racing', name:'Kit de arrastre 428 Oro (Cadena + Catalina)', cat:'Transmisión', price:185, stock:4, tag:'Más vendido', tagType:'', fit:true, fitLabel:'Sirve a tu MSX 125', img:'assets/productos/kit-arrastre.jpg'},
+  {id:'pastillas', sku:'GB-FR-029', brand:'Brembo', name:'Pastillas de freno sinterizadas cobre', cat:'Frenos', price:55, was:65, stock:11, tag:'-15%', tagType:'off', fit:true, fitLabel:'Sirve a tu MSX 125', img:'assets/productos/pastillas-freno.jpg'},
+  {id:'aceite', sku:'GB-MT-003', brand:'Motul 7100', name:'Aceite 4T 10W-40 100% Sintético 1L', cat:'Motor', price:45, stock:24, tag:'4 Tiempos', tagType:'', fit:true, fitLabel:'Universal 4T', uni:true, img:'assets/productos/aceite-4t.jpg'},
+  {id:'bujia', sku:'GB-EL-019', brand:'NGK Iridium', name:'Bujía de Iridio Laser CR8EIX', cat:'Eléctrico', price:48, stock:9, tag:'Iridio', tagType:'', fit:true, fitLabel:'Sirve a tu MSX 125', img:'assets/productos/bujia-iridio.jpg'},
+  {id:'casco', sku:'GB-AC-041', brand:'Shaft Pro', name:'Casco Integral Sport Mate Negro/Rojo', cat:'Accesorios', price:260, stock:3, tag:'DOT / ECE', tagType:'', fit:true, fitLabel:'Tallas M · L', uni:true, img:'assets/productos/casco-integral.jpg'},
+  {id:'bateria', sku:'GB-EL-005', brand:'Yuasa AGM', name:'Batería 12V 5Ah Libre Mantenimiento', cat:'Eléctrico', price:120, stock:5, tag:'Garantía 6M', tagType:'', fit:true, fitLabel:'Sirve a tu MSX 125', img:'assets/productos/bateria-agm.jpg'},
+  {id:'shock', sku:'GB-SU-012', brand:'YSS Racing', name:'Amortiguador Monoshock gas regulable', cat:'Suspensión', price:320, stock:2, tag:'¡Últimos 2!', tagType:'low', fit:true, fitLabel:'Sirve a tu MSX 125', img:'assets/productos/amortiguador.jpg'}
+];
+
+let currentCat = 'Todo';
+let onlyMyMoto = true;
+let deliveryMode = 'Recoger en taller GB';
+let wantInstall = true;
+let cart = { disco: 1, pastillas: 1, aceite: 1 };
+
+const fmt = n => 'S/ ' + n.toLocaleString('es-PE');
+
+function hydrateIcons(root=document){
+  root.querySelectorAll('i[data-i]').forEach(el=>{
+    el.outerHTML=`<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${P[el.dataset.i]}</svg>`;
+  });
+}
+
+function setCat(c, btn){
+  currentCat = c;
+  document.querySelectorAll('#catBar button').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderCatalog();
+}
+
+function toggleFit(){
+  onlyMyMoto = !onlyMyMoto;
+  document.getElementById('fitSw').classList.toggle('on', onlyMyMoto);
+  renderCatalog();
+}
+
+function singleWaLink(p){
+  const msg = `Hola Taller GB! Quiero pedir este repuesto:\n• *${p.name}* (${p.brand})\n• Código: ${p.sku}\n• Precio: ${fmt(p.price)}\n• Para mi moto: Honda MSX 125 (ABC-123)`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+}
+
+function renderCatalog(){
+  const q = (document.getElementById('qInput').value || '').toLowerCase().trim();
+  const list = INVENTORY.filter(p=>{
+    if(currentCat !== 'Todo' && p.cat !== currentCat) return false;
+    if(onlyMyMoto && !p.fit) return false;
+    if(q && !(p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q))) return false;
+    return true;
+  });
+
+  const grid = document.getElementById('catalogGrid');
+  const cardHtml = p => `
+    <article class="pc">
+      <div class="photo">
+        ${p.tag ? `<span class="tag ${p.tagType||''}">${p.tag}</span>` : ''}
+        <span class="stk">${p.stock} disp.</span>
+        <img src="${p.img}" alt="${p.name}">
+      </div>
+      <div class="meta"><span>${p.brand}</span><span>${p.sku}</span></div>
+      <h4>${p.name}</h4>
+      <p class="ok ${p.uni?'uni':''}"><i data-i="check"></i>${p.fitLabel}</p>
+      <div class="pc-f">
+        <div>
+          ${p.was ? `<span class="was">${fmt(p.was)}</span>` : ''}
+          <b class="price">${fmt(p.price)}</b>
+        </div>
+        <div class="act-btns">
+          <a class="wa-ic" href="${singleWaLink(p)}" target="_blank" title="Pedir por WhatsApp"><i data-i="wa"></i></a>
+          <button class="add" onclick="addToCart('${p.id}')" title="Agregar al pedido"><i data-i="plus"></i></button>
+        </div>
+      </div>
+    </article>
+  `;
+  grid.innerHTML = list.map(cardHtml).join('');
+  hydrateIcons(grid);
+
+  const strip = document.getElementById('fullInvRow');
+  if(strip && !strip.innerHTML){
+    strip.innerHTML = INVENTORY.map(cardHtml).join('');
+    hydrateIcons(strip);
+  }
+}
+
+function addToCart(id){
+  cart[id] = (cart[id] || 0) + 1;
+  renderCart();
+}
+
+function changeQty(id, delta){
+  cart[id] = (cart[id] || 0) + delta;
+  if(cart[id] <= 0) delete cart[id];
+  renderCart();
+}
+
+function setDelivery(mode){
+  deliveryMode = mode;
+  document.getElementById('delPickup').classList.toggle('on', mode.includes('taller'));
+  document.getElementById('delHome').classList.toggle('on', mode.includes('domicilio'));
+  renderCart();
+}
+
+function toggleInstall(){
+  wantInstall = !wantInstall;
+  document.getElementById('instBox').textContent = wantInstall ? '✓' : '';
+  renderCart();
+}
+
+function renderCart(){
+  const entries = Object.entries(cart).map(([id,qty])=>{
+    const item = INVENTORY.find(x=>x.id===id);
+    return item ? {...item, qty} : null;
+  }).filter(Boolean);
+
+  const totalCount = entries.reduce((s,x)=>s+x.qty, 0);
+  const totalPrice = entries.reduce((s,x)=>s+x.qty*x.price, 0);
+
+  document.querySelectorAll('.cart-count').forEach(el=>el.textContent = totalCount);
+  document.getElementById('cartItemsPill').textContent = `${totalCount} ítem${totalCount===1?'':'s'}`;
+  document.getElementById('cartTotal').textContent = fmt(totalPrice);
+
+  const cl = document.getElementById('cartList');
+  cl.innerHTML = entries.map(x=>`
+    <div class="c-item">
+      <img src="${x.img}" alt="${x.name}">
+      <div class="c-info">
+        <small>${x.brand} · ${x.sku}</small>
+        <b>${x.name}</b>
+        <span class="price">${fmt(x.price * x.qty)}</span>
+      </div>
+      <div class="qty">
+        <button onclick="changeQty('${x.id}',-1)">−</button>
+        <span>${x.qty}</span>
+        <button onclick="changeQty('${x.id}',1)">+</button>
+      </div>
+    </div>
+  `).join('');
+
+  const lines = entries.map(x=>`• ${x.qty}x ${x.name} [${x.sku}] — ${fmt(x.price*x.qty)}`).join('\n');
+  const waText =
+`Hola *Taller y Repuestos GB*! Quiero hacer el pedido *#GB-1042*:
+
+${lines || '• (Sin productos seleccionados)'}
+
+*Moto:* Honda MSX 125 (Placa ABC-123)
+*Entrega:* ${deliveryMode}
+*Instalación en taller:* ${wantInstall ? 'Sí, agendar montaje' : 'No, solo repuestos'}
+*Total a pagar:* ${fmt(totalPrice)}`;
+
+  document.getElementById('waMessagePreview').textContent = waText;
+  document.getElementById('waSendBtn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waText)}`;
+}
+
+hydrateIcons();
+renderCatalog();
+renderCart();
+</script>
+</body>
+</html>
