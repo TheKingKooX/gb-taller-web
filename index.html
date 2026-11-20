@@ -3,29 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
-<meta name="theme-color" content="#0E1014">
+<meta name="theme-color" content="#0D0F13">
 <title>GB Taller y Venta de Repuestos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --asfalto:#0E1014;
-  --pista:#171A20;
-  --pista-2:#1F232B;
-  --linea:#2A2F39;
-  --texto:#F4F4F2;
-  --texto-2:#A3A9B3;
-  --texto-3:#6E7580;
+  --asfalto:#0D0F13;
+  --pista:#181C22;
+  --pista-2:#20252E;
+  --linea:#2B313D;
+  --luz:rgba(255,255,255,.08);
+  --texto:#F5F6F8;
+  --texto-2:#A5ACB8;
+  --texto-3:#6F7785;
   --rojo:#E3201B;
   --granate:#7E1015;
   --oro:#F5B700;
-  --oro-claro:#FFD86B;
+  --oro-claro:#FFE07D;
   --verde:#3DDC84;
   --wa:#25D366;
+  --yape:#8B239B;
+  --plin:#00B8D9;
   --r-s:10px;
-  --r-m:14px;
-  --r-l:20px;
+  --r-m:15px;
+  --r-l:22px;
   --display:'Big Shoulders Display',Impact,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -34,106 +37,170 @@ a,button,input,select{color:inherit;font:inherit;text-decoration:none;background
 svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 
 /* ==========================================================================
-   ESTILOS COMPARTIDOS DE COMPONENTES (MISMO ASPECTO QUE LA APP)
+   COMPONENTES BASE Y ACABADO VITRINA
    ========================================================================== */
-.ib{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;position:relative;background:var(--pista);border:1px solid var(--linea);flex:none}
-.cnt{position:absolute;top:-4px;right:-4px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--rojo);color:#fff;font-size:10.5px;font-weight:800;display:grid;place-items:center}
+.ib{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;position:relative;background:var(--pista);border:1px solid var(--linea);box-shadow:inset 0 1px 0 var(--luz);flex:none}
+.cnt{position:absolute;top:-4px;right:-4px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--rojo);color:#fff;font-size:10.5px;font-weight:800;display:grid;place-items:center;transition:transform .25s cubic-bezier(.2,1.4,.4,1)}
+.cnt.bump,.t-badge.bump{transform:scale(1.38)}
 .dot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--oro);box-shadow:0 0 0 2px var(--pista)}
 .btn{height:46px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:14px;padding:0 16px;transition:transform .12s,filter .15s}
-.btn:active{transform:scale(.98)}
-.btn.primary{background:var(--rojo);color:#fff;box-shadow:0 6px 18px #e3201b40}
-.btn.wa{background:linear-gradient(135deg,#25D366,#16A34A);color:#061a0e;font-weight:800;box-shadow:0 6px 20px #25d36638}
-.btn.ghost{background:var(--pista-2);border:1px solid var(--linea)}
-.price{font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:.3px;background:linear-gradient(180deg,var(--oro-claro),var(--oro));-webkit-background-clip:text;background-clip:text;color:transparent;font-variant-numeric:tabular-nums;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:linear-gradient(135deg,var(--rojo),#B81410);color:#fff;box-shadow:0 6px 18px #e3201b45,inset 0 1px 0 rgba(255,255,255,.2)}
+.btn.wa{background:linear-gradient(135deg,#25D366,#159947);color:#04170c;font-weight:800;box-shadow:0 6px 20px #25d36638,inset 0 1px 0 rgba(255,255,255,.3)}
+.btn.ghost{background:var(--pista-2);border:1px solid var(--linea);box-shadow:inset 0 1px 0 var(--luz)}
+.price{font-family:var(--display);font-weight:900;font-size:22px;letter-spacing:.3px;background:linear-gradient(180deg,var(--oro-claro),var(--oro));-webkit-background-clip:text;background-clip:text;color:transparent;font-variant-numeric:tabular-nums;white-space:nowrap}
 .pill{font-size:11.5px;font-weight:800;padding:5px 10px;border-radius:999px;background:var(--oro);color:#1a1300;white-space:nowrap}
 
 /* Cabecera estilo App */
 .app-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 0 10px;gap:10px}
 .gb-wrap{display:flex;align-items:center;gap:10px;min-width:0}
-.gb{width:72px;height:40px;background:url(assets/logo-gb-marca.png) center/cover no-repeat;border-radius:9px;border:1px solid #f5b70055;flex:none}
+.gb{width:72px;height:40px;background:url(assets/logo-gb-marca.png) center/cover no-repeat;border-radius:9px;border:1px solid #f5b70066;box-shadow:0 4px 12px #0008;flex:none}
 .gb-txt{min-width:0}
-.gb-txt b{display:block;font-family:var(--display);font-size:19px;letter-spacing:.4px;line-height:1}
-.gb-txt small{font-size:12px;color:var(--texto-2)}
+.gb-txt b{display:block;font-family:var(--display);font-size:20px;letter-spacing:.4px;line-height:1}
+.gb-txt small{font-size:11.5px;color:var(--texto-2)}
 .hdr-a{display:flex;gap:7px;align-items:center}
 
-/* Selector de moto estilo App */
-.moto-bar{width:100%;display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--pista);border:1px solid var(--linea);border-radius:var(--r-m);text-align:left}
-.moto-ic{width:36px;height:36px;border-radius:10px;background:var(--pista-2);display:grid;place-items:center;color:var(--oro);flex:none}
+/* MEJORA 2: Selector de Moto con Foto Real + Placa Peruana */
+.moto-bar{
+  width:100%;display:flex;align-items:center;gap:11px;padding:9px 11px;
+  background:linear-gradient(135deg,#1d222b,#15181f);
+  border:1px solid #353c4b;border-radius:16px;
+  box-shadow:inset 0 1px 0 var(--luz),0 8px 20px rgba(0,0,0,.35);
+  position:relative;
+}
+.moto-thumb{
+  width:64px;height:48px;border-radius:11px;object-fit:cover;
+  background:#181C22;border:1px solid #f5b70044;flex:none;
+}
 .moto-bar-info{flex:1;min-width:0}
-.moto-bar-info select{width:100%;font-weight:800;font-size:14px;color:var(--texto);background:transparent;outline:none;appearance:none}
+.moto-bar-top{display:flex;align-items:center;gap:6px}
+.moto-bar-info select{
+  font-weight:800;font-size:14px;color:var(--texto);
+  background:transparent;outline:none;width:100%;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  -webkit-appearance:none;-moz-appearance:none;appearance:none;
+}
 .moto-bar-info select option{background:var(--pista);color:var(--texto)}
-.moto-bar-info small{display:block;font-size:11.5px;color:var(--texto-2)}
-.moto-bar > svg{color:var(--texto-2);flex:none}
+.moto-meta{display:flex;align-items:center;gap:7px;margin-top:4px;flex-wrap:wrap}
+.plate-pe{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:1px 6px;border-radius:4px;
+  background:linear-gradient(180deg,#FFE14D,#F5B700);
+  color:#111;border:1.5px solid #000;box-shadow:0 0 0 1px #f5b70066;
+  font-family:var(--display);font-weight:900;font-size:12px;letter-spacing:.7px;line-height:1.1;
+}
+.plate-pe small{font-family:Manrope,sans-serif;font-size:8px;font-weight:800;letter-spacing:.2px;opacity:.85}
+.oil-tag{font-size:11px;color:var(--verde);font-weight:700}
 
-/* Tarjeta del Tacómetro estilo App */
-.track{margin-top:12px;padding:14px 16px 16px;border-radius:var(--r-l);position:relative;overflow:hidden;
-  background:radial-gradient(120% 90% at 50% 100%,#2a0b0d 0%,transparent 60%),var(--pista);border:1px solid var(--linea)}
+/* MEJORA 3: Tacómetro Interactivo con LED y Selector de Etapas */
+.track{
+  margin-top:12px;padding:14px 15px 15px;border-radius:var(--r-l);position:relative;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 100%,#300b0e 0%,transparent 62%),var(--pista);
+  border:1px solid var(--linea);box-shadow:inset 0 1px 0 var(--luz),0 12px 26px rgba(0,0,0,.4);
+}
 .track::before{content:"";position:absolute;inset:0;opacity:.05;pointer-events:none;
   background:repeating-linear-gradient(60deg,#fff 0 6px,transparent 6px 22px),repeating-linear-gradient(-60deg,#fff 0 6px,transparent 6px 22px);
   -webkit-mask:linear-gradient(180deg,#000,transparent 55%);mask:linear-gradient(180deg,#000,transparent 55%)}
 .track-h{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--texto-2);font-weight:600;position:relative;gap:8px}
-.eta{display:inline-flex;align-items:center;gap:4px;color:var(--oro);font-weight:700;white-space:nowrap}
-.eta svg{width:14px;height:14px}
-.gauge{display:block;width:220px;max-width:100%;margin:4px auto 0;overflow:visible}
-.g-track{fill:none;stroke:#262A33;stroke-width:12}
-.g-red{fill:none;stroke:var(--rojo);stroke-width:12;stroke-dasharray:0 80 20 100;opacity:.35}
-.g-fill{fill:none;stroke:url(#oroGrad);stroke-width:12;stroke-dasharray:75 100;transition:stroke-dasharray .45s ease}
+.eta{display:inline-flex;align-items:center;gap:4px;color:var(--oro);font-weight:700;white-space:nowrap;background:#f5b70017;border:1px solid #f5b70044;padding:3px 8px;border-radius:999px;font-size:11px}
+.eta svg{width:13px;height:13px}
+.gauge{display:block;width:224px;max-width:100%;margin:2px auto 0;overflow:visible}
+.g-track{fill:none;stroke:#262B36;stroke-width:12}
+.g-red{fill:none;stroke:var(--rojo);stroke-width:12;stroke-dasharray:0 80 20 100;opacity:.38}
+.g-fill{fill:none;stroke:url(#oroGrad);stroke-width:12;stroke-dasharray:75 100;transition:stroke-dasharray .45s ease;filter:drop-shadow(0 0 6px rgba(245,183,0,.35))}
 .g-tick{stroke:var(--texto-3);stroke-width:2.5;stroke-linecap:round}
 .g-tick.d{stroke:var(--oro)}
 .g-num{fill:var(--texto-3);font:800 13px var(--display);text-anchor:middle;dominant-baseline:middle}
 .g-num.d{fill:var(--texto)}
-.needle line{stroke:var(--rojo);stroke-width:4;stroke-linecap:round}
+.needle line{stroke:var(--rojo);stroke-width:4;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(227,32,27,.8))}
 .needle{transform:rotate(45deg);transform-origin:120px 118px;transition:transform .5s cubic-bezier(.2,.85,.25,1.12)}
 .hub{fill:var(--asfalto);stroke:var(--rojo);stroke-width:4}
-.stage{text-align:center;margin-top:4px;position:relative}
-.stage small{font-size:12px;color:var(--texto-2);font-weight:600}
-.stage strong{display:block;font-family:var(--display);font-weight:900;font-size:32px;line-height:1.05;letter-spacing:.3px}
-.stage p{font-size:12.5px;color:var(--texto-2);margin-top:2px}
-.track-a{display:flex;gap:8px;margin-top:12px;position:relative}
-.track-a .btn{flex:1;height:40px;font-size:13px}
-.track-a .wa-mini{background:#25d3661a;border:1px solid #25d36655;color:#57e88e}
+.stage{text-align:center;margin-top:2px;position:relative}
+.stage small{font-size:11.5px;color:var(--oro);font-weight:800;text-transform:uppercase;letter-spacing:.6px}
+.stage strong{display:block;font-family:var(--display);font-weight:900;font-size:32px;line-height:1.04;letter-spacing:.3px;margin-top:1px}
+.stage p{font-size:12px;color:var(--texto-2);margin-top:2px}
 
-/* Botón rojo Agendar Cita estilo App */
-.book{width:100%;display:flex;align-items:center;gap:12px;margin-top:12px;padding:13px 14px;border-radius:var(--r-m);background:linear-gradient(110deg,var(--rojo),#B5140F);color:#fff;box-shadow:0 8px 20px #e3201b33;text-align:left}
-.book-ic{width:40px;height:40px;border-radius:11px;background:#ffffff26;display:grid;place-items:center;flex:none}
+.tacho-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:10px;position:relative}
+.tacho-steps button{
+  padding:5px 2px;border-radius:8px;background:rgba(13,15,19,.55);
+  border:1px solid var(--linea);font-size:10px;font-weight:800;color:var(--texto-2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all .15s;
+}
+.tacho-steps button.on{background:var(--oro);color:#1a1300;border-color:var(--oro);box-shadow:0 0 12px rgba(245,183,0,.35)}
+
+.track-a{display:flex;gap:8px;margin-top:10px;position:relative}
+.track-a .btn{flex:1;height:40px;font-size:12.5px}
+.track-a .wa-mini{background:#25d3661f;border:1px solid #25d36666;color:#62f098}
+
+/* Botón rojo Agendar Cita */
+.book{width:100%;display:flex;align-items:center;gap:12px;margin-top:12px;padding:13px 14px;border-radius:var(--r-m);background:linear-gradient(110deg,var(--rojo),#AD110C);color:#fff;box-shadow:0 8px 22px #e3201b38,inset 0 1px 0 rgba(255,255,255,.22);text-align:left}
+.book-ic{width:40px;height:40px;border-radius:11px;background:#ffffff24;display:grid;place-items:center;flex:none}
 .book b{display:block;font-size:15.5px}
 .book small{font-size:12px;opacity:.92}
 .book > svg:last-child{margin-left:auto}
 
-/* Accesos rápidos 3 botones estilo App */
 .quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
-.quick button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 4px;border-radius:var(--r-m);background:var(--pista);border:1px solid var(--linea);font-size:12px;font-weight:700}
+.quick button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 4px;border-radius:var(--r-m);background:var(--pista);border:1px solid var(--linea);box-shadow:inset 0 1px 0 var(--luz);font-size:12px;font-weight:700}
 .quick svg{color:var(--oro)}
 
 .sec{display:flex;justify-content:space-between;align-items:baseline;margin:18px 0 10px}
 .sec h3{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:.3px}
 .sec button,.sec a{font-size:13px;font-weight:700;color:var(--oro)}
 
-/* Tarjetas de producto con foto real estilo App */
+/* MEJORA 3: Tarjetas de Repuesto con Acabado Vitrina (sin corte cuadrado) */
 .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.pc{background:var(--pista);border:1px solid var(--linea);border-radius:var(--r-m);padding:9px;display:flex;flex-direction:column;min-width:0;transition:border-color .15s}
-.pc:hover{border-color:#f5b70066}
-.pc .photo{height:110px;border-radius:10px;overflow:hidden;position:relative;background:#14171C}
-.pc .photo img{width:100%;height:100%;object-fit:cover;display:block}
-.tag{position:absolute;top:6px;left:6px;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:6px;background:#0E1014e0;color:var(--oro);border:1px solid #f5b70055}
+.pc{
+  background:linear-gradient(180deg,#1B2027 0%,#161A20 100%);
+  border:1px solid var(--linea);border-radius:16px;padding:9px;
+  display:flex;flex-direction:column;min-width:0;
+  box-shadow:inset 0 1px 0 var(--luz),0 6px 16px rgba(0,0,0,.28);
+  transition:transform .15s,border-color .15s;
+}
+.pc:hover{border-color:#f5b70066;transform:translateY(-2px)}
+.pc .photo{
+  height:114px;border-radius:11px;overflow:hidden;position:relative;
+  background:radial-gradient(65% 65% at 50% 50%,#252B35 0%,#171A20 100%);
+  cursor:pointer;
+}
+.pc .photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s ease}
+.pc:hover .photo img{transform:scale(1.04)}
+.tag{position:absolute;top:6px;left:6px;z-index:2;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:6px;background:rgba(13,15,19,.86);color:var(--oro);border:1px solid #f5b70055;backdrop-filter:blur(4px)}
 .tag.off{background:var(--rojo);color:#fff;border-color:var(--rojo)}
 .tag.low{background:var(--granate);color:#ffd2d0;border-color:var(--rojo)}
-.stk{position:absolute;bottom:5px;right:5px;font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:5px;background:#0E1014e0;color:var(--texto-2)}
+.stk{position:absolute;bottom:5px;right:5px;z-index:2;font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:5px;background:rgba(13,15,19,.86);color:var(--texto-2)}
 .pc .meta{display:flex;justify-content:space-between;gap:4px;font-size:9.5px;color:var(--texto-3);font-weight:700;margin:7px 1px 0;white-space:nowrap;overflow:hidden}
-.pc h4{font-size:12.5px;font-weight:700;line-height:1.22;margin:2px 1px 0;min-height:31px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pc h4{font-size:12.5px;font-weight:700;line-height:1.22;margin:2px 1px 0;min-height:31px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
 .ok{display:flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:var(--verde);margin:4px 1px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ok.uni{color:var(--oro-claro)}
 .ok svg{width:12px;height:12px;stroke-width:3}
-.pc-f{display:flex;justify-content:space-between;align-items:center;padding:0 1px;margin-top:auto;gap:4px}
-.pc-f .price{font-size:19px}
+.pc-f{display:flex;justify-content:space-between;align-items:center;padding:4px 1px 0;margin-top:auto;gap:4px;border-top:1px solid rgba(255,255,255,.05)}
+.pc-f .price{font-size:19.5px}
 .was{display:block;font-size:9.5px;color:var(--texto-3);text-decoration:line-through;line-height:1}
 .act-btns{display:flex;gap:5px;flex:none}
-.wa-ic{width:31px;height:31px;border-radius:9px;background:#25d3661f;border:1px solid #25d36666;color:var(--wa);display:grid;place-items:center}
+.wa-ic{width:32px;height:32px;border-radius:9px;background:#25d3661f;border:1px solid #25d36666;color:var(--wa);display:grid;place-items:center}
 .wa-ic svg{width:15px;height:15px}
-.add{width:31px;height:31px;border-radius:9px;background:var(--rojo);color:#fff;display:grid;place-items:center}
+.add{width:32px;height:32px;border-radius:9px;background:var(--rojo);color:#fff;display:grid;place-items:center;box-shadow:0 4px 10px rgba(227,32,27,.35)}
 .add svg{width:15px;height:15px;stroke-width:2.6}
 
-/* Buscador y filtros de Tienda estilo App */
+/* MEJORA 5: Tarjeta de Confianza Perú (Yape, Plin, Taller y Ubicación) */
+.trust-card{
+  margin-top:16px;padding:13px;border-radius:16px;
+  background:linear-gradient(145deg,#1A1F28,#14171E);
+  border:1px solid var(--linea);box-shadow:inset 0 1px 0 var(--luz);
+}
+.trust-top{display:flex;gap:11px;align-items:center}
+.trust-top img{width:64px;height:64px;border-radius:12px;object-fit:cover;border:1px solid #f5b70055;flex:none}
+.trust-top b{display:block;font-family:var(--display);font-size:19px;letter-spacing:.3px}
+.trust-top small{display:block;font-size:11.5px;color:var(--texto-2);line-height:1.35;margin-top:2px}
+.pay-badges{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:11px;padding-top:10px;border-top:1px solid var(--linea)}
+.pay-badges span.lbl-p{font-size:11px;color:var(--texto-2);font-weight:700;margin-right:auto}
+.p-chip{font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px}
+.p-chip.yape{background:#8B239B33;border:1px solid #b644c7;color:#f0baff}
+.p-chip.plin{background:#00B8D92b;border:1px solid #00c8eb;color:#9ef2ff}
+.p-chip.cash{background:#3ddc8422;border:1px solid #3ddc8466;color:#8ff5b9}
+.p-chip.card{background:#f5b70022;border:1px solid #f5b70066;color:var(--oro-claro)}
+
+/* Buscador y filtros de Tienda */
 .hdr3{display:flex;align-items:center;gap:8px;padding:12px 0 10px}
 .hdr3 h3{font-family:var(--display);font-weight:800;font-size:25px;flex:1;letter-spacing:.3px}
 .search{display:flex;align-items:center;gap:8px;height:44px;padding:0 13px;border-radius:12px;background:var(--pista);border:1px solid var(--linea);color:var(--texto-2)}
@@ -151,37 +218,37 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
 .cats button{flex:none;height:33px;padding:0 13px;border-radius:17px;font-size:12.5px;font-weight:700;background:var(--pista);border:1px solid var(--linea);color:var(--texto-2)}
 .cats button.on{background:var(--oro);color:#1a1300;border-color:var(--oro)}
 
-/* Carrito y Venta por WhatsApp estilo App */
-.wa-banner{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:var(--r-m);background:linear-gradient(120deg,#0f291a,#13221c);border:1px solid #25d36655;margin-bottom:10px}
-.wa-banner .ic{width:36px;height:36px;border-radius:10px;background:#25D366;color:#061a0e;display:grid;place-items:center;flex:none}
+/* Carrito y Venta por WhatsApp */
+.wa-banner{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-m);background:linear-gradient(120deg,#0f291a,#13221c);border:1px solid #25d36655;margin-bottom:9px}
+.wa-banner .ic{width:35px;height:35px;border-radius:10px;background:#25D366;color:#061a0e;display:grid;place-items:center;flex:none}
 .wa-banner b{display:block;font-size:13px;color:#7bf1a8}
-.wa-banner small{font-size:11.5px;color:var(--texto-2);line-height:1.3;display:block}
-.c-list{display:flex;flex-direction:column;gap:8px}
-.c-item{display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;background:var(--pista);border:1px solid var(--linea)}
-.c-item img{width:52px;height:52px;border-radius:9px;object-fit:cover;background:#14171c;flex:none}
+.wa-banner small{font-size:11px;color:var(--texto-2);line-height:1.25;display:block}
+.c-list{display:flex;flex-direction:column;gap:7px}
+.c-item{display:flex;align-items:center;gap:10px;padding:7px 9px;border-radius:12px;background:var(--pista);border:1px solid var(--linea)}
+.c-item img{width:48px;height:48px;border-radius:9px;object-fit:cover;background:#14171c;flex:none}
 .c-info{flex:1;min-width:0}
-.c-info small{font-size:10px;color:var(--texto-3);font-weight:700;display:block}
-.c-info b{font-size:12.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.c-info .price{font-size:18px}
-.qty{display:flex;align-items:center;gap:6px;background:var(--pista-2);border:1px solid var(--linea);border-radius:9px;padding:3px 5px;flex:none}
-.qty button{width:24px;height:24px;border-radius:6px;background:var(--asfalto);display:grid;place-items:center;font-weight:800;font-size:14px}
-.qty span{font-size:13px;font-weight:800;min-width:15px;text-align:center}
+.c-info small{font-size:9.5px;color:var(--texto-3);font-weight:700;display:block}
+.c-info b{font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-info .price{font-size:17.5px}
+.qty{display:flex;align-items:center;gap:6px;background:var(--pista-2);border:1px solid var(--linea);border-radius:9px;padding:2px 5px;flex:none}
+.qty button{width:23px;height:23px;border-radius:6px;background:var(--asfalto);display:grid;place-items:center;font-weight:800;font-size:13px}
+.qty span{font-size:12.5px;font-weight:800;min-width:14px;text-align:center}
 .deliv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-.deliv button{padding:10px;border-radius:12px;background:var(--pista);border:1px solid var(--linea);text-align:left}
+.deliv button{padding:9px 10px;border-radius:12px;background:var(--pista);border:1px solid var(--linea);text-align:left}
 .deliv button.on{border-color:var(--oro);background:#f5b70014}
 .deliv button b{display:block;font-size:12.5px;color:var(--texto)}
-.deliv button small{font-size:11px;color:var(--texto-2)}
-.install-chk{display:flex;align-items:center;gap:9px;margin-top:8px;padding:10px 12px;border-radius:12px;background:var(--pista);border:1px solid var(--linea);font-size:12.5px;width:100%;text-align:left}
-.install-chk i.box{width:19px;height:19px;border-radius:5px;background:var(--oro);color:#1a1300;display:grid;place-items:center;font-weight:900;font-size:12px;font-style:normal;flex:none}
-.wa-preview{margin-top:8px;padding:9px 11px;border-radius:12px;background:#0b1811;border:1px solid #25d36644}
-.wa-preview .wh{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:800;color:#57e88e;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
-.wa-preview pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;color:#d8e8dd;font-size:11px;line-height:1.36;max-height:74px;overflow-y:auto}
-.cta-wa-box{margin-top:9px;padding:10px 12px;border-radius:var(--r-m);background:#0A0B0E;border:1px solid var(--linea)}
-.cta-wa-box .tot-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.deliv button small{font-size:10.5px;color:var(--texto-2)}
+.install-chk{display:flex;align-items:center;gap:9px;margin-top:8px;padding:9px 11px;border-radius:12px;background:var(--pista);border:1px solid var(--linea);font-size:12px;width:100%;text-align:left}
+.install-chk i.box{width:18px;height:18px;border-radius:5px;background:var(--oro);color:#1a1300;display:grid;place-items:center;font-weight:900;font-size:12px;font-style:normal;flex:none}
+.wa-preview{margin-top:8px;padding:8px 11px;border-radius:12px;background:#0b1811;border:1px solid #25d36644}
+.wa-preview .wh{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:800;color:#57e88e;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
+.wa-preview pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;color:#d8e8dd;font-size:11px;line-height:1.35;max-height:66px;overflow-y:auto}
+.cta-wa-box{margin-top:8px;padding:10px 12px;border-radius:var(--r-m);background:#0A0B0E;border:1px solid var(--linea)}
+.cta-wa-box .tot-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
 .cta-wa-box .tot-row span{font-size:12px;color:var(--texto-2)}
 .cta-wa-box .btn.wa{width:100%;height:44px;font-size:14px}
 
-/* Orden de Taller y Citas estilo App */
+/* Orden de Taller y Citas */
 .sub-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px;background:var(--pista);border:1px solid var(--linea);border-radius:12px;margin-bottom:12px}
 .sub-tabs button{height:36px;border-radius:9px;font-size:12.5px;font-weight:800;color:var(--texto-2)}
 .sub-tabs button.on{background:var(--oro);color:#1a1300}
@@ -210,7 +277,7 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
 .ln{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--texto-2);padding:4px 0;font-variant-numeric:tabular-nums}
 .ln.tot{border-top:1px dashed var(--linea);margin-top:6px;padding-top:8px;color:var(--texto);font-weight:700}
 
-/* Formulario Agendar Cita estilo App */
+/* Formulario Agendar Cita */
 .svc-card{display:flex;align-items:center;gap:11px;padding:11px;border-radius:var(--r-m);background:var(--pista);border:1px solid var(--linea);margin-bottom:8px;text-align:left;width:100%}
 .svc-card.on{border-color:var(--oro);background:#f5b70012}
 .svc-ic{width:38px;height:38px;border-radius:10px;background:var(--pista-2);display:grid;place-items:center;color:var(--oro);flex:none}
@@ -230,11 +297,57 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
 .slots button.on{background:var(--oro);border-color:var(--oro);color:#1a1300}
 .slots button.off{color:var(--texto-3);text-decoration:line-through;background:transparent;border-style:dashed;pointer-events:none}
 
+/* ==========================================================================
+   MEJORA 1: FICHA DESLIZABLE DE PRODUCTO (BOTTOM SHEET / MODAL)
+   ========================================================================== */
+.sheet-backdrop{
+  position:fixed;inset:0;z-index:110;background:rgba(5,7,10,.76);
+  backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .22s ease;
+  display:flex;align-items:flex-end;justify-content:center;
+}
+.sheet-backdrop.open{opacity:1;pointer-events:auto}
+.sheet{
+  width:100%;max-width:480px;background:linear-gradient(180deg,#1D222B,#13161C);
+  border-top:1px solid #3c4454;border-radius:24px 24px 0 0;
+  padding:14px 18px calc(22px + env(safe-area-inset-bottom,0px));
+  box-shadow:0 -18px 50px #000d;transform:translateY(100%);
+  transition:transform .26s cubic-bezier(.2,.9,.25,1);
+}
+.sheet-backdrop.open .sheet{transform:translateY(0)}
+.sheet-handle{width:42px;height:4px;border-radius:2px;background:#454d5e;margin:0 auto 12px}
+.sheet-top{display:flex;gap:14px;align-items:center}
+.sheet-top img{width:112px;height:112px;border-radius:16px;object-fit:cover;background:#171A20;border:1px solid #f5b70055;flex:none}
+.sheet-info{flex:1;min-width:0}
+.sheet-info .s-sku{font-size:11px;color:var(--oro);font-weight:800}
+.sheet-info h3{font-family:var(--display);font-size:26px;font-weight:900;line-height:1.05;margin:3px 0 6px}
+.sheet-specs{margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(13,15,19,.55);border:1px solid var(--linea);font-size:12px;color:var(--texto-2);line-height:1.5}
+.sheet-specs b{color:var(--texto)}
+.sheet-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+
+/* ==========================================================================
+   MEJORA 4: NOTIFICACIÓN TOAST DEPORTIVA AL AGREGAR AL CARRITO
+   ========================================================================== */
+.toast{
+  position:fixed;left:50%;bottom:74px;z-index:100;
+  transform:translate(-50%,20px);opacity:0;pointer-events:none;
+  width:calc(100% - 26px);max-width:420px;
+  display:flex;align-items:center;gap:10px;padding:9px 12px;
+  border-radius:14px;background:linear-gradient(135deg,#182b20,#121720);
+  border:1px solid #25d36688;box-shadow:0 14px 34px rgba(0,0,0,.75);
+  transition:all .22s cubic-bezier(.2,.9,.3,1);
+}
+.toast.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
+.toast img{width:36px;height:36px;border-radius:8px;object-fit:cover;flex:none}
+.toast div{flex:1;min-width:0}
+.toast small{display:block;font-size:10px;color:#6df09f;font-weight:800}
+.toast b{display:block;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toast button{padding:6px 10px;border-radius:8px;background:var(--oro);color:#1a1300;font-size:11.5px;font-weight:800;white-space:nowrap}
+
 /* Barra de navegación inferior fija estilo App */
 .app-tabbar{
   position:fixed;left:0;right:0;bottom:0;z-index:80;
   display:flex;justify-content:space-around;
-  background:#0A0B0Ef5;backdrop-filter:blur(12px);
+  background:#090B0Ef5;backdrop-filter:blur(12px);
   border-top:1px solid var(--linea);
   padding:7px 6px calc(10px + env(safe-area-inset-bottom, 0px));
 }
@@ -252,15 +365,14 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
   position:absolute;top:0;right:12px;min-width:16px;height:16px;
   padding:0 4px;border-radius:8px;background:var(--rojo);color:#fff;
   font-size:9.5px;font-weight:800;display:grid;place-items:center;
+  transition:transform .25s cubic-bezier(.2,1.4,.4,1);
 }
 
 /* ==========================================================================
    COMPORTAMIENTO MÓVIL VS ESCRITORIO
-   En Móvil (<= 960px): Interfaz idéntica a la App con navegación por pestañas
-   En Escritorio (> 960px): Muestra barra superior + las secciones en dashboard
    ========================================================================== */
 .desk-topbar{display:none}
-.app-shell{max-width:480px;margin:0 auto;padding:4px 15px 90px}
+.app-shell{max-width:480px;margin:0 auto;padding:4px 15px 92px}
 .app-screen{display:none}
 .app-screen.active{display:block;animation:fadeIn .18s ease}
 @keyframes fadeIn{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
@@ -268,6 +380,9 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
 @media (min-width:961px){
   .app-tabbar{display:none}
   .app-hdr{display:none}
+  .toast{bottom:24px}
+  .sheet-backdrop{align-items:center}
+  .sheet{border-radius:22px;border:1px solid #3c4454}
   .desk-topbar{
     display:block;position:sticky;top:0;z-index:60;
     background:#0b0d11eb;backdrop-filter:blur(14px);border-bottom:1px solid var(--linea);
@@ -283,31 +398,18 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
   .app-shell{
     max-width:1440px;padding:24px 28px 60px;
     display:grid;
-    grid-template-columns:360px minmax(0,1fr) 360px;
+    grid-template-columns:365px minmax(0,1fr) 365px;
     gap:22px;
     align-items:start;
   }
   .app-screen{display:block !important;background:var(--asfalto)}
-  #scr-inicio{
+  #scr-inicio,#scr-tienda,#scr-pedido,#scr-taller{
     background:var(--pista);border:1px solid var(--linea);
     border-radius:22px;padding:16px;
-  }
-  #scr-inicio .track{background:radial-gradient(120% 90% at 50% 100%,#2a0b0d 0%,transparent 60%),var(--asfalto)}
-  #scr-inicio .moto-bar,#scr-inicio .quick button,#scr-inicio .pc{background:var(--asfalto)}
-  #scr-tienda{
-    background:var(--pista);border:1px solid var(--linea);
-    border-radius:22px;padding:18px;
   }
   #scr-tienda .grid-2{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-  #scr-tienda .pc,#scr-tienda .search,#scr-tienda .cats button:not(.on){background:var(--asfalto)}
-  #scr-tienda .pc .photo{height:130px}
+  #scr-tienda .pc .photo{height:132px}
   .desk-right-col{display:flex;flex-direction:column;gap:22px}
-  #scr-pedido,#scr-taller{
-    background:var(--pista);border:1px solid var(--linea);
-    border-radius:22px;padding:16px;
-  }
-  #scr-pedido .c-item,#scr-pedido .deliv button:not(.on),#scr-pedido .install-chk{background:var(--asfalto)}
-  #scr-taller .sum,#scr-taller .quote,#scr-taller .svc-card:not(.on),#scr-taller .days button:not(.on),#scr-taller .slots button:not(.on){background:var(--asfalto)}
 }
 </style>
 </head>
@@ -320,7 +422,7 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
       <div class="gb" role="img" aria-label="Logo GB"></div>
       <div class="gb-txt">
         <b style="font-size:23px">TALLER Y VENTA DE REPUESTOS</b>
-        <small style="color:var(--oro);font-weight:700">MECÁNICA · REPUESTOS · ACCESORIOS</small>
+        <small style="color:var(--oro);font-weight:700">MECÁNICA · REPUESTOS · ACCESORIOS · PERÚ</small>
       </div>
     </div>
     <nav class="desk-nav">
@@ -337,17 +439,16 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
   </div>
 </header>
 
-<!-- CONTENEDOR PRINCIPAL: EN MÓVIL ES LA APP NATIVA POR PESTAÑAS, EN PC ES DASHBOARD -->
 <main class="app-shell">
 
   <!-- ====================================================================
-       PANTALLA 1 · INICIO (IDÉNTICA A LA APP)
+       PANTALLA 1 · INICIO
        ==================================================================== -->
   <section class="app-screen active" id="scr-inicio">
     <header class="app-hdr">
       <div class="gb-wrap">
         <div class="gb" role="img" aria-label="Logo GB"></div>
-        <div class="gb-txt"><b>TALLER Y REPUESTOS</b><small>Hola, Carlos</small></div>
+        <div class="gb-txt"><b>TALLER Y REPUESTOS</b><small>Hola, Carlos · Lima, PE</small></div>
       </div>
       <div class="hdr-a">
         <button class="ib" onclick="switchTab('taller')" aria-label="Notificaciones"><i data-i="bell"></i><span class="dot"></span></button>
@@ -355,23 +456,30 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
       </div>
     </header>
 
+    <!-- MEJORA 2: Selector de Moto con Foto Real + Placa Peruana -->
     <div class="moto-bar">
-      <span class="moto-ic"><i data-i="bike"></i></span>
+      <img class="moto-thumb" id="motoThumb" src="assets/motos/msx-125.jpg" alt="Mi Moto">
       <div class="moto-bar-info">
-        <select id="motoSelect" onchange="changeMoto()">
-          <option value="Honda MSX 125 (Placa ABC-123)">Honda MSX 125 (Grom)</option>
-          <option value="Yamaha NMAX 155 (Placa 4582-JM)">Yamaha NMAX 155</option>
-          <option value="Bajaj Pulsar NS 200 (Placa 9104-KP)">Bajaj Pulsar NS 200</option>
-        </select>
-        <small id="motoSub">Placa ABC-123 · 18.400 km</small>
+        <div class="moto-bar-top">
+          <select id="motoSelect" onchange="changeMoto()">
+            <option value="msx">Honda MSX 125 (Grom)</option>
+            <option value="nmax">Yamaha NMAX 155 Connected</option>
+            <option value="pulsar">Bajaj Pulsar NS 200 FI</option>
+          </select>
+        </div>
+        <div class="moto-meta">
+          <span class="plate-pe"><small>PERÚ</small> <span id="motoPlate">ABC-123</span></span>
+          <span class="oil-tag" id="motoKm">● 18.400 km · Aceite OK</span>
+        </div>
       </div>
       <i data-i="down"></i>
     </div>
 
+    <!-- MEJORA 3: Tacómetro Interactivo con selector de 5 etapas -->
     <section class="track" aria-label="Estado de tu moto">
       <div class="track-h"><span>Orden #0231 · Mecánico: Andrés</span><span class="eta"><i data-i="clock"></i>Hoy 5:00 pm</span></div>
       <svg class="gauge" viewBox="0 0 240 128" aria-hidden="true">
-        <defs><linearGradient id="oroGrad" x1="0" x2="1"><stop offset="0" stop-color="#F5B700"/><stop offset="1" stop-color="#FFD86B"/></linearGradient></defs>
+        <defs><linearGradient id="oroGrad" x1="0" x2="1"><stop offset="0" stop-color="#F5B700"/><stop offset="1" stop-color="#FFE07D"/></linearGradient></defs>
         <path class="g-track" d="M24 118 A96 96 0 0 1 216 118" pathLength="100"/>
         <path class="g-red"   d="M24 118 A96 96 0 0 1 216 118" pathLength="100"/>
         <path class="g-fill"  id="gaugeFill" d="M24 118 A96 96 0 0 1 216 118" pathLength="100"/>
@@ -385,16 +493,28 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
         <text class="g-num d" x="120" y="60">3</text>
         <text class="g-num d" x="161" y="77">4</text>
         <text class="g-num"   x="180" y="116">5</text>
-        <g class="needle" id="gaugeNeedle"><line x1="120" y1="118" x2="120" y2="44"/></g>
+        <g class="needle" id="gaugeNeedle">
+          <line x1="120" y1="118" x2="120" y2="44"/>
+          <circle cx="120" cy="46" r="3" fill="#FFD86B"/>
+        </g>
         <circle class="hub" cx="120" cy="118" r="8"/>
       </svg>
       <div class="stage">
         <small id="stStep">Paso 4 de 5 · En taller</small>
         <strong id="stTitle">En reparación</strong>
-        <p id="stDesc">Instalando kit de arrastre DID 428</p>
+        <p id="stDesc">Instalando kit de arrastre DID 428 Oro</p>
       </div>
+
+      <div class="tacho-steps" id="tachoSteps">
+        <button onclick="setOrderStage(1)">1. Ingreso</button>
+        <button onclick="setOrderStage(2)">2. Revisión</button>
+        <button onclick="setOrderStage(3)">3. Aprobada</button>
+        <button class="on" onclick="setOrderStage(4)">4. Taller</button>
+        <button onclick="setOrderStage(5)">5. ¡Lista!</button>
+      </div>
+
       <div class="track-a">
-        <button class="btn ghost" onclick="openTallerMode('orden')">Ver orden</button>
+        <button class="btn ghost" onclick="openTallerMode('orden')">Ver fotos y orden</button>
         <a class="btn wa-mini" href="https://wa.me/51960628745?text=Hola%20Taller%20GB,%20quiero%20consultar%20por%20la%20Orden%20%230231%20de%20mi%20moto" target="_blank"><i data-i="wa"></i>WhatsApp taller</a>
       </div>
     </section>
@@ -411,12 +531,30 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
       <button onclick="openTallerMode('orden')"><i data-i="hist"></i>Mi Orden</button>
     </div>
 
-    <div class="sec"><h3>Repuestos para tu moto</h3><button onclick="switchTab('tienda')">Ver los 8 →</button></div>
+    <div class="sec"><h3>Destacados para tu moto</h3><button onclick="switchTab('tienda')">Ver los 8 →</button></div>
     <div class="grid-2" id="homeFeaturedGrid"></div>
+
+    <!-- MEJORA 5: Sello de Confianza Perú (Taller Real + Yape / Plin) -->
+    <div class="trust-card">
+      <div class="trust-top">
+        <img src="assets/motos/taller-box.jpg" alt="Box Taller GB">
+        <div>
+          <b>TALLER Y TIENDA OFICIAL GB</b>
+          <small>Lun a Sáb: 8:30 am – 7:00 pm · Garantía en mano de obra y repuestos verificados.</small>
+        </div>
+      </div>
+      <div class="pay-badges">
+        <span class="lbl-p">Pagas en taller con:</span>
+        <span class="p-chip yape">● Yape</span>
+        <span class="p-chip plin">● Plin</span>
+        <span class="p-chip cash">Efectivo</span>
+        <span class="p-chip card">Transferencia</span>
+      </div>
+    </div>
   </section>
 
   <!-- ====================================================================
-       PANTALLA 2 · TIENDA DE REPUESTOS E INVENTARIO REAL (IDÉNTICA A LA APP)
+       PANTALLA 2 · TIENDA DE REPUESTOS E INVENTARIO REAL
        ==================================================================== -->
   <section class="app-screen" id="scr-tienda">
     <header class="hdr3">
@@ -452,7 +590,7 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
   <div class="desk-right-col">
 
     <!-- ==================================================================
-         PANTALLA 3 · PEDIDO DIRECTO POR WHATSAPP (IDÉNTICA A LA APP)
+         PANTALLA 3 · PEDIDO DIRECTO POR WHATSAPP
          ================================================================== -->
     <section class="app-screen" id="scr-pedido">
       <header class="hdr3">
@@ -464,14 +602,14 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
       <div class="wa-banner">
         <span class="ic"><i data-i="wa"></i></span>
         <div>
-          <b>Compra rápida por WhatsApp</b>
-          <small>Apartamos tus repuestos al instante y pagas al recoger o contra entrega.</small>
+          <b>Reserva inmediata por WhatsApp</b>
+          <small>Apartamos tus repuestos y pagas con <b>Yape, Plin o Efectivo</b> al recoger o recibir.</small>
         </div>
       </div>
 
       <div class="c-list" id="cartList"></div>
 
-      <div class="sec"><h3>¿Cómo lo recibes?</h3></div>
+      <div class="sec" style="margin:12px 0 6px"><h3>¿Cómo lo recibes?</h3></div>
       <div class="deliv">
         <button class="on" id="delPickup" onclick="setDelivery('Recoger en taller GB')">
           <b>Recoger en taller</b>
@@ -479,7 +617,7 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
         </button>
         <button id="delHome" onclick="setDelivery('Envío a domicilio')">
           <b>Envío a domicilio</b>
-          <small>Mensajero local</small>
+          <small>Delivery rápido</small>
         </button>
       </div>
 
@@ -495,7 +633,7 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
 
       <div class="cta-wa-box">
         <div class="tot-row">
-          <span>Total estimado (pagas en taller/entrega)</span>
+          <span>Total estimado (Yape / Plin / Efectivo)</span>
           <b class="price" id="cartTotal">S/ 195</b>
         </div>
         <a class="btn wa" id="waSendBtn" href="#" target="_blank">
@@ -505,7 +643,7 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
     </section>
 
     <!-- ==================================================================
-         PANTALLA 4 · ORDEN DE TALLER Y AGENDAR CITA (IDÉNTICA A LA APP)
+         PANTALLA 4 · ORDEN DE TALLER Y AGENDAR CITA
          ================================================================== -->
     <section class="app-screen" id="scr-taller">
       <header class="hdr3">
@@ -607,7 +745,43 @@ svg.i{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke
 
 </main>
 
-<!-- BARRA INFERIOR FIJA DE 4 PESTAÑAS (IDÉNTICA A LA APP EN MÓVIL) -->
+<!-- MEJORA 1: FICHA DESLIZABLE DE DETALLE DEL REPUESTO (BOTTOM SHEET) -->
+<div class="sheet-backdrop" id="prodSheet" onclick="if(event.target===this)closeSheet()">
+  <div class="sheet" role="dialog" aria-modal="true">
+    <div class="sheet-handle"></div>
+    <div class="sheet-top">
+      <img id="shImg" src="assets/productos/disco-freno.jpg" alt="">
+      <div class="sheet-info">
+        <span class="s-sku" id="shBrandSku">HONDA OEM · GB-FR-014</span>
+        <h3 id="shName">Disco de freno delantero Wave 220mm</h3>
+        <div style="display:flex;align-items:baseline;gap:10px">
+          <b class="price" id="shPrice" style="font-size:28px">S/ 95</b>
+          <span class="ok" id="shStock" style="margin:0">✓ 6 disponibles en taller</span>
+        </div>
+      </div>
+    </div>
+    <div class="sheet-specs">
+      <div><b>Especificación:</b> <span id="shSpec">Acero inoxidable SUS420 ventilado · 220mm · 4 pernos OEM.</span></div>
+      <div style="margin-top:4px"><b>Compatibilidad verificada:</b> <span id="shModels">Honda MSX 125 (Grom), CB 125F Twister, Navi 110.</span></div>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn primary" id="shAddBtn"><i data-i="plus"></i>Agregar al pedido</button>
+      <a class="btn wa" id="shWaBtn" href="#" target="_blank"><i data-i="wa"></i>Pedir por WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<!-- MEJORA 4: NOTIFICACIÓN TOAST DEPORTIVA AL AGREGAR AL CARRITO -->
+<div class="toast" id="cartToast">
+  <img id="toastImg" src="assets/productos/disco-freno.jpg" alt="">
+  <div>
+    <small>✓ AGREGADO AL PEDIDO #GB-1042</small>
+    <b id="toastTitle">Disco de freno delantero Wave</b>
+  </div>
+  <button onclick="switchTab('pedido')">Ver pedido →</button>
+</div>
+
+<!-- BARRA INFERIOR FIJA DE 4 PESTAÑAS -->
 <nav class="app-tabbar" aria-label="Navegación principal">
   <button class="on" id="nav-inicio" onclick="switchTab('inicio')">
     <i data-i="home"></i><span>Inicio</span>
@@ -645,23 +819,39 @@ const P={
  wa:'<path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/>'
 };
 
+const MOTOS = {
+  msx:{name:'Honda MSX 125 (Grom)', short:'MSX 125', fullShort:'Honda MSX 125', plate:'ABC-123', km:'● 18.400 km · Aceite OK', img:'assets/motos/msx-125.jpg'},
+  nmax:{name:'Yamaha NMAX 155 Connected', short:'NMAX 155', fullShort:'Yamaha NMAX 155', plate:'4582-JM', km:'● 12.100 km · Frenos OK', img:'assets/motos/nmax-155.jpg'},
+  pulsar:{name:'Bajaj Pulsar NS 200 FI', short:'NS 200', fullShort:'Pulsar NS 200', plate:'9104-KP', km:'● 24.600 km · Toca afinamiento', img:'assets/motos/pulsar-200.jpg'}
+};
+
 const INVENTORY = [
-  {id:'disco', sku:'GB-FR-014', brand:'Honda OEM', name:'Disco de freno delantero Wave 220mm', cat:'Frenos', price:95, stock:6, tag:'Original', tagType:'', fit:true, fitLabel:'Sirve a tu moto', img:'assets/productos/disco-freno.jpg'},
-  {id:'kit', sku:'GB-TR-008', brand:'DID Racing', name:'Kit de arrastre 428 Oro (Cadena + Catalina)', cat:'Transmisión', price:185, stock:4, tag:'Más vendido', tagType:'', fit:true, fitLabel:'Sirve a tu moto', img:'assets/productos/kit-arrastre.jpg'},
-  {id:'pastillas', sku:'GB-FR-029', brand:'Brembo', name:'Pastillas de freno sinterizadas cobre', cat:'Frenos', price:55, was:65, stock:11, tag:'-15%', tagType:'off', fit:true, fitLabel:'Sirve a tu moto', img:'assets/productos/pastillas-freno.jpg'},
-  {id:'aceite', sku:'GB-MT-003', brand:'Motul 7100', name:'Aceite 4T 10W-40 100% Sintético 1L', cat:'Motor', price:45, stock:24, tag:'4 Tiempos', tagType:'', fit:true, fitLabel:'Universal 4T', uni:true, img:'assets/productos/aceite-4t.jpg'},
-  {id:'bujia', sku:'GB-EL-019', brand:'NGK Iridium', name:'Bujía de Iridio Laser CR8EIX', cat:'Eléctrico', price:48, stock:9, tag:'Iridio', tagType:'', fit:true, fitLabel:'Sirve a tu moto', img:'assets/productos/bujia-iridio.jpg'},
-  {id:'casco', sku:'GB-AC-041', brand:'Shaft Pro', name:'Casco Integral Sport Mate Negro/Rojo', cat:'Accesorios', price:260, stock:3, tag:'DOT / ECE', tagType:'', fit:true, fitLabel:'Tallas M · L', uni:true, img:'assets/productos/casco-integral.jpg'},
-  {id:'bateria', sku:'GB-EL-005', brand:'Yuasa AGM', name:'Batería 12V 5Ah Libre Mantenimiento', cat:'Eléctrico', price:120, stock:5, tag:'Garantía 6M', tagType:'', fit:true, fitLabel:'Sirve a tu moto', img:'assets/productos/bateria-agm.jpg'},
-  {id:'shock', sku:'GB-SU-012', brand:'YSS Racing', name:'Amortiguador Monoshock gas regulable', cat:'Suspensión', price:320, stock:2, tag:'¡Últimos 2!', tagType:'low', fit:true, fitLabel:'Sirve a tu moto', img:'assets/productos/amortiguador.jpg'}
+  {id:'disco', sku:'GB-FR-014', brand:'Honda OEM', name:'Disco de freno delantero Wave 220mm', cat:'Frenos', price:95, stock:6, tag:'Original', tagType:'', fit:true, fitLabel:'Sirve a tu moto', img:'assets/productos/disco-freno.jpg', spec:'Acero inoxidable SUS420 ventilado · 220mm · 4 pernos OEM.', models:'Honda MSX 125 (Grom), CB 125F Twister, XR 150L.'},
+  {id:'kit', sku:'GB-TR-008', brand:'DID Racing', name:'Kit de arrastre 428 Oro (Cadena + Catalina)', cat:'Transmisión', price:185, stock:4, tag:'Más vendido', tagType:'', fit:true, fitLabel:'Sirve a tu moto', img:'assets/productos/kit-arrastre.jpg', spec:'Cadena reforzada 428HD dorada 120 eslabones + Catalina 34T + Piñón 15T.', models:'Honda MSX 125, CB 125F, Yamaha YB 125, Pulsar 135.'},
+  {id:'pastillas', sku:'GB-FR-029', brand:'Brembo', name:'Pastillas de freno sinterizadas cobre', cat:'Frenos', price:55, was:65, stock:11, tag:'-15%', tagType:'off', fit:true, fitLabel:'Sirve a tu moto', img:'assets/productos/pastillas-freno.jpg', spec:'Compuesto sinterizado HH de alto agarre en seco y mojado (par).', models:'Honda MSX 125, Yamaha NMAX 155, Bajaj Pulsar NS 200.'},
+  {id:'aceite', sku:'GB-MT-003', brand:'Motul 7100', name:'Aceite 4T 10W-40 100% Sintético 1L', cat:'Motor', price:45, stock:24, tag:'4 Tiempos', tagType:'', fit:true, fitLabel:'Universal 4T', uni:true, img:'assets/productos/aceite-4t.jpg', spec:'100% Sintético con tecnología Ester · Norma JASO MA2 / API SN (1 Litro).', models:'Todas las motocicletas de 4 Tiempos (Honda, Yamaha, Bajaj, KTM).'},
+  {id:'bujia', sku:'GB-EL-019', brand:'NGK Iridium', name:'Bujía de Iridio Laser CR8EIX', cat:'Eléctrico', price:48, stock:9, tag:'Iridio', tagType:'', fit:true, fitLabel:'Sirve a tu moto', img:'assets/productos/bujia-iridio.jpg', spec:'Electrodo central de Iridio soldado con láser 0.6mm · Arranque en frío inmediato.', models:'Honda MSX 125, Yamaha NMAX 155, Pulsar NS 200, FZ 16.'},
+  {id:'casco', sku:'GB-AC-041', brand:'Shaft Pro', name:'Casco Integral Sport Mate Negro/Rojo', cat:'Accesorios', price:260, stock:3, tag:'DOT / ECE', tagType:'', fit:true, fitLabel:'Tallas M · L', uni:true, img:'assets/productos/casco-integral.jpg', spec:'Certificación ECE 22.06 y DOT · Visor iridium + interior desmontable lavable.', models:'Tallas disponibles en tienda: M (57-58 cm) y L (59-60 cm).'},
+  {id:'bateria', sku:'GB-EL-005', brand:'Yuasa AGM', name:'Batería 12V 5Ah Libre Mantenimiento', cat:'Eléctrico', price:120, stock:5, tag:'Garantía 6M', tagType:'', fit:true, fitLabel:'Sirve a tu moto', img:'assets/productos/bateria-agm.jpg', spec:'Tecnología AGM sellada activada de fábrica · 12V 5Ah CCA 85A.', models:'Honda MSX 125, Yamaha NMAX 155, Pulsar NS 200, AKT 125.'},
+  {id:'shock', sku:'GB-SU-012', brand:'YSS Racing', name:'Amortiguador Monoshock gas regulable', cat:'Suspensión', price:320, stock:2, tag:'¡Últimos 2!', tagType:'low', fit:true, fitLabel:'Sirve a tu moto', img:'assets/productos/amortiguador.jpg', spec:'Monoshock hidráulico con botella de nitrógeno anodizada en oro y precarga regulable.', models:'Honda MSX 125 (Grom), Pulsar NS 200.'}
 ];
+
+const STAGES = {
+  1:{ang:-72, fill:20, step:'Paso 1 de 5 · Ingreso', title:'Recibida en taller', desc:'Moto registrada en recepción. Asignada al mecánico Andrés.'},
+  2:{ang:-36, fill:40, step:'Paso 2 de 5 · Revisión', title:'En diagnóstico', desc:'Revisando desgaste de transmisión, frenos y nivel de aceite.'},
+  3:{ang:0,   fill:60, step:'Paso 3 de 5 · Presupuesto', title:'Cotización aprobada', desc:'Presupuesto de S/ 280 aprobado por WhatsApp.'},
+  4:{ang:45,  fill:75, step:'Paso 4 de 5 · En taller', title:'En reparación', desc:'Instalando kit de arrastre DID 428 Oro.'},
+  5:{ang:82,  fill:100,step:'Paso 5 de 5 · Terminada', title:'¡Lista para recoger!', desc:'Pasó prueba de ruta. Puedes recogerla en Taller GB.'}
+};
 
 let currentCat = 'Todo';
 let onlyMyMoto = true;
+let currentMotoKey = 'msx';
 let selectedMoto = 'Honda MSX 125 (Placa ABC-123)';
 let deliveryMode = 'Recoger en taller GB';
 let wantInstall = true;
 let cart = { disco: 1, pastillas: 1, aceite: 1 };
+let toastTimer = null;
 
 let citaService = 'Mantenimiento general completo';
 let citaPrice = 120;
@@ -674,6 +864,16 @@ function hydrateIcons(root=document){
   root.querySelectorAll('i[data-i]').forEach(el=>{
     el.outerHTML=`<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${P[el.dataset.i]}</svg>`;
   });
+}
+
+function setOrderStage(n){
+  const s = STAGES[n];
+  document.getElementById('gaugeNeedle').style.transform = `rotate(${s.ang}deg)`;
+  document.getElementById('gaugeFill').style.strokeDasharray = `${s.fill} 100`;
+  document.getElementById('stStep').textContent = s.step;
+  document.getElementById('stTitle').textContent = s.title;
+  document.getElementById('stDesc').textContent = s.desc;
+  document.querySelectorAll('#tachoSteps button').forEach((b,idx)=>b.classList.toggle('on', idx+1===n));
 }
 
 function switchTab(tab){
@@ -704,10 +904,13 @@ function filterGo(cat){
 }
 
 function changeMoto(){
-  selectedMoto = document.getElementById('motoSelect').value;
-  const parts = selectedMoto.split(' (');
-  document.getElementById('fitMotoName').textContent = parts[0];
-  document.getElementById('motoSub').textContent = (parts[1] ? parts[1].replace(')','') : 'Placa ABC-123') + ' · 18.400 km';
+  currentMotoKey = document.getElementById('motoSelect').value;
+  const m = MOTOS[currentMotoKey];
+  selectedMoto = `${m.name} (Placa ${m.plate})`;
+  document.getElementById('motoThumb').src = m.img;
+  document.getElementById('motoPlate').textContent = m.plate;
+  document.getElementById('motoKm').textContent = m.km;
+  document.getElementById('fitMotoName').textContent = m.fullShort;
   renderCatalog();
   renderCart();
   updateCitaWa();
@@ -731,17 +934,38 @@ function singleWaLink(p){
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 }
 
+function openSheet(id){
+  const p = INVENTORY.find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('shImg').src = p.img;
+  document.getElementById('shBrandSku').textContent = `${p.brand.toUpperCase()} · ${p.sku}`;
+  document.getElementById('shName').textContent = p.name;
+  document.getElementById('shPrice').textContent = fmt(p.price);
+  document.getElementById('shStock').textContent = `✓ ${p.stock} disponibles en taller`;
+  document.getElementById('shSpec').textContent = p.spec;
+  document.getElementById('shModels').textContent = p.models;
+  document.getElementById('shWaBtn').href = singleWaLink(p);
+  document.getElementById('shAddBtn').onclick = () => { addToCart(p.id); closeSheet(); };
+  document.getElementById('prodSheet').classList.add('open');
+}
+
+function closeSheet(){
+  document.getElementById('prodSheet').classList.remove('open');
+}
+
 function productCardHtml(p){
+  const mShort = MOTOS[currentMotoKey].short;
+  const fitText = p.uni ? p.fitLabel : `Sirve a tu ${mShort}`;
   return `
     <article class="pc">
-      <div class="photo">
+      <div class="photo" onclick="openSheet('${p.id}')">
         ${p.tag ? `<span class="tag ${p.tagType||''}">${p.tag}</span>` : ''}
         <span class="stk">${p.stock} disp.</span>
         <img src="${p.img}" alt="${p.name}">
       </div>
       <div class="meta"><span>${p.brand}</span><span>${p.sku}</span></div>
-      <h4>${p.name}</h4>
-      <p class="ok ${p.uni?'uni':''}"><i data-i="check"></i>${p.fitLabel}</p>
+      <h4 onclick="openSheet('${p.id}')">${p.name}</h4>
+      <p class="ok ${p.uni?'uni':''}"><i data-i="check"></i>${fitText}</p>
       <div class="pc-f">
         <div>
           ${p.was ? `<span class="was">${fmt(p.was)}</span>` : ''}
@@ -776,9 +1000,26 @@ function renderCatalog(){
   }
 }
 
+function showToast(p){
+  const t = document.getElementById('cartToast');
+  document.getElementById('toastImg').src = p.img;
+  document.getElementById('toastTitle').textContent = `${p.name} · ${fmt(p.price)}`;
+  t.classList.add('show');
+  document.querySelectorAll('.cart-count').forEach(el=>{
+    el.classList.remove('bump');
+    void el.offsetWidth;
+    el.classList.add('bump');
+    setTimeout(()=>el.classList.remove('bump'), 300);
+  });
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
 function addToCart(id){
   cart[id] = (cart[id] || 0) + 1;
   renderCart();
+  const p = INVENTORY.find(x=>x.id===id);
+  if(p) showToast(p);
 }
 
 function changeQty(id, delta){
@@ -839,7 +1080,7 @@ ${lines || '• (Sin productos seleccionados)'}
 *Moto:* ${selectedMoto}
 *Entrega:* ${deliveryMode}
 *Instalación en taller:* ${wantInstall ? 'Sí, agendar montaje' : 'No, solo repuestos'}
-*Total a pagar:* ${fmt(totalPrice)}`;
+*Total a pagar:* ${fmt(totalPrice)} (Yape / Plin / Efectivo)`;
 
   document.getElementById('waMessagePreview').textContent = waText;
   document.getElementById('waSendBtn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waText)}`;
@@ -882,6 +1123,7 @@ updateCitaWa();
 function checkHashTab(){
   const h = (location.hash || '').replace('#','');
   if(['inicio','tienda','pedido','taller'].includes(h)) switchTab(h);
+  if(h==='ficha'){ switchTab('tienda'); openSheet('disco'); }
 }
 checkHashTab();
 window.addEventListener('hashchange', checkHashTab);
