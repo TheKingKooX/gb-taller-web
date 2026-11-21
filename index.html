@@ -358,14 +358,69 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .install-chk b{color:var(--texto);font-weight:600}
 .install-chk i.box{width:17px;height:17px;border-radius:5px;background:var(--oro);color:#1a1300;display:grid;place-items:center;font-weight:900;font-size:11px;font-style:normal;flex:none}
 
-.pay-methods{display:grid;grid-template-columns:1.25fr .9fr .95fr;gap:7px;margin-top:8px}
+.pay-methods{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:8px}
 .pay-m{
-  padding:8px 8px;border-radius:11px;background:var(--pista);border:1px solid var(--linea);
+  padding:9px 8px;border-radius:11px;background:var(--pista);border:1px solid var(--linea);
   font-size:11.5px;font-weight:700;color:var(--texto-2);text-align:center;transition:all .15s;
 }
 .pay-m.on.yape-m{background:linear-gradient(135deg,rgba(116,35,132,.35),rgba(0,209,178,.12));border-color:#A94BC0;color:#fff}
+.pay-m.on.card-m{background:linear-gradient(135deg,rgba(245,183,0,.18),rgba(255,255,255,.06));border-color:var(--oro);color:#fff}
 .pay-m.on.plin-m{background:rgba(0,184,217,.18);border-color:var(--plin);color:#fff}
 .pay-m.on.cash-m{background:rgba(245,183,0,.14);border-color:var(--oro);color:var(--oro-claro)}
+
+/* ==========================================================================
+   PASARELA PAGO CON TARJETA DE CRÉDITO / DÉBITO (BLACK LABEL)
+   ========================================================================== */
+.card-gateway{
+  margin-top:10px;padding:13px;border-radius:16px;
+  background:linear-gradient(145deg,#181E2B 0%,#12151D 65%,#1C1612 100%);
+  border:1px solid rgba(245,183,0,.35);
+  box-shadow:0 12px 28px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);
+}
+.card-gw-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.card-brands{display:flex;gap:4px;align-items:center}
+.cb-pill{
+  font-size:9px;font-weight:800;padding:2px 6px;border-radius:5px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#e2e6ee;letter-spacing:.4px;
+}
+.card-mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:3px;border-radius:10px;background:rgba(9,10,13,.65);border:1px solid var(--linea);margin-bottom:10px}
+.card-mode-tabs button{padding:6px 6px;border-radius:8px;font-size:11px;font-weight:700;color:var(--texto-2)}
+.card-mode-tabs button.on{background:var(--pista-2);color:var(--oro-claro);border:1px solid rgba(245,183,0,.3)}
+
+.card-visual{
+  padding:12px 14px;border-radius:13px;margin-bottom:10px;
+  background:linear-gradient(135deg,#232A3B 0%,#12151E 55%,#2B1416 100%);
+  border:1px solid rgba(255,255,255,.14);position:relative;overflow:hidden;
+}
+.card-visual-top{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:800;color:var(--oro-claro);letter-spacing:.7px}
+.card-chip{width:28px;height:20px;border-radius:4px;background:linear-gradient(135deg,#FFD86B,#C88A00);opacity:.85}
+.card-num-disp{font-family:Manrope,monospace;font-size:15.5px;font-weight:800;letter-spacing:1.6px;margin:11px 0 8px;color:#fff}
+.card-visual-bot{display:flex;justify-content:space-between;font-size:10px;color:var(--texto-2);text-transform:uppercase}
+.card-visual-bot b{display:block;color:#fff;font-size:11.5px;margin-top:1px}
+
+.card-form{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.card-form .full{grid-column:1 / -1}
+.card-in{
+  height:37px;padding:0 11px;border-radius:10px;
+  background:rgba(9,10,13,.7);border:1px solid rgba(255,255,255,.12);
+  font-size:12px;color:#fff;outline:none;width:100%;
+}
+.card-in:focus{border-color:rgba(245,183,0,.55)}
+.card-in::placeholder{color:var(--texto-3)}
+.card-inst{display:flex;gap:6px;margin-top:8px}
+.card-inst button{
+  flex:1;height:31px;border-radius:8px;background:rgba(9,10,13,.6);border:1px solid var(--linea);
+  font-size:11px;font-weight:700;color:var(--texto-2);
+}
+.card-inst button.on{background:rgba(245,183,0,.15);border-color:var(--oro);color:var(--oro-claro)}
+.card-auth-row{margin-top:9px;display:flex;flex-direction:column;gap:6px}
+.card-err{font-size:11px;color:#ff6b68;font-weight:700;display:none}
+.card-ok-box{
+  padding:10px 12px;border-radius:11px;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.4);
+  font-size:11.5px;color:#a7f3d0;line-height:1.4;display:none;
+}
+.card-ok-box b{color:#fff}
+.card-note{font-size:10px;color:var(--texto-3);margin-top:6px;text-align:center;line-height:1.35}
 
 .yape-gateway{
   margin-top:10px;padding:12px 13px;border-radius:16px;
@@ -746,7 +801,8 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
       </div>
       <div class="pay-badges">
         <span class="lbl-p">Pago inmediato con:</span>
-        <span class="p-chip" style="border-color:rgba(169,75,192,.45);color:#e4b5f2">Yape QR Dinámico</span>
+        <span class="p-chip" style="border-color:rgba(169,75,192,.45);color:#e4b5f2">Yape QR</span>
+        <span class="p-chip" style="border-color:rgba(245,183,0,.35);color:var(--oro-claro)">Tarjeta Visa/MC</span>
         <span class="p-chip">Plin</span>
         <span class="p-chip">Efectivo</span>
       </div>
@@ -851,9 +907,76 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 
       <div class="pay-methods">
         <button class="pay-m yape-m on" id="pmYape" onclick="setPayMethod('Yape QR')">● Yape QR Dinámico</button>
+        <button class="pay-m card-m" id="pmCard" onclick="setPayMethod('Tarjeta')">● Tarjeta Crédito / Débito</button>
         <button class="pay-m plin-m" id="pmPlin" onclick="setPayMethod('Plin')">● Plin</button>
-        <button class="pay-m cash-m" id="pmCash" onclick="setPayMethod('Efectivo en taller')">Efectivo</button>
+        <button class="pay-m cash-m" id="pmCash" onclick="setPayMethod('Efectivo en taller')">Efectivo en taller</button>
       </div>
+
+      <!-- PASARELA DE PAGO CON TARJETA DE CRÉDITO / DÉBITO -->
+      <section class="card-gateway" id="cardGatewayBox" style="display:none" aria-label="Pago con tarjeta de crédito o débito">
+        <div class="card-gw-h">
+          <div class="card-brands">
+            <span class="cb-pill">VISA</span>
+            <span class="cb-pill">MC</span>
+            <span class="cb-pill">AMEX</span>
+            <span class="cb-pill">DINERS</span>
+          </div>
+          <span class="pill" id="cardModeTag">Demo / Culqi-Izipay</span>
+        </div>
+
+        <div class="card-mode-tabs">
+          <button class="on" id="cmOnlineBtn" onclick="setCardSubMode('online')">Pagar en línea (Demo)</button>
+          <button id="cmPosBtn" onclick="setCardSubMode('pos')">Link / POS en entrega</button>
+        </div>
+
+        <div id="cardOnlinePane">
+          <div class="card-visual">
+            <div class="card-visual-top">
+              <span class="card-chip"></span>
+              <span id="cvBrand">TARJETA CRÉDITO</span>
+            </div>
+            <div class="card-num-disp" id="cvNumber">•••• •••• •••• ••••</div>
+            <div class="card-visual-bot">
+              <div>TITULAR<b id="cvHolder">CARLOS MENDOZA</b></div>
+              <div style="text-align:right">VENCE<b id="cvExp">MM/AA</b></div>
+            </div>
+          </div>
+
+          <div class="card-form">
+            <input class="card-in full" id="ccNum" type="text" inputmode="numeric" maxlength="19" placeholder="Número de tarjeta (16 dígitos)" oninput="onCardInput()">
+            <input class="card-in full" id="ccName" type="text" placeholder="Nombre en la tarjeta" value="Carlos Mendoza" oninput="onCardInput()">
+            <input class="card-in" id="ccExp" type="text" inputmode="numeric" maxlength="5" placeholder="MM/AA" oninput="onCardInput()">
+            <input class="card-in" id="ccCvv" type="password" inputmode="numeric" maxlength="4" placeholder="CVV" oninput="onCardInput()">
+          </div>
+
+          <div class="card-inst" id="cardInstBar">
+            <button class="on" onclick="setInstallments(1,this)">1 cuota</button>
+            <button onclick="setInstallments(3,this)">3 cuotas</button>
+            <button onclick="setInstallments(6,this)">6 cuotas</button>
+          </div>
+
+          <div class="card-auth-row">
+            <div class="card-err" id="cardErrMsg">Verifica el número de tarjeta, vencimiento y CVV.</div>
+            <button class="btn primary" style="height:42px;font-size:13px" id="cardPayBtn" onclick="authorizeCardDemo()">
+              Autorizar pago de <span id="cardPayBtnAmt">S/ 195.00</span>
+            </button>
+            <div class="card-ok-box" id="cardOkBox"></div>
+          </div>
+          <p class="card-note">Validación visual local (no guarda ni envía tu tarjeta completa o CVV). Listo para conectar API Key de Culqi, Izipay o Niubiz.</p>
+        </div>
+
+        <div id="cardPosPane" style="display:none">
+          <div class="card-ok-box" style="display:block;border-color:rgba(245,183,0,.35);background:rgba(245,183,0,.07);color:var(--texto-2)">
+            <b style="color:var(--oro-claro)">Cobro seguro vía Link Izipay / Culqi o POS inalámbrico:</b>
+            al enviar tu pedido por WhatsApp te mandamos el link oficial de pago con tarjeta o llevamos el POS al entregar/recoger tus repuestos.
+          </div>
+          <div class="card-inst" id="cardPosInstBar" style="margin-top:8px">
+            <button class="on" onclick="setInstallments(1,this)">1 cuota (Sin recargo)</button>
+            <button onclick="setInstallments(3,this)">3 cuotas</button>
+            <button onclick="setInstallments(6,this)">6 cuotas</button>
+          </div>
+        </div>
+      </section>
 
       <!-- PASARELA YAPE CON QR DINÁMICO REAL ISO/IEC 18004 ESCANEABLE -->
       <section class="yape-gateway" id="yapeGatewayBox" aria-label="Pasarela de pago Yape con QR dinámico">
@@ -1540,16 +1663,118 @@ function setDelivery(mode){
   renderCart();
 }
 
+let cardSubMode = 'online';
+let cardInstallments = 1;
+let cardBrand = 'TARJETA';
+let cardLast4 = '';
+let cardAuthRef = '';
+
+function luhnValid(digits){
+  if(digits.length < 13 || digits.length > 19) return false;
+  let sum = 0, alt = false;
+  for(let i = digits.length - 1; i >= 0; i--){
+    let n = parseInt(digits[i], 10);
+    if(alt){ n *= 2; if(n > 9) n -= 9; }
+    sum += n; alt = !alt;
+  }
+  return sum % 10 === 0;
+}
+
+function detectCardBrand(digits){
+  if(/^4/.test(digits)) return 'VISA';
+  if(/^(5[1-5]|2[2-7])/.test(digits)) return 'MASTERCARD';
+  if(/^3[47]/.test(digits)) return 'AMEX';
+  if(/^3(?:0[0-5]|[68])/.test(digits)) return 'DINERS';
+  return 'TARJETA CRÉDITO';
+}
+
+function onCardInput(){
+  const numEl = document.getElementById('ccNum');
+  const expEl = document.getElementById('ccExp');
+  const nameEl = document.getElementById('ccName');
+  if(!numEl) return;
+
+  const digits = numEl.value.replace(/\D/g, '').slice(0, 16);
+  numEl.value = digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+  cardBrand = detectCardBrand(digits);
+
+  let exp = expEl.value.replace(/\D/g, '').slice(0, 4);
+  if(exp.length > 2) exp = exp.slice(0, 2) + '/' + exp.slice(2);
+  expEl.value = exp;
+
+  document.getElementById('cvBrand').textContent = cardBrand;
+  document.getElementById('cvNumber').textContent = digits
+    ? digits.padEnd(16, '•').replace(/(.{4})/g, '$1 ').trim()
+    : '•••• •••• •••• ••••';
+  document.getElementById('cvHolder').textContent = (nameEl.value || 'TITULAR').toUpperCase();
+  document.getElementById('cvExp').textContent = exp || 'MM/AA';
+  document.getElementById('cardErrMsg').style.display = 'none';
+
+  if(cardAuthRef){
+    cardAuthRef = '';
+    cardLast4 = '';
+    document.getElementById('cardOkBox').style.display = 'none';
+    renderCart();
+  }
+}
+
+function setCardSubMode(mode){
+  cardSubMode = mode;
+  document.getElementById('cmOnlineBtn').classList.toggle('on', mode === 'online');
+  document.getElementById('cmPosBtn').classList.toggle('on', mode === 'pos');
+  document.getElementById('cardOnlinePane').style.display = mode === 'online' ? 'block' : 'none';
+  document.getElementById('cardPosPane').style.display = mode === 'pos' ? 'block' : 'none';
+  renderCart();
+}
+
+function setInstallments(n, btn){
+  cardInstallments = n;
+  document.querySelectorAll('#cardInstBar button, #cardPosInstBar button').forEach(b => b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  renderCart();
+}
+
+function authorizeCardDemo(){
+  const digits = (document.getElementById('ccNum').value || '').replace(/\D/g, '');
+  const exp = (document.getElementById('ccExp').value || '').trim();
+  const cvv = (document.getElementById('ccCvv').value || '').replace(/\D/g, '');
+  const errEl = document.getElementById('cardErrMsg');
+
+  const [mm, yy] = exp.split('/').map(x => parseInt(x, 10));
+  const expOk = exp.length === 5 && mm >= 1 && mm <= 12 && yy >= 26;
+  if(!luhnValid(digits) || !expOk || cvv.length < 3){
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+  cardLast4 = digits.slice(-4);
+  cardAuthRef = 'GB-' + Math.floor(1000 + Math.random() * 9000);
+  const okBox = document.getElementById('cardOkBox');
+  const amtTxt = document.getElementById('cardPayBtnAmt').textContent;
+  okBox.innerHTML = `✓ <b>Autorización demo aprobada (${cardBrand} •••• ${cardLast4})</b> · ${cardInstallments} cuota${cardInstallments>1?'s':''} · Monto ${amtTxt} · Ref: <b>#${cardAuthRef}</b>.<br><small>Envía tu pedido por WhatsApp para coordinar la entrega.</small>`;
+  okBox.style.display = 'block';
+  showCustomToast('✓ TARJETA VALIDADA (MODO DEMO)', `${cardBrand} •••• ${cardLast4} · Ref #${cardAuthRef}`);
+  renderCart();
+}
+
 function setPayMethod(m){
   payMethod = m;
   document.getElementById('pmYape').classList.toggle('on', m==='Yape QR');
+  document.getElementById('pmCard').classList.toggle('on', m==='Tarjeta');
   document.getElementById('pmPlin').classList.toggle('on', m==='Plin');
   document.getElementById('pmCash').classList.toggle('on', m.includes('Efectivo'));
   document.getElementById('yapeGatewayBox').style.display = (m==='Yape QR') ? 'block' : 'none';
+  document.getElementById('cardGatewayBox').style.display = (m==='Tarjeta') ? 'block' : 'none';
   document.getElementById('totPayLabel').textContent = `Total a pagar (${m})`;
-  document.getElementById('waSendBtnTxt').textContent = (m==='Yape QR')
-    ? 'Confirmar Yapeo y enviar pedido por WhatsApp'
-    : 'Enviar pedido por WhatsApp';
+  if(m === 'Yape QR'){
+    document.getElementById('waSendBtnTxt').textContent = 'Confirmar Yapeo y enviar pedido por WhatsApp';
+  } else if(m === 'Tarjeta'){
+    document.getElementById('waSendBtnTxt').textContent = (cardSubMode === 'online' && cardAuthRef)
+      ? 'Enviar pedido con pago confirmado por WhatsApp'
+      : 'Solicitar Link / POS de tarjeta por WhatsApp';
+  } else {
+    document.getElementById('waSendBtnTxt').textContent = 'Enviar pedido por WhatsApp';
+  }
   renderCart();
 }
 
@@ -1577,9 +1802,23 @@ function renderCart(){
   const opCode = (document.getElementById('yapeOpCode')?.value || '').trim();
 
   const lines = entries.map(x=>`• ${x.qty}x ${x.name} [${x.sku}] — ${fmt(x.price*x.qty)}`).join('\n');
-  const payLine = payMethod === 'Yape QR'
-    ? `Yape QR Dinámico por *${fmtDec(totalPrice)}*${opCode ? ` (Operación N° ${opCode})` : ' (Adjunto constancia de Yapeo)'}`
-    : payMethod;
+  let payLine = payMethod;
+  if(payMethod === 'Yape QR'){
+    payLine = `Yape QR Dinámico por *${fmtDec(totalPrice)}*${opCode ? ` (Operación N° ${opCode})` : ' (Adjunto constancia de Yapeo)'}`;
+  } else if(payMethod === 'Tarjeta'){
+    if(cardSubMode === 'online' && cardAuthRef){
+      payLine = `Tarjeta ${cardBrand} •••• ${cardLast4} (${cardInstallments} cuota${cardInstallments>1?'s':''}) · Ref Demo #${cardAuthRef}`;
+    } else {
+      payLine = `Tarjeta de Crédito/Débito (${cardSubMode === 'pos' ? 'Solicito Link de pago o POS al entregar' : 'Solicito Link de pago en línea'} · ${cardInstallments} cuota${cardInstallments>1?'s':''})`;
+    }
+  }
+  const cardBtnAmt = document.getElementById('cardPayBtnAmt');
+  if(cardBtnAmt) cardBtnAmt.textContent = fmtDec(totalPrice);
+  if(payMethod === 'Tarjeta'){
+    document.getElementById('waSendBtnTxt').textContent = (cardSubMode === 'online' && cardAuthRef)
+      ? 'Enviar pedido con pago confirmado por WhatsApp'
+      : 'Solicitar Link / POS de tarjeta por WhatsApp';
+  }
 
   const waText =
 `Hola *Taller y Repuestos GB*! Soy *${cName}*, envío mi pedido *#GB-1042*:
@@ -1698,6 +1937,7 @@ function checkHashTab(){
   if(h==='nmax'){ switchTab('tienda'); changeMoto('nmax'); }
   if(h==='pulsar'){ switchTab('tienda'); changeMoto('pulsar'); }
   if(h==='yape'){ switchTab('pedido'); openYapeModal(); }
+  if(h==='tarjeta'){ switchTab('pedido'); setPayMethod('Tarjeta'); }
 }
 checkHashTab();
 window.addEventListener('hashchange', checkHashTab);
