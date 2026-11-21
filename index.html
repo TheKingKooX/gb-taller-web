@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="assets/qrcode.min.js"></script>
+<script src="assets/jsQR.min.js"></script>
 <style>
 :root{
   --asfalto:#090A0D;
@@ -870,12 +871,12 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
           </div>
 
           <div class="yape-gw-info">
-            <span class="amt-lbl">COSTO TOTAL EN EL QR:</span>
+            <span class="amt-lbl">COSTO TOTAL DEL PEDIDO:</span>
             <div class="amt-val">
               <b id="yapeQrAmount">S/ 195.00</b>
-              <span>EN VIVO</span>
+              <span id="yapeModeChip">CÁMARA / WA</span>
             </div>
-            <p class="yape-dest">Escanea con la <b>cámara de tu celular</b> para abrir la orden de pago exacta o copia el número directo a Yape.</p>
+            <p class="yape-dest" id="yapeHelpDesc">Carga tu captura <b>"Mi QR" de Yape</b> para generar un QR EMVCo con monto exacto, o toca <b>"Abrir Yape + Copiar N°"</b> para pagar directo.</p>
             <div class="yape-gw-acts">
               <button class="yape-mini-btn teal" onclick="copyAndOpenYape()">Abrir Yape + Copiar N°</button>
               <button class="yape-mini-btn" onclick="openYapeModal()">Ampliar QR</button>
@@ -885,10 +886,11 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 
         <div class="yape-op-row">
           <input class="yape-op-in" id="yapeOpCode" type="text" placeholder="N° de operación Yape (opcional) o envía captura..." oninput="renderCart()">
-          <label class="yape-mini-btn" style="cursor:pointer;white-space:nowrap" title="Sube la captura de 'Mi QR' desde tu app Yape si deseas escaneo interno BCP">
-            Mi QR Yape
+          <label class="yape-mini-btn" id="uploadYapeLbl" style="cursor:pointer;white-space:nowrap" title="Sube la captura de 'Mi QR' desde tu app Yape para generar QR EMVCo dinámico real">
+            Cargar Mi QR Yape
             <input type="file" accept="image/*" style="display:none" onchange="uploadOfficialYapeQr(event)">
           </label>
+          <button class="yape-mini-btn" id="clearYapeBtn" style="display:none" onclick="clearOfficialYapeQr()" title="Quitar QR cargado">✕</button>
         </div>
       </section>
 
@@ -1050,9 +1052,9 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
       <div id="yapeQrBigSvgWrap"></div>
     </div>
 
-    <div class="yape-steps-box">
-      <div><b>1. Escaneo con Cámara / Lector QR:</b> abre esta orden con el monto exacto (<b id="ymInlineAmt">S/ 195.00</b>) y envía el comprobante directo al WhatsApp del taller.</div>
-      <div style="margin-top:5px"><b>2. Pago directo en App Yape:</b> pulsa <b>"Abrir Yape y copiar N°"</b> para copiar el número oficial del taller y yapear el monto exacto en 1 toque.</div>
+    <div class="yape-steps-box" id="ymStepsBox">
+      <div><b>1. Pago directo en App Yape:</b> pulsa <b>"Abrir Yape y copiar N°"</b> para copiar el número oficial del taller y yapear el monto exacto (<b id="ymInlineAmt">S/ 195.00</b>).</div>
+      <div style="margin-top:5px"><b>2. Escaneo QR:</b> escaneando con la cámara normal abres tu pedido en WhatsApp. Para escaneo directo desde la app Yape con monto automático, carga la captura <b>"Mi QR"</b> del taller.</div>
     </div>
 
     <div class="sheet-actions">
@@ -1148,12 +1150,15 @@ const STAGES = {
   5:{ang:82,  fill:100,step:'Etapa 5 de 5', title:'¡Lista para entrega!', desc:'Prueba de ruta superada. Lista en Taller GB.'}
 };
 
+const YAPE_BASE_EMVCO_QR = ''; // Opcional: pega aquí tu trama 000201... de "Mi QR" Yape para todos los visitantes
+
 let currentCat = 'Todo';
 let currentMotoKey = 'msx';
 let selectedMoto = 'Honda MSX 125 (Placa ABC-123)';
 let deliveryMode = 'Recoger en taller GB';
 let wantInstall = true;
 let payMethod = 'Yape QR';
+let baseEmvcoQr = localStorage.getItem('gb_yape_emvco_base') || YAPE_BASE_EMVCO_QR;
 let customYapeQrDataUrl = localStorage.getItem('gb_custom_yape_qr') || null;
 let cart = { disco: 1, pastillas: 1, aceite: 1 };
 let toastTimer = null;
@@ -1173,26 +1178,55 @@ function hydrateIcons(root=document){
 }
 
 /* ==========================================================================
-   GENERADOR DE QR DINÁMICO REAL ISO/IEC 18004 (REED-SOLOMON ESTÁNDAR)
-   Se escanea sin error con cualquier cámara o lector QR
+   MOTOR EMVCo PERÚ (TAG 54 MONTO DINÁMICO + CRC-16/CCITT-FALSE) + QR ISO 18004
    ========================================================================== */
-function buildDynamicYapeQrSvg(urlPayload){
-  if(customYapeQrDataUrl){
-    return `<img src="${customYapeQrDataUrl}" alt="Mi QR Oficial Yape">`;
+function crc16CcittFalse(str){
+  let crc = 0xFFFF;
+  for(let i=0; i<str.length; i++){
+    crc ^= (str.charCodeAt(i) & 0xFF) << 8;
+    for(let j=0; j<8; j++){
+      crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+    }
   }
+  return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+}
+
+function injectEmvcoAmount(rawEmvco, amountNumber){
+  if(!rawEmvco || !rawEmvco.startsWith('000201')) return null;
+  const tags = [];
+  let i = 0;
+  while(i + 4 <= rawEmvco.length){
+    const tag = rawEmvco.slice(i, i + 2);
+    const len = parseInt(rawEmvco.slice(i + 2, i + 4), 10);
+    if(isNaN(len) || i + 4 + len > rawEmvco.length) return null;
+    const val = rawEmvco.slice(i + 4, i + 4 + len);
+    if(tag !== '63') tags.push([tag, val]);
+    i += 4 + len;
+  }
+  const map = new Map(tags);
+  if(!map.has('00')) return null;
+  if(map.has('01')) map.set('01', '12'); // 12 = QR Dinámico de monto único
+  map.set('54', amountNumber.toFixed(2)); // Tag 54 = Costo total exacto
+  if(!map.has('53')) map.set('53', '604'); // 604 = Soles (PEN)
+  const ordered = [...map.entries()].sort((a, b) => Number(a[0]) - Number(b[0]));
+  const body = ordered.map(([t, v]) => t + String(v.length).padStart(2, '0') + v).join('') + '6304';
+  return body + crc16CcittFalse(body);
+}
+
+function buildQrSvgFromText(payload, isEmvco){
   if(typeof qrcode === 'function'){
     const qr = qrcode(0, 'M');
-    qr.addData(urlPayload);
+    qr.addData(payload);
     qr.make();
     const count = qr.getModuleCount();
-    const margin = 2;
+    const margin = 4; // Zona silenciosa estándar ISO/IEC 18004 (4 módulos)
     const size = count + margin * 2;
     let paths = '';
     for(let r=0; r<count; r++){
       for(let c=0; c<count; c++){
         if(qr.isDark(r, c)){
           const isFinder = (r<7 && c<7) || (r<7 && c>=count-7) || (r>=count-7 && c<7);
-          const color = isFinder ? '#5B166B' : '#121016';
+          const color = isFinder ? (isEmvco ? '#742384' : '#5B166B') : '#111111';
           paths += `<rect x="${c+margin}" y="${r+margin}" width="1" height="1" fill="${color}"/>`;
         }
       }
@@ -1207,12 +1241,65 @@ function uploadOfficialYapeQr(ev){
   if(!file) return;
   const reader = new FileReader();
   reader.onload = e => {
-    customYapeQrDataUrl = e.target.result;
-    try{ localStorage.setItem('gb_custom_yape_qr', customYapeQrDataUrl); }catch(_){}
-    document.getElementById('yapeQrBadge').textContent = 'QR Oficial BCP Activo';
-    renderCart();
+    const img = new Image();
+    img.onload = () => {
+      const maxDim = 900;
+      const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(img, 0, 0, w, h);
+      const imgData = ctx.getImageData(0, 0, w, h);
+      const decoded = (typeof jsQR === 'function') ? jsQR(imgData.data, w, h, {inversionAttempts:'attemptBoth'}) : null;
+
+      if(decoded && decoded.data && decoded.data.startsWith('000201')){
+        baseEmvcoQr = decoded.data;
+        customYapeQrDataUrl = null;
+        try{
+          localStorage.setItem('gb_yape_emvco_base', baseEmvcoQr);
+          localStorage.removeItem('gb_custom_yape_qr');
+        }catch(_){}
+        showCustomToast('✓ QR YAPE EMVCo DETECTADO', 'Ahora el QR lleva el monto dinámico exacto');
+      } else if(decoded && decoded.data){
+        customYapeQrDataUrl = e.target.result;
+        baseEmvcoQr = '';
+        try{ localStorage.setItem('gb_custom_yape_qr', customYapeQrDataUrl); }catch(_){}
+        showCustomToast('✓ QR CARGADO', 'Mostrando la imagen QR seleccionada');
+      } else {
+        customYapeQrDataUrl = e.target.result;
+        baseEmvcoQr = '';
+        try{ localStorage.setItem('gb_custom_yape_qr', customYapeQrDataUrl); }catch(_){}
+        showCustomToast('Imagen cargada', 'No se pudo extraer EMVCo; mostrando captura directa');
+      }
+      renderCart();
+    };
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
+}
+
+function clearOfficialYapeQr(){
+  baseEmvcoQr = YAPE_BASE_EMVCO_QR;
+  customYapeQrDataUrl = null;
+  try{
+    localStorage.removeItem('gb_yape_emvco_base');
+    localStorage.removeItem('gb_custom_yape_qr');
+  }catch(_){}
+  renderCart();
+}
+
+function showCustomToast(smallTxt, titleTxt){
+  const t = document.getElementById('cartToast');
+  document.getElementById('toastImg').src = 'assets/logo-gb-marca.png';
+  document.getElementById('toastSmall').textContent = smallTxt;
+  document.getElementById('toastTitle').textContent = titleTxt;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3800);
 }
 
 function copyAndOpenYape(){
@@ -1505,18 +1592,48 @@ ${lines || '• (Sin productos seleccionados)'}
 *Medio de pago:* ${payLine}
 *Total:* ${fmtDec(totalPrice)}`;
 
-  // El QR Dinámico codifica una URL real ISO/IEC 18004 compacta (33x33 módulos grandes) para lectura instantánea
-  const shortQrWaText = `Pago Yape Pedido #GB-1042 - Total: ${fmtDec(totalPrice)} (${MOTOS[currentMotoKey].fullShort})`;
-  const qrValidUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(shortQrWaText)}`;
+  // Generar QR dinámico real:
+  // 1) Si el comercio cargó su QR EMVCo de Yape (000201...), inyecta Tag 54 (monto exacto) y recalcula CRC16 (Tag 63)
+  // 2) Si no, genera QR ISO/IEC 18004 estándar con la orden directa a WhatsApp del taller (escaneable por cámara)
+  const dynamicEmvco = baseEmvcoQr ? injectEmvcoAmount(baseEmvcoQr, totalPrice) : null;
+  let qrHtml = '';
+  const badgeEl = document.getElementById('yapeQrBadge');
+  const chipEl = document.getElementById('yapeModeChip');
+  const helpEl = document.getElementById('yapeHelpDesc');
+  const clearBtn = document.getElementById('clearYapeBtn');
+  const stepsBox = document.getElementById('ymStepsBox');
 
-  const qrSvg = buildDynamicYapeQrSvg(qrValidUrl);
+  if(dynamicEmvco){
+    qrHtml = buildQrSvgFromText(dynamicEmvco, true);
+    if(badgeEl) badgeEl.textContent = 'EMVCo Dinámico Activo';
+    if(chipEl) chipEl.textContent = 'YAPE / PLIN';
+    if(helpEl) helpEl.innerHTML = `QR <b>EMVCo verificado</b> con el monto <b>${fmtDec(totalPrice)}</b> incrustado para escanear directo desde Yape o Plin.`;
+    if(clearBtn) clearBtn.style.display = 'inline-flex';
+    if(stepsBox) stepsBox.innerHTML = `<div><b>1. Escanea directo desde Yape / Plin:</b> este QR incluye tu token EMVCo con el monto exacto (<b>${fmtDec(totalPrice)}</b>) pre-cargado.</div><div style="margin-top:5px"><b>2. O paga con el número:</b> pulsa <b>"Abrir Yape y copiar N°"</b> y luego confirma tu envío por WhatsApp.</div>`;
+  } else if(customYapeQrDataUrl){
+    qrHtml = `<img src="${customYapeQrDataUrl}" alt="QR Yape Oficial">`;
+    if(badgeEl) badgeEl.textContent = 'QR Imagen Activo';
+    if(chipEl) chipEl.textContent = 'YAPE DIRECTO';
+    if(helpEl) helpEl.innerHTML = `Escanea el QR en Yape e ingresa el monto total exacto: <b>${fmtDec(totalPrice)}</b>.`;
+    if(clearBtn) clearBtn.style.display = 'inline-flex';
+  } else {
+    const shortQrWaText = `Pago Yape Pedido #GB-1042 - Total: ${fmtDec(totalPrice)} (${MOTOS[currentMotoKey].fullShort})`;
+    const qrValidUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(shortQrWaText)}`;
+    qrHtml = buildQrSvgFromText(qrValidUrl, false);
+    if(badgeEl) badgeEl.textContent = 'QR Pedido WhatsApp';
+    if(chipEl) chipEl.textContent = 'CÁMARA / WA';
+    if(helpEl) helpEl.innerHTML = `Escanea con la <b>cámara normal</b> para abrir el pedido, toca <b>"Abrir Yape + Copiar N°"</b>, o carga tu captura <b>"Mi QR" de Yape</b> abajo.`;
+    if(clearBtn) clearBtn.style.display = 'none';
+  }
+
   const qrWrap = document.getElementById('yapeQrSvgWrap');
   const qrBigWrap = document.getElementById('yapeQrBigSvgWrap');
-  if(qrWrap) qrWrap.innerHTML = qrSvg;
-  if(qrBigWrap) qrBigWrap.innerHTML = qrSvg;
+  if(qrWrap) qrWrap.innerHTML = qrHtml;
+  if(qrBigWrap) qrBigWrap.innerHTML = qrHtml;
   document.getElementById('yapeQrAmount').textContent = fmtDec(totalPrice);
   document.getElementById('ymAmount').textContent = fmtDec(totalPrice);
-  document.getElementById('ymInlineAmt').textContent = fmtDec(totalPrice);
+  const ymInline = document.getElementById('ymInlineAmt');
+  if(ymInline) ymInline.textContent = fmtDec(totalPrice);
 
   const cl = document.getElementById('cartList');
   cl.innerHTML = entries.map(x=>`
