@@ -279,10 +279,11 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
       <div class="gb" role="img" aria-label="Logo GB"></div>
       <div class="gb-txt">
         <b>PANEL ADMINISTRADOR · INVENTARIO</b>
-        <small>SINCRONIZADO EN VIVO CON LA TIENDA WEB</small>
+        <small id="admWaSession">WHATSAPP ADMIN: +51 960 628 745 · SINCRONIZADO EN VIVO</small>
       </div>
     </div>
     <div class="top-acts">
+      <a class="btn ghost" href="index.html#login" title="Cambiar cuenta WhatsApp">Cuenta WA</a>
       <a class="btn ghost" href="index.html">← Ver Tienda</a>
       <button class="btn gold" onclick="openNewModal()">+ Nuevo Repuesto</button>
     </div>
@@ -849,6 +850,13 @@ function resetFactoryInventory(){
 }
 
 renderAdminList();
+try{
+  const u = JSON.parse(localStorage.getItem('gb_user_session_v1') || 'null');
+  if(u && u.phone){
+    const ph = String(u.phone).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
+    document.getElementById('admWaSession').textContent = `SESIÓN WHATSAPP: ${u.name.toUpperCase()} (+51 ${ph})`;
+  }
+}catch(_){}
 if(location.hash === '#edit'){
   openEditModal('disco');
 }

@@ -583,6 +583,143 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .yape-steps-box b{color:#fff}
 
 /* ==========================================================================
+   LOGIN CON NÚMERO DE WHATSAPP (+51 PERÚ) Y SESIÓN DE USUARIO
+   ========================================================================== */
+.wa-user-pill{
+  display:inline-flex;align-items:center;gap:5px;margin-top:2px;
+  padding:3px 9px 3px 7px;border-radius:99px;
+  background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.28);
+  color:#A7F3D0;font-size:10.5px;font-weight:700;line-height:1.2;
+  transition:all .16s ease;max-width:210px;
+}
+.wa-user-pill:hover{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.45)}
+.wa-user-pill.guest{
+  background:rgba(245,183,0,.12);border-color:rgba(245,183,0,.35);color:var(--oro-claro);
+}
+.wa-user-pill.admin{
+  background:rgba(245,183,0,.16);border-color:var(--oro);color:var(--oro-claro);
+}
+.wa-user-pill .wa-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--verde);
+  box-shadow:0 0 8px var(--verde);flex:none;
+}
+.wa-user-pill.guest .wa-dot{background:var(--oro);box-shadow:0 0 8px var(--oro)}
+.wa-user-pill span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.cust-wa-row{
+  display:flex;align-items:center;gap:6px;
+}
+.cust-wa-prefix{
+  height:40px;padding:0 11px;border-radius:11px;
+  background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.28);
+  color:#A7F3D0;font-family:var(--mono);font-size:12px;font-weight:700;
+  display:inline-flex;align-items:center;gap:5px;flex:none;
+}
+.cust-wa-btn{
+  height:40px;padding:0 11px;border-radius:11px;
+  background:var(--pista-2);border:1px solid var(--linea);
+  color:var(--oro-claro);font-size:11px;font-weight:700;white-space:nowrap;flex:none;
+}
+
+.login-sheet{
+  background:linear-gradient(170deg,#12181B 0%,#13161C 55%,#0D1412 100%);
+  border-top:1px solid rgba(34,197,94,.35);
+  max-height:90vh;overflow-y:auto;
+}
+.login-hdr{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;
+}
+.login-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 10px;border-radius:99px;
+  background:rgba(34,197,94,.14);border:1px solid rgba(34,197,94,.35);
+  color:#86EFAC;font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+}
+.login-active-card{
+  padding:11px 13px;border-radius:14px;margin-bottom:12px;
+  background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.26);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.login-active-card .la-left{display:flex;align-items:center;gap:10px;min-width:0}
+.login-avatar{
+  width:38px;height:38px;border-radius:11px;
+  background:linear-gradient(135deg,#199E52,#0F6B36);color:#fff;
+  font-family:var(--display);font-size:16px;font-weight:800;
+  display:grid;place-items:center;flex:none;
+}
+.login-active-card b{display:block;font-size:13px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.login-active-card small{display:block;font-size:11px;color:#86EFAC;font-family:var(--mono)}
+.login-logout-btn{
+  padding:6px 10px;border-radius:9px;background:rgba(225,29,46,.14);
+  border:1px solid rgba(225,29,46,.32);color:#FCA5A5;font-size:11px;font-weight:700;flex:none;
+}
+.wa-phone-box{
+  display:flex;align-items:center;gap:8px;margin-bottom:9px;
+}
+.wa-cc{
+  height:44px;padding:0 12px;border-radius:12px;
+  background:var(--asfalto);border:1px solid var(--linea);
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:13px;font-weight:700;color:var(--texto);flex:none;
+}
+.wa-cc span{font-size:10px;color:var(--texto-2);font-family:var(--sans);font-weight:600}
+.wa-phone-in{
+  flex:1;min-width:0;height:44px;padding:0 13px;border-radius:12px;
+  background:var(--asfalto);border:1px solid rgba(34,197,94,.38);
+  color:#fff;font-family:var(--mono);font-size:16px;font-weight:700;letter-spacing:.8px;outline:none;
+}
+.wa-phone-in:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(34,197,94,.15)}
+.login-grid-2{
+  display:grid;grid-template-columns:minmax(0,1fr) 115px;gap:8px;margin-bottom:9px;
+}
+.login-in{
+  width:100%;height:40px;padding:0 12px;border-radius:11px;
+  background:var(--asfalto);border:1px solid var(--linea);
+  color:var(--texto);font-size:12.5px;outline:none;
+}
+.login-in:focus{border-color:var(--oro)}
+select.login-in{-webkit-appearance:none;appearance:none}
+
+.wa-otp-banner{
+  padding:10px 12px;border-radius:13px;margin-bottom:11px;
+  background:linear-gradient(135deg,rgba(25,158,82,.22),rgba(15,24,20,.92));
+  border:1px solid rgba(34,197,94,.48);cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.wa-otp-banner b{display:block;font-size:12px;color:#fff}
+.wa-otp-banner small{display:block;font-size:11px;color:#A7F3D0;margin-top:1px}
+.wa-otp-code-pill{
+  padding:5px 10px;border-radius:9px;background:#199E52;color:#fff;
+  font-family:var(--mono);font-size:14px;font-weight:800;letter-spacing:1.5px;flex:none;
+}
+.otp-boxes{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:10px 0 12px;
+}
+.otp-digit{
+  width:100%;min-width:0;height:48px;border-radius:12px;background:var(--asfalto);
+  border:1.5px solid rgba(34,197,94,.4);color:#fff;
+  font-family:var(--mono);font-size:21px;font-weight:800;text-align:center;outline:none;
+}
+.otp-digit:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(34,197,94,.18)}
+
+.demo-users{
+  margin-top:13px;padding-top:11px;border-top:1px solid var(--linea);
+}
+.demo-users-h{
+  font-size:10.5px;font-weight:700;color:var(--texto-2);text-transform:uppercase;
+  letter-spacing:.6px;margin-bottom:7px;display:flex;justify-content:space-between;
+}
+.demo-user-list{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.demo-u-btn{
+  padding:7px 9px;border-radius:10px;background:var(--asfalto);
+  border:1px solid var(--linea);text-align:left;transition:all .15s;
+}
+.demo-u-btn:hover,.demo-u-btn.on{border-color:rgba(34,197,94,.5);background:rgba(34,197,94,.08)}
+.demo-u-btn.adm:hover,.demo-u-btn.adm.on{border-color:var(--oro);background:rgba(245,183,0,.1)}
+.demo-u-btn b{display:block;font-size:11.5px;color:var(--texto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.demo-u-btn small{display:block;font-size:10px;color:var(--texto-2);font-family:var(--mono);margin-top:1px}
+
+/* ==========================================================================
    NOTIFICACIÓN TOAST MINIMALISTA
    ========================================================================== */
 .toast{
@@ -692,6 +829,10 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
       <a href="mobile.html">Vista 4 Pantallas</a>
     </nav>
     <div class="hdr-a">
+      <button class="wa-user-pill" id="deskUserPill" onclick="openLoginModal()" style="height:38px;padding:0 13px;font-size:12px;max-width:260px" title="Cambiar cuenta o iniciar sesión con WhatsApp">
+        <i class="wa-dot"></i>
+        <span id="deskUserTxt">Carlos · +51 987 654 321</span>
+      </button>
       <a class="btn wa" style="height:40px;font-size:13px" href="https://wa.me/51960628745?text=Hola%20Taller%20GB,%20quiero%20hacer%20una%20consulta" target="_blank">
         <i data-i="wa"></i>Atención directa
       </a>
@@ -708,11 +849,16 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
     <header class="app-hdr">
       <div class="gb-wrap">
         <div class="gb" role="img" aria-label="Logo GB"></div>
-        <div class="gb-txt"><b>TALLER Y REPUESTOS</b><small>Hola, Carlos</small></div>
+        <div class="gb-txt">
+          <b>TALLER Y REPUESTOS</b>
+          <button class="wa-user-pill" id="hdrUserPill" onclick="openLoginModal()" title="Iniciar sesión o cambiar número de WhatsApp">
+            <i class="wa-dot"></i>
+            <span id="hdrUserTxt">Carlos · +51 987 654 321</span>
+          </button>
+        </div>
       </div>
       <div class="hdr-a">
         <a class="ib" href="admin.html" title="Panel Administrador de Inventario" aria-label="Panel Administrador"><i data-i="gear"></i></a>
-        <button class="ib" onclick="switchTab('taller')" aria-label="Notificaciones"><i data-i="bell"></i><span class="dot"></span></button>
         <button class="ib" onclick="switchTab('pedido')" aria-label="Carrito"><i data-i="cart"></i><b class="cnt cart-count">3</b></button>
       </div>
     </header>
@@ -898,7 +1044,12 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
       </div>
 
       <div class="cust-fields">
-        <input class="cust-in" id="custName" type="text" placeholder="Tu nombre (ej. Carlos Mendoza)" value="Carlos" oninput="renderCart()">
+        <input class="cust-in" id="custName" type="text" placeholder="Tu nombre (ej. Carlos Mendoza)" value="Carlos Mendoza" oninput="renderCart()">
+        <div class="cust-wa-row">
+          <span class="cust-wa-prefix"><i class="wa-dot" style="width:6px;height:6px;border-radius:50%;background:var(--verde)"></i>+51</span>
+          <input class="cust-in" id="custPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="Tu WhatsApp (ej. 987 654 321)" value="987 654 321" oninput="onCheckoutPhoneInput(this)">
+          <button class="cust-wa-btn" type="button" onclick="openLoginModal()">Cuenta WA</button>
+        </div>
         <input class="cust-in" id="custAddress" type="text" placeholder="Dirección o distrito de entrega..." style="display:none" oninput="renderCart()">
       </div>
 
@@ -1189,6 +1340,128 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
   </div>
 </div>
 
+<!-- MODAL DE LOGIN CON NÚMERO DE WHATSAPP (+51 PERÚ) Y VERIFICACIÓN OTP -->
+<div class="sheet-backdrop" id="loginModal" onclick="if(event.target===this)closeLoginModal()">
+  <div class="sheet login-sheet" role="dialog" aria-modal="true" aria-label="Iniciar sesión con número de WhatsApp">
+    <div class="sheet-handle"></div>
+    <div class="login-hdr">
+      <span class="login-badge"><i data-i="wa"></i>Login con WhatsApp</span>
+      <span class="pill" id="loginStatusBadge">Sesión activa</span>
+    </div>
+
+    <!-- Tarjeta de sesión activa (si ya inició sesión) -->
+    <div class="login-active-card" id="loginActiveCard">
+      <div class="la-left">
+        <div class="login-avatar" id="loginAvatar">CM</div>
+        <div style="min-width:0">
+          <b id="loginActiveName">Carlos Mendoza</b>
+          <small id="loginActivePhone">+51 987 654 321 · Honda MSX 125 (ABC-123)</small>
+        </div>
+      </div>
+      <button class="login-logout-btn" type="button" onclick="logoutWaSession()">Salir</button>
+    </div>
+
+    <!-- Banner de acceso directo Admin si el número es el del Taller GB -->
+    <a href="admin.html" id="loginAdminBanner" style="display:none;margin-bottom:11px;padding:9px 12px;border-radius:12px;background:rgba(245,183,0,.14);border:1px solid var(--oro);color:var(--oro-claro);font-size:12px;font-weight:700;align-items:center;justify-content:space-between">
+      <span>⚙ Cuenta Administrador GB detectada</span>
+      <span style="text-decoration:underline">Ir al Inventario →</span>
+    </a>
+
+    <!-- PASO 1: INGRESAR NÚMERO DE WHATSAPP Y MOTO -->
+    <div id="loginStep1">
+      <p style="font-size:12px;color:var(--texto-2);margin-bottom:9px">
+        Ingresa tu <b style="color:#fff">número de WhatsApp</b> para vincular tu moto, ver el estado de tu orden en vivo y autocompletar tus pedidos:
+      </p>
+
+      <div class="wa-phone-box">
+        <div class="wa-cc"><i style="width:7px;height:7px;border-radius:50%;background:var(--verde);display:inline-block"></i>+51 <span>PERÚ</span></div>
+        <input class="wa-phone-in" id="waLoginPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="987 654 321" value="987 654 321" oninput="onWaLoginPhoneInput(this)">
+      </div>
+
+      <div style="margin-bottom:9px">
+        <input class="login-in" id="waLoginName" type="text" placeholder="Tu nombre y apellido (ej. Carlos Mendoza)" value="Carlos Mendoza">
+      </div>
+
+      <div class="login-grid-2">
+        <select class="login-in" id="waLoginMoto">
+          <option value="msx">Honda MSX 125 (Grom)</option>
+          <option value="nmax">Yamaha NMAX 155 CVT</option>
+          <option value="pulsar">Bajaj Pulsar NS 200 FI</option>
+          <option value="xr">Honda XR 190L Enduro</option>
+          <option value="duke">KTM Duke 200 / 250 NG</option>
+        </select>
+        <input class="login-in" id="waLoginPlate" type="text" maxlength="8" placeholder="Placa ABC-123" value="ABC-123" style="font-family:var(--mono);font-weight:700;text-transform:uppercase;text-align:center">
+      </div>
+
+      <div id="waLoginErr" style="display:none;font-size:11.5px;color:#FCA5A5;margin-bottom:8px;font-weight:600">
+        Ingresa un número celular de WhatsApp válido de 9 dígitos (empieza con 9).
+      </div>
+
+      <div class="sheet-actions" style="margin-top:10px">
+        <button class="btn ghost" type="button" onclick="closeLoginModal()">Cerrar</button>
+        <button class="btn wa" type="button" onclick="sendWaOtpCode()">
+          <i data-i="wa"></i>Recibir código WA
+        </button>
+      </div>
+    </div>
+
+    <!-- PASO 2: VERIFICACIÓN DE CÓDIGO OTP DE 4 DÍGITOS VÍA WHATSAPP -->
+    <div id="loginStep2" style="display:none">
+      <div class="wa-otp-banner" onclick="autofillWaOtp()" title="Toca para autocompletar el código recibido por WhatsApp">
+        <div>
+          <b>💬 WhatsApp · Taller GB Oficial</b>
+          <small>Tu código de acceso es <b style="color:#86EFAC" id="waOtpBannerCode">4829</b> · Toca para autocompletar</small>
+        </div>
+        <span class="wa-otp-code-pill" id="waOtpPillCode">4829</span>
+      </div>
+
+      <p style="font-size:12px;color:var(--texto-2);text-align:center">
+        Ingresa el código de 4 dígitos enviado al WhatsApp <b style="color:#fff;font-family:var(--mono)" id="otpTargetPhone">+51 987 654 321</b>:
+      </p>
+
+      <div class="otp-boxes">
+        <input class="otp-digit" id="otp1" type="text" inputmode="numeric" maxlength="1" oninput="onOtpDigit(1,this)">
+        <input class="otp-digit" id="otp2" type="text" inputmode="numeric" maxlength="1" oninput="onOtpDigit(2,this)">
+        <input class="otp-digit" id="otp3" type="text" inputmode="numeric" maxlength="1" oninput="onOtpDigit(3,this)">
+        <input class="otp-digit" id="otp4" type="text" inputmode="numeric" maxlength="1" oninput="onOtpDigit(4,this)">
+      </div>
+
+      <div class="sheet-actions" style="margin-top:8px">
+        <button class="btn ghost" type="button" onclick="backToLoginStep1()">← Cambiar N°</button>
+        <button class="btn wa" type="button" onclick="verifyWaOtpCode()">
+          <i data-i="wa"></i>Verificar y entrar
+        </button>
+      </div>
+    </div>
+
+    <!-- PERFILES RÁPIDOS DE PRUEBA (1 TOQUE) -->
+    <div class="demo-users">
+      <div class="demo-users-h">
+        <span>Cambio rápido de cuenta WhatsApp (1 toque)</span>
+        <span style="color:#86EFAC">● 4 perfiles</span>
+      </div>
+      <div class="demo-user-list">
+        <button class="demo-u-btn on" type="button" data-phone="987654321" onclick="quickLoginProfile('987654321')">
+          <b>Carlos Mendoza</b>
+          <small>+51 987 654 321 · MSX</small>
+        </button>
+        <button class="demo-u-btn" type="button" data-phone="945112890" onclick="quickLoginProfile('945112890')">
+          <b>Luis Quispe</b>
+          <small>+51 945 112 890 · NMAX</small>
+        </button>
+        <button class="demo-u-btn" type="button" data-phone="912334567" onclick="quickLoginProfile('912334567')">
+          <b>Marco Paredes</b>
+          <small>+51 912 334 567 · Pulsar</small>
+        </button>
+        <button class="demo-u-btn adm" type="button" data-phone="960628745" onclick="quickLoginProfile('960628745')">
+          <b style="color:var(--oro-claro)">⚙ Admin Taller GB</b>
+          <small>+51 960 628 745 · Admin</small>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- NOTIFICACIÓN TOAST MINIMALISTA -->
 <div class="toast" id="cartToast">
   <img id="toastImg" src="assets/productos/disco-freno.jpg" alt="">
@@ -1233,6 +1506,7 @@ const P={
  search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
  plus:'<path d="M12 5v14M5 12h14"/>',
  wrench:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.1L3 17.7 6.3 21l6.3-6.3a4 4 0 0 0 5.1-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>',
+ user:'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
  wa:'<path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/>'
 };
 
@@ -1821,6 +2095,8 @@ function renderCart(){
   document.getElementById('cartTotal').textContent = fmt(totalPrice);
 
   const cName = (document.getElementById('custName')?.value || 'Cliente').trim();
+  const cPhoneRaw = (document.getElementById('custPhone')?.value || '').replace(/\D/g, '').slice(0, 9);
+  const cPhoneFmt = cPhoneRaw.length === 9 ? `+51 ${cPhoneRaw.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3')}` : (cPhoneRaw ? `+51 ${cPhoneRaw}` : 'Por confirmar');
   const cAddr = (document.getElementById('custAddress')?.value || '').trim();
   const opCode = (document.getElementById('yapeOpCode')?.value || '').trim();
 
@@ -1844,7 +2120,7 @@ function renderCart(){
   }
 
   const waText =
-`Hola *Taller y Repuestos GB*! Soy *${cName}*, envío mi pedido *#GB-1042*:
+`Hola *Taller y Repuestos GB*! Soy *${cName}* (WhatsApp: *${cPhoneFmt}*), envío mi pedido *#GB-1042*:
 
 ${lines || '• (Sin productos seleccionados)'}
 
@@ -1946,14 +2222,270 @@ function selectSlot(slot, btn){
 function updateCitaWa(){
   document.getElementById('citaSummaryTxt').textContent = `${citaDay} · ${citaSlot}`;
   document.getElementById('citaPriceTxt').textContent = fmt(citaPrice);
-  const msg = `Hola *Taller GB*! Quiero confirmar una cita en el taller:\n• *Servicio:* ${citaService} (${fmt(citaPrice)})\n• *Fecha y hora:* ${citaDay} a las ${citaSlot}\n• *Moto:* ${selectedMoto}`;
+  const uName = currentUser ? currentUser.name : (document.getElementById('custName')?.value || 'Cliente');
+  const uPhone = currentUser ? `+51 ${formatPePhone(currentUser.phone)}` : 'Por confirmar';
+  const msg = `Hola *Taller GB*! Soy *${uName}* (WhatsApp: *${uPhone}*). Quiero confirmar una cita en el taller:\n• *Servicio:* ${citaService} (${fmt(citaPrice)})\n• *Fecha y hora:* ${citaDay} a las ${citaSlot}\n• *Moto:* ${selectedMoto}`;
   document.getElementById('citaWaBtn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 }
 
+/* ==========================================================================
+   MOTOR DE AUTENTICACIÓN / LOGIN CON NÚMERO DE WHATSAPP (+51 PERÚ)
+   ========================================================================== */
+const WA_USERS_DB = {
+  '987654321': { name:'Carlos Mendoza', phone:'987654321', motoKey:'msx', plate:'ABC-123', orderId:'#0231', stage:4, eta:'Hoy, 5:00 pm', role:'client' },
+  '945112890': { name:'Luis Quispe', phone:'945112890', motoKey:'nmax', plate:'4582-JM', orderId:'#0234', stage:5, eta:'¡Lista hoy!', role:'client' },
+  '912334567': { name:'Marco Paredes', phone:'912334567', motoKey:'pulsar', plate:'9104-KP', orderId:'#0238', stage:2, eta:'Mañana 11 am', role:'client' },
+  '960628745': { name:'Admin Taller GB', phone:'960628745', motoKey:'duke', plate:'GB-ADMIN', orderId:'#0240', stage:5, eta:'Control Total', role:'admin' }
+};
+
+let pendingWaUser = null;
+let generatedWaOtp = '4829';
+
+function formatPePhone(raw9){
+  const d = String(raw9 || '').replace(/\D/g, '').slice(0, 9);
+  if(d.length <= 3) return d;
+  if(d.length <= 6) return `${d.slice(0,3)} ${d.slice(3)}`;
+  return `${d.slice(0,3)} ${d.slice(3,6)} ${d.slice(6,9)}`;
+}
+
+function getInitials(name){
+  const parts = String(name || 'GB').trim().split(/\s+/);
+  return ((parts[0]?.[0] || 'G') + (parts[1]?.[0] || '')).toUpperCase();
+}
+
+function loadSavedWaSession(){
+  try{
+    const raw = localStorage.getItem('gb_user_session_v1');
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(parsed === null) return null;
+      if(parsed && parsed.phone) return parsed;
+    }
+  }catch(_){}
+  return { ...WA_USERS_DB['987654321'] };
+}
+
+let currentUser = loadSavedWaSession();
+
+function saveWaSession(userObj){
+  currentUser = userObj;
+  try{
+    localStorage.setItem('gb_user_session_v1', JSON.stringify(userObj));
+  }catch(_){}
+  applyUserSessionToUi();
+}
+
+function applyUserSessionToUi(){
+  const hdrPill = document.getElementById('hdrUserPill');
+  const hdrTxt = document.getElementById('hdrUserTxt');
+  const deskPill = document.getElementById('deskUserPill');
+  const deskTxt = document.getElementById('deskUserTxt');
+  const activeCard = document.getElementById('loginActiveCard');
+  const statusBadge = document.getElementById('loginStatusBadge');
+  const adminBanner = document.getElementById('loginAdminBanner');
+
+  if(currentUser){
+    const firstName = currentUser.name.split(' ')[0];
+    const fmtPhone = formatPePhone(currentUser.phone);
+    const isAdm = currentUser.role === 'admin' || currentUser.phone === YAPE_LOCAL_NUMBER;
+    const pillLabel = isAdm ? `⚙ Admin · +51 ${fmtPhone}` : `${firstName} · +51 ${fmtPhone}`;
+
+    if(hdrTxt) hdrTxt.textContent = pillLabel;
+    if(deskTxt) deskTxt.textContent = pillLabel;
+    if(hdrPill){
+      hdrPill.classList.remove('guest');
+      hdrPill.classList.toggle('admin', isAdm);
+    }
+    if(deskPill){
+      deskPill.classList.remove('guest');
+      deskPill.classList.toggle('admin', isAdm);
+    }
+
+    if(activeCard) activeCard.style.display = 'flex';
+    if(statusBadge){
+      statusBadge.textContent = isAdm ? '⚙ Admin Verificado' : '✓ WhatsApp Verificado';
+      statusBadge.style.color = isAdm ? 'var(--oro-claro)' : '#86EFAC';
+    }
+    if(adminBanner) adminBanner.style.display = isAdm ? 'flex' : 'none';
+
+    const mInfo = MOTOS[currentUser.motoKey] || MOTOS.msx;
+    document.getElementById('loginAvatar').textContent = getInitials(currentUser.name);
+    document.getElementById('loginActiveName').textContent = currentUser.name;
+    document.getElementById('loginActivePhone').textContent = `+51 ${fmtPhone} · ${mInfo.fullShort} (${currentUser.plate})`;
+
+    // Rellenar formulario del modal y del checkout
+    const loginPh = document.getElementById('waLoginPhone');
+    const loginNm = document.getElementById('waLoginName');
+    const loginMt = document.getElementById('waLoginMoto');
+    const loginPl = document.getElementById('waLoginPlate');
+    if(loginPh) loginPh.value = fmtPhone;
+    if(loginNm) loginNm.value = currentUser.name;
+    if(loginMt && currentUser.motoKey !== 'all') loginMt.value = currentUser.motoKey;
+    if(loginPl) loginPl.value = currentUser.plate;
+
+    const custNameEl = document.getElementById('custName');
+    const custPhoneEl = document.getElementById('custPhone');
+    const ccNameEl = document.getElementById('ccName');
+    if(custNameEl) custNameEl.value = currentUser.name;
+    if(custPhoneEl) custPhoneEl.value = fmtPhone;
+    if(ccNameEl){
+      ccNameEl.value = currentUser.name;
+      const cvH = document.getElementById('cvHolder');
+      if(cvH) cvH.textContent = currentUser.name.toUpperCase();
+    }
+
+    // Sincronizar moto, placa y tacómetro del cliente
+    if(MOTOS[currentUser.motoKey] && currentUser.plate){
+      MOTOS[currentUser.motoKey].plate = currentUser.plate;
+    }
+    changeMoto(currentUser.motoKey || 'msx');
+    if(currentUser.orderId){
+      document.getElementById('orderHdrTxt').textContent = `Orden ${currentUser.orderId} · ${firstName} (${currentUser.plate})`;
+      document.getElementById('orderEtaTxt').textContent = currentUser.eta || 'Hoy, 5:00 pm';
+      setOrderStage(currentUser.stage || 4);
+      document.querySelectorAll('.plate-chip').forEach(b=>{
+        b.classList.toggle('on', b.textContent.trim() === currentUser.plate);
+      });
+    }
+
+    document.querySelectorAll('.demo-u-btn').forEach(b=>{
+      b.classList.toggle('on', b.dataset.phone === currentUser.phone);
+    });
+  } else {
+    if(hdrTxt) hdrTxt.textContent = 'Entrar con WhatsApp';
+    if(deskTxt) deskTxt.textContent = 'Iniciar sesión con WhatsApp';
+    if(hdrPill){ hdrPill.classList.add('guest'); hdrPill.classList.remove('admin'); }
+    if(deskPill){ deskPill.classList.add('guest'); deskPill.classList.remove('admin'); }
+    if(activeCard) activeCard.style.display = 'none';
+    if(adminBanner) adminBanner.style.display = 'none';
+    if(statusBadge){
+      statusBadge.textContent = 'Invitado';
+      statusBadge.style.color = 'var(--oro-claro)';
+    }
+    document.querySelectorAll('.demo-u-btn').forEach(b=>b.classList.remove('on'));
+  }
+  renderCart();
+  updateCitaWa();
+}
+
+function openLoginModal(){
+  backToLoginStep1();
+  document.getElementById('loginModal').classList.add('open');
+}
+
+function closeLoginModal(){
+  document.getElementById('loginModal').classList.remove('open');
+}
+
+function onWaLoginPhoneInput(el){
+  const digits = el.value.replace(/\D/g, '').slice(0, 9);
+  el.value = formatPePhone(digits);
+  document.getElementById('waLoginErr').style.display = 'none';
+  if(WA_USERS_DB[digits]){
+    const u = WA_USERS_DB[digits];
+    document.getElementById('waLoginName').value = u.name;
+    document.getElementById('waLoginMoto').value = u.motoKey;
+    document.getElementById('waLoginPlate').value = u.plate;
+  }
+}
+
+function onCheckoutPhoneInput(el){
+  const digits = el.value.replace(/\D/g, '').slice(0, 9);
+  el.value = formatPePhone(digits);
+  if(currentUser && digits.length === 9){
+    currentUser.phone = digits;
+  }
+  renderCart();
+}
+
+function sendWaOtpCode(){
+  const rawPhone = (document.getElementById('waLoginPhone').value || '').replace(/\D/g, '');
+  const errEl = document.getElementById('waLoginErr');
+  if(rawPhone.length !== 9 || !rawPhone.startsWith('9')){
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+  const name = (document.getElementById('waLoginName').value || 'Cliente GB').trim();
+  const motoKey = document.getElementById('waLoginMoto').value || 'msx';
+  const plate = (document.getElementById('waLoginPlate').value || MOTOS[motoKey].plate || 'ABC-123').trim().toUpperCase();
+  const known = WA_USERS_DB[rawPhone];
+
+  pendingWaUser = {
+    name,
+    phone: rawPhone,
+    motoKey,
+    plate,
+    orderId: known ? known.orderId : '#0245',
+    stage: known ? known.stage : 3,
+    eta: known ? known.eta : 'Hoy, 6:00 pm',
+    role: (rawPhone === YAPE_LOCAL_NUMBER) ? 'admin' : 'client'
+  };
+
+  generatedWaOtp = String(4000 + (parseInt(rawPhone.slice(-3), 10) % 900)).slice(0, 4);
+  document.getElementById('waOtpBannerCode').textContent = generatedWaOtp;
+  document.getElementById('waOtpPillCode').textContent = generatedWaOtp;
+  document.getElementById('otpTargetPhone').textContent = `+51 ${formatPePhone(rawPhone)}`;
+
+  // Pre-cargar los 4 dígitos para demostración rápida o permitir edición
+  ['otp1','otp2','otp3','otp4'].forEach((id, idx)=>{
+    document.getElementById(id).value = generatedWaOtp[idx] || '';
+  });
+
+  document.getElementById('loginStep1').style.display = 'none';
+  document.getElementById('loginStep2').style.display = 'block';
+}
+
+function backToLoginStep1(){
+  document.getElementById('loginStep1').style.display = 'block';
+  document.getElementById('loginStep2').style.display = 'none';
+}
+
+function autofillWaOtp(){
+  ['otp1','otp2','otp3','otp4'].forEach((id, idx)=>{
+    document.getElementById(id).value = generatedWaOtp[idx] || '';
+  });
+  verifyWaOtpCode();
+}
+
+function onOtpDigit(idx, el){
+  el.value = el.value.replace(/\D/g, '').slice(0, 1);
+  if(el.value && idx < 4){
+    document.getElementById('otp' + (idx + 1)).focus();
+  }
+}
+
+function verifyWaOtpCode(){
+  const code = ['otp1','otp2','otp3','otp4'].map(id => document.getElementById(id).value).join('');
+  if(code.length < 4){
+    autofillWaOtp();
+    return;
+  }
+  const userToSave = pendingWaUser || { ...WA_USERS_DB['987654321'] };
+  saveWaSession(userToSave);
+  closeLoginModal();
+  showCustomToast('✓ SESIÓN INICIADA CON WHATSAPP', `${userToSave.name} · +51 ${formatPePhone(userToSave.phone)}`);
+}
+
+function quickLoginProfile(phoneKey){
+  const profile = WA_USERS_DB[phoneKey];
+  if(!profile) return;
+  saveWaSession({ ...profile });
+  backToLoginStep1();
+  showCustomToast('✓ CUENTA WHATSAPP ACTIVA', `${profile.name} · +51 ${formatPePhone(profile.phone)}`);
+}
+
+function logoutWaSession(){
+  saveWaSession(null);
+  backToLoginStep1();
+  document.getElementById('waLoginPhone').value = '';
+  document.getElementById('waLoginName').value = '';
+  document.getElementById('waLoginPlate').value = '';
+  showCustomToast('Sesión cerrada', 'Ingresa tu número de WhatsApp para continuar');
+}
+
 hydrateIcons();
-renderCatalog();
-renderCart();
-updateCitaWa();
+applyUserSessionToUi();
 function checkHashTab(){
   const h = (location.hash || '').replace('#','');
   if(['inicio','tienda','pedido','taller'].includes(h)) switchTab(h);
@@ -1961,6 +2493,8 @@ function checkHashTab(){
   if(h==='pulsar'){ switchTab('tienda'); changeMoto('pulsar'); }
   if(h==='yape'){ switchTab('pedido'); openYapeModal(); }
   if(h==='tarjeta'){ switchTab('pedido'); setPayMethod('Tarjeta'); }
+  if(h==='login'){ switchTab('inicio'); openLoginModal(); }
+  if(h==='otp'){ switchTab('inicio'); openLoginModal(); sendWaOtpCode(); }
 }
 checkHashTab();
 window.addEventListener('hashchange', checkHashTab);
