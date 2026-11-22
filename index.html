@@ -688,6 +688,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
       <a class="on" href="#scr-tienda">Catálogo (16)</a>
       <a href="#scr-pedido">Checkout Yape QR</a>
       <a href="#scr-taller">Taller y Citas</a>
+      <a href="admin.html" style="color:var(--oro)">⚙ Panel Admin</a>
       <a href="mobile.html">Vista 4 Pantallas</a>
     </nav>
     <div class="hdr-a">
@@ -710,6 +711,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
         <div class="gb-txt"><b>TALLER Y REPUESTOS</b><small>Hola, Carlos</small></div>
       </div>
       <div class="hdr-a">
+        <a class="ib" href="admin.html" title="Panel Administrador de Inventario" aria-label="Panel Administrador"><i data-i="gear"></i></a>
         <button class="ib" onclick="switchTab('taller')" aria-label="Notificaciones"><i data-i="bell"></i><span class="dot"></span></button>
         <button class="ib" onclick="switchTab('pedido')" aria-label="Carrito"><i data-i="cart"></i><b class="cnt cart-count">3</b></button>
       </div>
@@ -1246,7 +1248,7 @@ const MOTOS = {
 /* ==========================================================================
    CATÁLOGO AMPLIADO A 16 PRODUCTOS CON COMPATIBILIDAD ESPECÍFICA POR MODELO
    ========================================================================== */
-const INVENTORY = [
+const DEFAULT_INVENTORY = [
   {id:'disco', sku:'GB-FR-014', brand:'Honda OEM', name:'Disco de freno delantero Wave 220mm', cat:'Frenos', price:95, stock:6, tag:'Original', tagType:'', fits:['msx','xr'], fitText:'Honda MSX 125 · XR 190L', img:'assets/productos/disco-freno.jpg', spec:'Acero inoxidable SUS420 ventilado · 220mm · 4 pernos OEM.', models:'Honda MSX 125 (Grom), Honda XR 190L, CB 125F Twister.'},
   {id:'faja', sku:'GB-TR-021', brand:'Yamaha Genuine', name:'Faja / Correa de Transmisión CVT Reforzada', cat:'Transmisión', price:145, stock:5, tag:'Scooter CVT', tagType:'excl', excl:true, fits:['nmax'], fitText:'Exclusivo Yamaha NMAX 155', img:'assets/productos/faja-cvt.jpg', spec:'Correa trapezoidal dentada de kevlar y caucho EPDM original para transmisión automática CVT.', models:'Exclusivo Yamaha NMAX 155 Connected / Aerox 155.'},
   {id:'bujias3', sku:'GB-MT-031', brand:'Bajaj Original', name:'Kit 3 Bujías Iridio Triple Chispa DTS-i', cat:'Motor', price:68, stock:8, tag:'Triple Chispa', tagType:'excl', excl:true, fits:['pulsar'], fitText:'Exclusivo Pulsar NS 200', img:'assets/productos/kit-3-bujias.jpg', spec:'Juego de 3 bujías calibradas (2 laterales + 1 central) para motor 200cc Triple Spark.', models:'Exclusivo Bajaj Pulsar NS 200 FI / AS 200 / RS 200.'},
@@ -1264,6 +1266,27 @@ const INVENTORY = [
   {id:'casco', sku:'GB-AC-041', brand:'Shaft Pro', name:'Casco Integral Sport Mate Negro/Rojo', cat:'Accesorios', price:260, stock:3, tag:'ECE 22.06', tagType:'', fits:['msx','nmax','pulsar','xr','duke'], fitText:'Universal · Tallas M y L', img:'assets/productos/casco-integral.jpg', spec:'Certificación ECE 22.06 y DOT · Visor iridium + interior desmontable.', models:'Tallas disponibles en tienda: M (57-58 cm) y L (59-60 cm).'},
   {id:'guantes', sku:'GB-AC-059', brand:'Racing Carbon', name:'Guantes Tácticos con Nudillos de Carbono', cat:'Accesorios', price:85, stock:10, tag:'Protección', tagType:'', fits:['msx','nmax','pulsar','xr','duke'], fitText:'Universal · Tallas M, L, XL', img:'assets/productos/guantes-carbono.jpg', spec:'Cuero sintético respirable con protector rígido de fibra de carbono en nudillos y palma antideslizante.', models:'Universal para todo tipo de motociclista (Tallas M, L, XL).'}
 ];
+
+function loadSharedInventory(){
+  try{
+    const raw = localStorage.getItem('gb_inventory_v1');
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } else {
+      localStorage.setItem('gb_inventory_v1', JSON.stringify(DEFAULT_INVENTORY));
+    }
+  }catch(_){}
+  return DEFAULT_INVENTORY.slice();
+}
+let INVENTORY = loadSharedInventory();
+
+window.addEventListener('storage', e => {
+  if(e.key === 'gb_inventory_v1'){
+    INVENTORY = loadSharedInventory();
+    changeMoto(currentMotoKey);
+  }
+});
 
 const STAGES = {
   1:{ang:-72, fill:20, step:'Etapa 1 de 5', title:'Recibida en taller', desc:'Moto registrada en recepción con Andrés.'},

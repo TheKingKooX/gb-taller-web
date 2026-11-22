@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+<meta name="theme-color" content="#090A0D">
+<title>Panel Administrador · GB Taller y Repuestos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --asfalto:#090A0D;
+  --pista:#13161C;
+  --pista-2:#1A1E26;
+  --pista-3:#232833;
+  --linea:rgba(255,255,255,.075);
+  --luz:rgba(255,255,255,.06);
+  --texto:#F5F6F8;
+  --texto-2:#949BA8;
+  --texto-3:#5E6573;
+  --rojo:#E3201B;
+  --oro:#F5B700;
+  --oro-claro:#FFE07D;
+  --verde:#34D399;
+  --ambar:#F59E0B;
+  --r-s:12px;
+  --r-m:16px;
+  --r-l:22px;
+  --display:'Big Shoulders Display',Impact,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--asfalto);color:var(--texto);font-family:Manrope,system-ui,sans-serif;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a,button,input,select,textarea{color:inherit;font:inherit;text-decoration:none;background:none;border:0;cursor:pointer}
+svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ---------- BARRA SUPERIOR ADMIN ---------- */
+.topbar{
+  position:sticky;top:0;z-index:60;
+  background:rgba(9,10,13,.9);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--linea);
+}
+.topbar-in{
+  max-width:1280px;margin:0 auto;padding:12px 16px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+}
+.gb-wrap{display:flex;align-items:center;gap:10px;min-width:0}
+.gb{width:58px;height:34px;background:url(assets/logo-gb-marca.png) center/cover no-repeat;border-radius:8px;border:1px solid rgba(245,183,0,.35);flex:none}
+.gb-txt b{display:block;font-family:var(--display);font-size:19px;letter-spacing:.6px;line-height:1;font-weight:800}
+.gb-txt small{font-size:11px;color:var(--oro);font-weight:700;letter-spacing:.3px}
+
+.top-acts{display:flex;gap:8px;align-items:center}
+.btn{
+  height:40px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center;
+  gap:7px;font-weight:700;font-size:12.5px;padding:0 14px;transition:transform .12s,background .15s,filter .15s;white-space:nowrap;
+}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--rojo);color:#fff;box-shadow:0 6px 18px rgba(227,32,27,.28)}
+.btn.gold{background:var(--oro);color:#1a1300;font-weight:800;box-shadow:0 6px 18px rgba(245,183,0,.22)}
+.btn.ghost{background:var(--pista);border:1px solid var(--linea);color:var(--texto-2)}
+.btn.ghost:hover{color:var(--texto);background:var(--pista-2)}
+
+/* ---------- CONTENEDOR PRINCIPAL ---------- */
+.shell{max-width:1280px;margin:0 auto;padding:16px 16px 96px}
+
+/* ---------- 4 TARJETAS KPI DEL INVENTARIO ---------- */
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}
+@media (min-width:768px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}}
+.kpi{
+  padding:13px 14px;border-radius:var(--r-m);background:var(--pista);
+  border:1px solid var(--linea);box-shadow:inset 0 1px 0 var(--luz);
+  display:flex;flex-direction:column;gap:4px;text-align:left;transition:border-color .15s;
+}
+.kpi.clickable:hover,.kpi.on{border-color:var(--oro);background:rgba(245,183,0,.06)}
+.kpi small{font-size:11px;color:var(--texto-2);font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.kpi strong{font-family:var(--display);font-size:28px;font-weight:800;letter-spacing:.3px;line-height:1.05;font-variant-numeric:tabular-nums}
+.kpi span.sub{font-size:11px;color:var(--texto-3);font-weight:500}
+.kpi.warn strong{color:var(--oro-claro)}
+.kpi.val strong{color:var(--verde)}
+
+/* ---------- BUSCADOR Y FILTROS ---------- */
+.toolbar{
+  display:flex;flex-direction:column;gap:10px;
+  padding:13px;border-radius:var(--r-m);background:var(--pista);border:1px solid var(--linea);
+  margin-bottom:14px;
+}
+@media (min-width:768px){
+  .toolbar-row{display:flex;gap:10px;align-items:center}
+}
+.toolbar-row{display:grid;grid-template-columns:1fr;gap:8px}
+@media (min-width:640px){.toolbar-row{grid-template-columns:1fr auto auto}}
+
+.search{
+  display:flex;align-items:center;gap:9px;height:42px;padding:0 13px;
+  border-radius:11px;background:var(--asfalto);border:1px solid var(--linea);color:var(--texto-3);
+}
+.search input{flex:1;min-width:0;color:var(--texto);outline:none;font-size:13px}
+.search input::placeholder{color:var(--texto-3)}
+
+.sel-box{
+  height:42px;padding:0 12px;border-radius:11px;
+  background:var(--asfalto);border:1px solid var(--linea);
+  font-size:12.5px;font-weight:600;color:var(--texto);outline:none;
+}
+.sel-box option{background:var(--pista);color:var(--texto)}
+
+.pills{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.pills::-webkit-scrollbar{display:none}
+.pills button{
+  flex:none;height:32px;padding:0 12px;border-radius:999px;
+  font-size:12px;font-weight:600;background:var(--asfalto);
+  border:1px solid var(--linea);color:var(--texto-2);transition:all .15s;
+}
+.pills button.on{background:var(--texto);color:var(--asfalto);border-color:var(--texto);font-weight:700}
+.pills button.warn-p.on{background:var(--oro);color:#1a1300;border-color:var(--oro)}
+
+/* ---------- LISTA / GRID DE EDICIÓN RÁPIDA DE INVENTARIO ---------- */
+.inv-grid{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:860px){.inv-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+
+.adm-card{
+  padding:12px;border-radius:16px;background:var(--pista);
+  border:1px solid var(--linea);display:flex;flex-direction:column;gap:10px;
+  transition:border-color .15s;
+}
+.adm-card:hover{border-color:rgba(255,255,255,.16)}
+.adm-card.low-stk{border-color:rgba(245,158,11,.35)}
+.adm-card.out-stk{border-color:rgba(227,32,27,.45);opacity:.85}
+
+.adm-top{display:flex;gap:12px;align-items:center}
+.adm-photo{
+  width:68px;height:68px;border-radius:12px;overflow:hidden;
+  background:#171A20;border:1px solid var(--linea);flex:none;position:relative;cursor:pointer;
+}
+.adm-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.adm-photo span{
+  position:absolute;inset:auto 0 0 0;background:rgba(9,10,13,.78);
+  font-size:9px;font-weight:700;text-align:center;padding:2px 0;color:var(--texto-2);
+}
+
+.adm-main{flex:1;min-width:0}
+.adm-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sku-badge{
+  font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px;
+  background:var(--asfalto);border:1px solid var(--linea);color:var(--oro-claro);letter-spacing:.4px;
+}
+.cat-badge{font-size:10px;font-weight:700;color:var(--texto-3);text-transform:uppercase;letter-spacing:.5px}
+.stk-pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:auto}
+.stk-pill.ok{background:rgba(52,211,153,.12);color:var(--verde)}
+.stk-pill.low{background:rgba(245,158,11,.16);color:#fbbf24}
+.stk-pill.out{background:rgba(227,32,27,.18);color:#ff6b68}
+
+.adm-main h4{
+  font-size:14px;font-weight:700;color:var(--texto);line-height:1.25;
+  margin:4px 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;
+}
+.adm-fits{
+  font-size:11px;color:var(--texto-2);display:flex;align-items:center;gap:5px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.adm-fits i.d{width:5px;height:5px;border-radius:50%;background:var(--oro);flex:none}
+
+/* Controles rápidos en línea: Precio S/ + Stock (- / +) + Editar */
+.adm-controls{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding-top:9px;border-top:1px solid var(--linea);flex-wrap:wrap;
+}
+.price-edit{
+  display:flex;align-items:center;gap:5px;
+  background:var(--asfalto);border:1px solid var(--linea);
+  padding:4px 9px;border-radius:10px;
+}
+.price-edit span{font-size:11.5px;font-weight:800;color:var(--texto-2)}
+.price-edit input{
+  width:62px;font-weight:800;font-size:14px;color:var(--texto);
+  outline:none;font-variant-numeric:tabular-nums;
+}
+.price-edit input:focus{color:var(--oro-claro)}
+
+.stock-ctrl{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--asfalto);border:1px solid var(--linea);
+  padding:3px 5px;border-radius:10px;
+}
+.stock-ctrl button{
+  width:27px;height:27px;border-radius:7px;background:var(--pista-2);
+  color:var(--texto);font-weight:800;font-size:14px;display:grid;place-items:center;
+}
+.stock-ctrl button:hover{background:var(--texto);color:var(--asfalto)}
+.stock-ctrl b{font-size:12.5px;font-weight:800;min-width:44px;text-align:center;font-variant-numeric:tabular-nums}
+
+.act-group{display:flex;gap:6px}
+.icon-act{
+  height:33px;padding:0 11px;border-radius:9px;
+  background:var(--pista-2);border:1px solid var(--linea);
+  font-size:11.5px;font-weight:700;color:var(--texto-2);
+  display:inline-flex;align-items:center;gap:5px;
+}
+.icon-act:hover{color:var(--texto);border-color:rgba(255,255,255,.22)}
+.icon-act.del:hover{color:#ff6b68;border-color:rgba(227,32,27,.45);background:rgba(227,32,27,.1)}
+
+/* ---------- BARRA DE HERRAMIENTAS DE RESPALDO ---------- */
+.backup-bar{
+  margin-top:22px;padding:15px;border-radius:var(--r-m);
+  background:var(--pista);border:1px solid var(--linea);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+.backup-bar div b{display:block;font-size:13.5px}
+.backup-bar div small{font-size:11.5px;color:var(--texto-2)}
+.backup-btns{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- MODAL DESLIZABLE PARA CREAR / EDITAR REPUESTO ---------- */
+.sheet-backdrop{
+  position:fixed;inset:0;z-index:110;background:rgba(4,5,8,.82);
+  backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s ease;
+  display:flex;align-items:flex-end;justify-content:center;
+}
+.sheet-backdrop.open{opacity:1;pointer-events:auto}
+.sheet{
+  width:100%;max-width:540px;max-height:92vh;overflow-y:auto;
+  background:#141820;border-top:1px solid rgba(255,255,255,.14);
+  border-radius:24px 24px 0 0;padding:16px 18px 26px;
+  box-shadow:0 -20px 60px #000e;transform:translateY(100%);
+  transition:transform .25s cubic-bezier(.2,.9,.25,1);
+}
+@media (min-width:768px){
+  .sheet-backdrop{align-items:center}
+  .sheet{border-radius:22px;border:1px solid rgba(255,255,255,.14)}
+}
+.sheet-backdrop.open .sheet{transform:translateY(0)}
+.sheet-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.sheet-h h3{font-family:var(--display);font-size:24px;font-weight:800;letter-spacing:.4px}
+
+.f-photo-row{display:flex;gap:14px;align-items:center;padding:11px;border-radius:14px;background:var(--asfalto);border:1px solid var(--linea);margin-bottom:12px}
+.f-photo-prev{width:76px;height:76px;border-radius:12px;object-fit:cover;background:#171A20;border:1px solid var(--linea);flex:none}
+.f-photo-acts{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.f-photo-acts small{font-size:11px;color:var(--texto-2)}
+
+.f-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.f-grid .full{grid-column:1 / -1}
+.f-field label{display:block;font-size:11px;font-weight:700;color:var(--texto-2);margin-bottom:4px}
+.f-in{
+  width:100%;height:40px;padding:0 12px;border-radius:10px;
+  background:var(--asfalto);border:1px solid var(--linea);
+  font-size:13px;color:var(--texto);outline:none;
+}
+.f-in:focus{border-color:var(--oro)}
+textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
+
+.moto-checks{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.m-chk{
+  padding:6px 10px;border-radius:9px;background:var(--asfalto);
+  border:1px solid var(--linea);font-size:11.5px;font-weight:700;color:var(--texto-2);
+  display:inline-flex;align-items:center;gap:5px;transition:all .15s;
+}
+.m-chk.on{background:rgba(245,183,0,.15);border-color:var(--oro);color:var(--oro-claro)}
+
+.sheet-f{display:flex;gap:10px;margin-top:16px}
+.sheet-f .btn{flex:1;height:44px}
+
+/* ---------- TOAST DE CONFIRMACIÓN ---------- */
+.toast{
+  position:fixed;left:50%;bottom:20px;z-index:120;
+  transform:translate(-50%,20px);opacity:0;pointer-events:none;
+  padding:10px 16px;border-radius:13px;background:#181D26;
+  border:1px solid rgba(52,211,153,.45);color:var(--texto);
+  font-size:12.5px;font-weight:700;box-shadow:0 14px 36px rgba(0,0,0,.8);
+  display:flex;align-items:center;gap:10px;transition:all .2s ease;
+}
+.toast.show{transform:translate(-50%,0);opacity:1}
+.toast span{color:var(--verde)}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="gb-wrap">
+      <div class="gb" role="img" aria-label="Logo GB"></div>
+      <div class="gb-txt">
+        <b>PANEL ADMINISTRADOR · INVENTARIO</b>
+        <small>SINCRONIZADO EN VIVO CON LA TIENDA WEB</small>
+      </div>
+    </div>
+    <div class="top-acts">
+      <a class="btn ghost" href="index.html">← Ver Tienda</a>
+      <button class="btn gold" onclick="openNewModal()">+ Nuevo Repuesto</button>
+    </div>
+  </div>
+</header>
+
+<main class="shell">
+
+  <!-- 4 KPIs EN TIEMPO REAL -->
+  <section class="kpis" aria-label="Resumen del inventario">
+    <button class="kpi clickable" id="kpiAll" onclick="setStockFilter('all')">
+      <small>PRODUCTOS ACTIVOS <span>📦</span></small>
+      <strong id="kpiTotalItems">16</strong>
+      <span class="sub">Referencias en catálogo</span>
+    </button>
+    <div class="kpi">
+      <small>UNIDADES EN STOCK <span>🔩</span></small>
+      <strong id="kpiTotalUnits">110</strong>
+      <span class="sub">Total físico en almacén</span>
+    </div>
+    <div class="kpi val">
+      <small>VALOR DEL INVENTARIO <span>S/</span></small>
+      <strong id="kpiTotalValue">S/ 15,430</strong>
+      <span class="sub">Calculado (precio × stock)</span>
+    </div>
+    <button class="kpi warn clickable" id="kpiLow" onclick="setStockFilter('low')">
+      <small>ALERTA STOCK BAJO <span>⚠</span></small>
+      <strong id="kpiLowCount">4</strong>
+      <span class="sub">Con ≤ 3 unidades (Toca para filtrar)</span>
+    </button>
+  </section>
+
+  <!-- BUSCADOR Y FILTROS -->
+  <section class="toolbar">
+    <div class="toolbar-row">
+      <label class="search">
+        <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="qAdmin" type="text" placeholder="Buscar por nombre, código SKU (ej. GB-FR-014) o marca..." oninput="renderAdminList()">
+      </label>
+
+      <select class="sel-box" id="motoAdminFilter" onchange="renderAdminList()">
+        <option value="all">Todas las motos (Compatibilidad)</option>
+        <option value="msx">Compatibles: Honda MSX 125</option>
+        <option value="nmax">Compatibles: Yamaha NMAX 155</option>
+        <option value="pulsar">Compatibles: Bajaj Pulsar NS 200</option>
+        <option value="xr">Compatibles: Honda XR 190L</option>
+        <option value="duke">Compatibles: KTM Duke 200</option>
+      </select>
+
+      <select class="sel-box" id="sortAdmin" onchange="renderAdminList()">
+        <option value="default">Orden: Predeterminado</option>
+        <option value="stock-asc">Orden: Menor stock primero</option>
+        <option value="price-asc">Orden: Menor precio</option>
+        <option value="price-desc">Orden: Mayor precio</option>
+      </select>
+    </div>
+
+    <div class="pills" id="catPills">
+      <button class="on" onclick="setAdminCat('Todo',this)">Todas las categorías</button>
+      <button class="warn-p" id="pillLowBtn" onclick="setStockFilter('low')">⚠ Por agotar (≤ 3)</button>
+      <button onclick="setAdminCat('Frenos',this)">Frenos</button>
+      <button onclick="setAdminCat('Transmisión',this)">Transmisión / CVT</button>
+      <button onclick="setAdminCat('Motor',this)">Motor</button>
+      <button onclick="setAdminCat('Eléctrico',this)">Eléctrico</button>
+      <button onclick="setAdminCat('Suspensión',this)">Suspensión y Llantas</button>
+      <button onclick="setAdminCat('Accesorios',this)">Accesorios</button>
+    </div>
+  </section>
+
+  <!-- LISTA DE EDICIÓN RÁPIDA -->
+  <section class="inv-grid" id="adminGrid"></section>
+
+  <!-- RESPALDO Y RESTAURACIÓN -->
+  <section class="backup-bar">
+    <div>
+      <b>Respaldo y sincronización del almacén</b>
+      <small>Todos los cambios de precio, stock o productos nuevos se actualizan al instante en la Tienda del Cliente.</small>
+    </div>
+    <div class="backup-btns">
+      <button class="btn ghost" onclick="exportInventoryJson()">⬇ Exportar JSON</button>
+      <label class="btn ghost" style="cursor:pointer">
+        ⬆ Importar JSON
+        <input type="file" accept=".json,application/json" style="display:none" onchange="importInventoryJson(event)">
+      </label>
+      <button class="btn ghost" onclick="resetFactoryInventory()">↺ Restaurar 16 originales</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- MODAL PARA AGREGAR O EDITAR REPUESTO COMPLETO -->
+<div class="sheet-backdrop" id="editSheet" onclick="if(event.target===this)closeEditModal()">
+  <div class="sheet" role="dialog" aria-modal="true">
+    <div class="sheet-h">
+      <h3 id="modalTitle">Editar Repuesto</h3>
+      <button class="btn ghost" style="height:34px;padding:0 10px" onclick="closeEditModal()">✕ Cerrar</button>
+    </div>
+
+    <div class="f-photo-row">
+      <img class="f-photo-prev" id="fImgPrev" src="assets/productos/disco-freno.jpg" alt="Vista previa">
+      <div class="f-photo-acts">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <label class="btn ghost" style="height:34px;font-size:11.5px;cursor:pointer">
+            📷 Subir foto desde equipo
+            <input type="file" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
+          </label>
+          <select class="sel-box" id="fPresetImg" style="height:34px;font-size:11.5px" onchange="selectPresetPhoto(this.value)">
+            <option value="">Elegir foto de galería GB...</option>
+            <option value="assets/productos/disco-freno.jpg">Disco de freno Wave</option>
+            <option value="assets/productos/faja-cvt.jpg">Faja / Correa CVT</option>
+            <option value="assets/productos/bujias3.jpg">Kit 3 Bujías</option>
+            <option value="assets/productos/kit-3-bujias.jpg">3 Bujías Iridio</option>
+            <option value="assets/productos/llanta-cocada.jpg">Llanta Cocada Enduro</option>
+            <option value="assets/productos/kit-arrastre.jpg">Kit de arrastre Oro</option>
+            <option value="assets/productos/rodillos-variador.jpg">Rodillos de variador</option>
+            <option value="assets/productos/radiador-200.jpg">Radiador con ventilador</option>
+            <option value="assets/productos/escape-carbono.jpg">Escape fibra carbono</option>
+            <option value="assets/productos/pastillas-freno.jpg">Pastillas de freno</option>
+            <option value="assets/productos/faro-led.jpg">Faro LED Ojo de Ángel</option>
+            <option value="assets/productos/amortiguador.jpg">Amortiguador Monoshock</option>
+            <option value="assets/productos/aceite-4t.jpg">Aceite 4T Sintético</option>
+            <option value="assets/productos/bujia-iridio.jpg">Bujía Iridio</option>
+            <option value="assets/productos/bateria-agm.jpg">Batería 12V AGM</option>
+            <option value="assets/productos/casco-integral.jpg">Casco Integral</option>
+            <option value="assets/productos/guantes-carbono.jpg">Guantes Carbono</option>
+          </select>
+        </div>
+        <small>Puedes subir una foto real desde tu celular o elegir una del catálogo.</small>
+      </div>
+    </div>
+
+    <div class="f-grid">
+      <div class="f-field full">
+        <label>Nombre del repuesto o accesorio</label>
+        <input class="f-in" id="fName" type="text" placeholder="Ej. Disco de freno delantero Wave 220mm">
+      </div>
+
+      <div class="f-field">
+        <label>Marca</label>
+        <input class="f-in" id="fBrand" type="text" placeholder="Ej. Honda OEM, Motul, DID">
+      </div>
+
+      <div class="f-field">
+        <label>Código SKU</label>
+        <input class="f-in" id="fSku" type="text" placeholder="Ej. GB-FR-014">
+      </div>
+
+      <div class="f-field">
+        <label>Categoría</label>
+        <select class="f-in" id="fCat">
+          <option value="Frenos">Frenos</option>
+          <option value="Transmisión">Transmisión</option>
+          <option value="Motor">Motor</option>
+          <option value="Eléctrico">Eléctrico</option>
+          <option value="Suspensión">Suspensión</option>
+          <option value="Accesorios">Accesorios</option>
+        </select>
+      </div>
+
+      <div class="f-field">
+        <label>Etiqueta superior (opcional)</label>
+        <input class="f-in" id="fTag" type="text" placeholder="Ej. Original, -15%, Scooter CVT">
+      </div>
+
+      <div class="f-field">
+        <label>Precio de venta (S/)</label>
+        <input class="f-in" id="fPrice" type="number" min="1" step="1" placeholder="95">
+      </div>
+
+      <div class="f-field">
+        <label>Stock disponible (unidades)</label>
+        <input class="f-in" id="fStock" type="number" min="0" step="1" placeholder="6">
+      </div>
+
+      <div class="f-field full">
+        <label style="display:flex;justify-content:space-between">
+          <span>Motocicletas compatibles con este repuesto</span>
+          <button type="button" style="color:var(--oro);font-size:11px;font-weight:700" onclick="selectAllMotosInForm()">Marcar todas (Universal)</button>
+        </label>
+        <div class="moto-checks" id="fMotoChecks">
+          <button type="button" class="m-chk" data-m="msx" onclick="toggleFormMoto('msx',this)">Honda MSX 125</button>
+          <button type="button" class="m-chk" data-m="nmax" onclick="toggleFormMoto('nmax',this)">Yamaha NMAX 155</button>
+          <button type="button" class="m-chk" data-m="pulsar" onclick="toggleFormMoto('pulsar',this)">Pulsar NS 200</button>
+          <button type="button" class="m-chk" data-m="xr" onclick="toggleFormMoto('xr',this)">Honda XR 190L</button>
+          <button type="button" class="m-chk" data-m="duke" onclick="toggleFormMoto('duke',this)">KTM Duke 200</button>
+        </div>
+      </div>
+
+      <div class="f-field full">
+        <label>Texto corto de compatibilidad en tarjeta</label>
+        <input class="f-in" id="fFitText" type="text" placeholder="Ej. Honda MSX 125 · XR 190L">
+      </div>
+
+      <div class="f-field full">
+        <label>Especificación técnica (se muestra al abrir la ficha)</label>
+        <textarea class="f-in" id="fSpec" placeholder="Detalles técnicos, medidas, certificación..."></textarea>
+      </div>
+    </div>
+
+    <div class="sheet-f">
+      <button class="btn ghost" id="fDeleteBtn" style="flex:0 0 auto;color:#ff6b68" onclick="deleteCurrentItem()">Eliminar</button>
+      <button class="btn gold" onclick="saveModalItem()">✓ Guardar en Inventario</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="admToast"><span>✓</span><b id="admToastTxt">Inventario actualizado</b></div>
+
+<script>
+const DEFAULT_INVENTORY = [
+  {id:'disco', sku:'GB-FR-014', brand:'Honda OEM', name:'Disco de freno delantero Wave 220mm', cat:'Frenos', price:95, stock:6, tag:'Original', tagType:'', fits:['msx','xr'], fitText:'Honda MSX 125 · XR 190L', img:'assets/productos/disco-freno.jpg', spec:'Acero inoxidable SUS420 ventilado · 220mm · 4 pernos OEM.', models:'Honda MSX 125 (Grom), Honda XR 190L, CB 125F Twister.'},
+  {id:'faja', sku:'GB-TR-021', brand:'Yamaha Genuine', name:'Faja / Correa de Transmisión CVT Reforzada', cat:'Transmisión', price:145, stock:5, tag:'Scooter CVT', tagType:'excl', excl:true, fits:['nmax'], fitText:'Exclusivo Yamaha NMAX 155', img:'assets/productos/faja-cvt.jpg', spec:'Correa trapezoidal dentada de kevlar y caucho EPDM original para transmisión automática CVT.', models:'Exclusivo Yamaha NMAX 155 Connected / Aerox 155.'},
+  {id:'bujias3', sku:'GB-MT-031', brand:'Bajaj Original', name:'Kit 3 Bujías Iridio Triple Chispa DTS-i', cat:'Motor', price:68, stock:8, tag:'Triple Chispa', tagType:'excl', excl:true, fits:['pulsar'], fitText:'Exclusivo Pulsar NS 200', img:'assets/productos/kit-3-bujias.jpg', spec:'Juego de 3 bujías calibradas (2 laterales + 1 central) para motor 200cc Triple Spark.', models:'Exclusivo Bajaj Pulsar NS 200 FI / AS 200 / RS 200.'},
+  {id:'llanta', sku:'GB-SU-042', brand:'Pirelli MT60', name:'Llanta Doble Propósito 110/90-17 Cocada', cat:'Suspensión', price:245, stock:4, tag:'Enduro / Trail', tagType:'excl', excl:true, fits:['xr'], fitText:'Exclusivo Honda XR 190L', img:'assets/productos/llanta-cocada.jpg', spec:'Compuesto mixto asfalto/trocha con tacos profundos de tracción y carcasa reforzada.', models:'Honda XR 190L, XR 150L, Tornado 250, Yamaha XTZ 150.'},
+  {id:'kit', sku:'GB-TR-008', brand:'DID Racing', name:'Kit de arrastre 428 Oro (Cadena + Catalina)', cat:'Transmisión', price:185, stock:4, tag:'Destacado', tagType:'', fits:['msx','xr','pulsar'], fitText:'MSX 125 · XR 190L · Pulsar', img:'assets/productos/kit-arrastre.jpg', spec:'Cadena reforzada 428HD dorada 120 eslabones + Catalina de acero al carbono + Piñón.', models:'Honda MSX 125, Honda XR 190L, Bajaj Pulsar NS 200.'},
+  {id:'rodillos', sku:'GB-TR-024', brand:'Dr. Pulley', name:'Kit 6 Rodillos / Polines de Variador 13g', cat:'Transmisión', price:75, stock:7, tag:'Racing CVT', tagType:'excl', excl:true, fits:['nmax'], fitText:'Exclusivo Yamaha NMAX 155', img:'assets/productos/rodillos-variador.jpg', spec:'Juego de 6 polines autolubricados de baja fricción para mayor salida y velocidad final en variador.', models:'Exclusivo Yamaha NMAX 155 / BWS 125 / Cygnus.'},
+  {id:'radiador', sku:'GB-MT-035', brand:'KTM / Bajaj OEM', name:'Radiador Aluminio + Electroventilador 200cc', cat:'Motor', price:290, stock:3, tag:'Refrig. Líquida', tagType:'excl', excl:true, fits:['pulsar','duke'], fitText:'Pulsar NS 200 · KTM Duke 200', img:'assets/productos/radiador-200.jpg', spec:'Panal de aluminio de alto flujo térmico con electroventilador sellado 12V incluido.', models:'Bajaj Pulsar NS 200 FI, RS 200 y KTM Duke 200 / 250 NG.'},
+  {id:'escape', sku:'GB-AC-048', brand:'Akra Style Carbon', name:'Escape Deportivo Slip-On Fibra de Carbono', cat:'Accesorios', price:380, stock:3, tag:'Fibra Carbono', tagType:'', fits:['msx','pulsar','duke'], fitText:'MSX 125 · Pulsar · KTM Duke', img:'assets/productos/escape-carbono.jpg', spec:'Silenciador deportivo en fibra de carbono real y acero inoxidable 304 con DB-Killer desmontable.', models:'Honda MSX 125, Bajaj Pulsar NS 200, KTM Duke 200 / 250.'},
+  {id:'pastillas', sku:'GB-FR-029', brand:'Brembo', name:'Pastillas de freno sinterizadas cobre', cat:'Frenos', price:55, was:65, stock:11, tag:'-15%', tagType:'off', fits:['msx','nmax','pulsar','duke'], fitText:'MSX · NMAX · Pulsar · Duke', img:'assets/productos/pastillas-freno.jpg', spec:'Compuesto sinterizado HH de alto agarre en seco y mojado (par delantero).', models:'Honda MSX 125, Yamaha NMAX 155, Bajaj Pulsar NS 200, KTM Duke 200.'},
+  {id:'faro', sku:'GB-EL-052', brand:'LED Moto Pro', name:'Faro Proyector LED Ojo de Ángel 6000K', cat:'Eléctrico', price:135, stock:6, tag:'LED 6000K', tagType:'', fits:['msx','pulsar','xr','duke'], fitText:'MSX · Pulsar · XR · Duke', img:'assets/productos/faro-led.jpg', spec:'Proyector Bi-LED alta/baja 45W con aro DRL blanco y direccional ámbar integrada IP67.', models:'Honda MSX 125, Bajaj Pulsar NS 200, Honda XR 190L, KTM Duke.'},
+  {id:'shock', sku:'GB-SU-012', brand:'YSS Racing', name:'Amortiguador Monoshock gas regulable', cat:'Suspensión', price:320, stock:2, tag:'Últimos 2', tagType:'low', fits:['msx','pulsar','duke'], fitText:'MSX 125 · Pulsar · KTM Duke', img:'assets/productos/amortiguador.jpg', spec:'Monoshock hidráulico con botella de nitrógeno anodizada en oro y precarga regulable.', models:'Honda MSX 125 (Grom), Bajaj Pulsar NS 200, KTM Duke 200.'},
+  {id:'aceite', sku:'GB-MT-003', brand:'Motul 7100', name:'Aceite 4T 10W-40 100% Sintético 1L', cat:'Motor', price:45, stock:24, tag:'Universal 4T', tagType:'', fits:['msx','nmax','pulsar','xr','duke'], fitText:'Universal 4T (Todas las motos)', img:'assets/productos/aceite-4t.jpg', spec:'100% Sintético con tecnología Ester · Norma JASO MA2 / API SN (1 Litro).', models:'Todas las motocicletas de 4 Tiempos (Honda, Yamaha, Bajaj, KTM).'},
+  {id:'bujia', sku:'GB-EL-019', brand:'NGK Iridium', name:'Bujía de Iridio Laser CR8EIX', cat:'Eléctrico', price:48, stock:9, tag:'Iridio', tagType:'', fits:['msx','nmax','xr','duke'], fitText:'MSX · NMAX · XR 190L · Duke', img:'assets/productos/bujia-iridio.jpg', spec:'Electrodo central de Iridio soldado con láser 0.6mm · Arranque inmediato.', models:'Honda MSX 125, Yamaha NMAX 155, Honda XR 190L, KTM Duke 200.'},
+  {id:'bateria', sku:'GB-EL-005', brand:'Yuasa AGM', name:'Batería 12V 5Ah Libre Mantenimiento', cat:'Eléctrico', price:120, stock:5, tag:'Garantía 6M', tagType:'', fits:['msx','nmax','pulsar','xr','duke'], fitText:'Compatible con los 5 modelos', img:'assets/productos/bateria-agm.jpg', spec:'Tecnología AGM sellada activada de fábrica · 12V 5Ah CCA 85A.', models:'Honda MSX 125, Yamaha NMAX 155, Pulsar NS 200, Honda XR 190L, KTM Duke.'},
+  {id:'casco', sku:'GB-AC-041', brand:'Shaft Pro', name:'Casco Integral Sport Mate Negro/Rojo', cat:'Accesorios', price:260, stock:3, tag:'ECE 22.06', tagType:'', fits:['msx','nmax','pulsar','xr','duke'], fitText:'Universal · Tallas M y L', img:'assets/productos/casco-integral.jpg', spec:'Certificación ECE 22.06 y DOT · Visor iridium + interior desmontable.', models:'Tallas disponibles en tienda: M (57-58 cm) y L (59-60 cm).'},
+  {id:'guantes', sku:'GB-AC-059', brand:'Racing Carbon', name:'Guantes Tácticos con Nudillos de Carbono', cat:'Accesorios', price:85, stock:10, tag:'Protección', tagType:'', fits:['msx','nmax','pulsar','xr','duke'], fitText:'Universal · Tallas M, L, XL', img:'assets/productos/guantes-carbono.jpg', spec:'Cuero sintético respirable con protector rígido de fibra de carbono en nudillos y palma antideslizante.', models:'Universal para todo tipo de motociclista (Tallas M, L, XL).'}
+];
+
+const MOTO_LABELS = {msx:'MSX 125', nmax:'NMAX 155', pulsar:'Pulsar NS 200', xr:'XR 190L', duke:'KTM Duke'};
+
+function loadInventory(){
+  try{
+    const raw = localStorage.getItem('gb_inventory_v1');
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  }catch(_){}
+  return JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
+}
+
+let INVENTORY = loadInventory();
+let adminCat = 'Todo';
+let stockFilter = 'all'; // 'all' | 'low'
+let editingId = null;
+let formMotos = new Set(['msx']);
+let formImg = 'assets/productos/disco-freno.jpg';
+let toastT = null;
+
+function saveInventory(msg){
+  try{
+    localStorage.setItem('gb_inventory_v1', JSON.stringify(INVENTORY));
+  }catch(_){}
+  updateKpis();
+  if(msg) showAdmToast(msg);
+}
+
+function showAdmToast(txt){
+  const el = document.getElementById('admToast');
+  document.getElementById('admToastTxt').textContent = txt;
+  el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>el.classList.remove('show'), 2200);
+}
+
+function updateKpis(){
+  const totalItems = INVENTORY.length;
+  const totalUnits = INVENTORY.reduce((s,p)=>s + (Number(p.stock)||0), 0);
+  const totalVal = INVENTORY.reduce((s,p)=>s + (Number(p.price)||0) * (Number(p.stock)||0), 0);
+  const lowCount = INVENTORY.filter(p=>(Number(p.stock)||0) <= 3).length;
+
+  document.getElementById('kpiTotalItems').textContent = totalItems;
+  document.getElementById('kpiTotalUnits').textContent = totalUnits;
+  document.getElementById('kpiTotalValue').textContent = 'S/ ' + totalVal.toLocaleString('es-PE');
+  document.getElementById('kpiLowCount').textContent = lowCount;
+}
+
+function setAdminCat(c, btn){
+  adminCat = c;
+  stockFilter = 'all';
+  document.querySelectorAll('#catPills button').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  document.getElementById('kpiLow').classList.remove('on');
+  renderAdminList();
+}
+
+function setStockFilter(mode){
+  stockFilter = (stockFilter === mode && mode === 'low') ? 'all' : mode;
+  document.querySelectorAll('#catPills button').forEach(b=>b.classList.remove('on'));
+  if(stockFilter === 'low'){
+    document.getElementById('pillLowBtn').classList.add('on');
+    document.getElementById('kpiLow').classList.add('on');
+  } else {
+    document.querySelector('#catPills button:first-child').classList.add('on');
+    document.getElementById('kpiLow').classList.remove('on');
+  }
+  renderAdminList();
+}
+
+function quickStock(id, delta){
+  const p = INVENTORY.find(x=>x.id===id);
+  if(!p) return;
+  p.stock = Math.max(0, (Number(p.stock)||0) + delta);
+  saveInventory(`Stock de ${p.sku}: ${p.stock} uds`);
+  renderAdminList();
+}
+
+function quickPrice(id, val){
+  const p = INVENTORY.find(x=>x.id===id);
+  if(!p) return;
+  const num = Math.max(1, Number(val)||p.price);
+  p.price = num;
+  saveInventory(`Precio ${p.sku}: S/ ${num}`);
+}
+
+function renderAdminList(){
+  updateKpis();
+  const q = (document.getElementById('qAdmin').value || '').toLowerCase().trim();
+  const motoF = document.getElementById('motoAdminFilter').value;
+  const sortF = document.getElementById('sortAdmin').value;
+
+  let list = INVENTORY.filter(p=>{
+    if(adminCat !== 'Todo' && !adminCat.startsWith(p.cat)) return false;
+    if(stockFilter === 'low' && (Number(p.stock)||0) > 3) return false;
+    if(motoF !== 'all' && !(p.fits || []).includes(motoF)) return false;
+    if(q && !(p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q))) return false;
+    return true;
+  });
+
+  if(sortF === 'stock-asc') list.sort((a,b)=>a.stock - b.stock);
+  if(sortF === 'price-asc') list.sort((a,b)=>a.price - b.price);
+  if(sortF === 'price-desc') list.sort((a,b)=>b.price - a.price);
+
+  const grid = document.getElementById('adminGrid');
+  grid.innerHTML = list.map(p=>{
+    const stk = Number(p.stock)||0;
+    const stkClass = stk === 0 ? 'out' : (stk <= 3 ? 'low' : 'ok');
+    const stkText = stk === 0 ? 'Agotado (0)' : (stk <= 3 ? `⚠ Quedan ${stk}` : `● ${stk} en stock`);
+    const cardClass = stk === 0 ? 'out-stk' : (stk <= 3 ? 'low-stk' : '');
+
+    return `
+      <article class="adm-card ${cardClass}">
+        <div class="adm-top">
+          <div class="adm-photo" onclick="openEditModal('${p.id}')" title="Cambiar foto o editar">
+            <img src="${p.img}" alt="${p.name}">
+            <span>Editar</span>
+          </div>
+          <div class="adm-main">
+            <div class="adm-meta">
+              <span class="sku-badge">${p.sku}</span>
+              <span class="cat-badge">${p.brand} · ${p.cat}</span>
+              <span class="stk-pill ${stkClass}">${stkText}</span>
+            </div>
+            <h4 onclick="openEditModal('${p.id}')">${p.name}</h4>
+            <div class="adm-fits"><i class="d"></i><span>${p.fitText || 'Universal'}</span></div>
+          </div>
+        </div>
+
+        <div class="adm-controls">
+          <label class="price-edit" title="Editar precio en Soles">
+            <span>S/</span>
+            <input type="number" min="1" value="${p.price}" onchange="quickPrice('${p.id}',this.value)">
+          </label>
+
+          <div class="stock-ctrl">
+            <button onclick="quickStock('${p.id}',-1)" aria-label="Restar 1 unidad">−</button>
+            <b>${stk} uds</b>
+            <button onclick="quickStock('${p.id}',1)" aria-label="Sumar 1 unidad">+</button>
+          </div>
+
+          <div class="act-group">
+            <button class="icon-act" onclick="openEditModal('${p.id}')">✎ Ficha</button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+/* ---------- MODAL CREAR / EDITAR ---------- */
+function openEditModal(id){
+  const p = INVENTORY.find(x=>x.id===id);
+  if(!p) return;
+  editingId = p.id;
+  document.getElementById('modalTitle').textContent = `Editar · ${p.sku}`;
+  document.getElementById('fName').value = p.name;
+  document.getElementById('fBrand').value = p.brand;
+  document.getElementById('fSku').value = p.sku;
+  document.getElementById('fCat').value = p.cat;
+  document.getElementById('fTag').value = p.tag || '';
+  document.getElementById('fPrice').value = p.price;
+  document.getElementById('fStock').value = p.stock;
+  document.getElementById('fFitText').value = p.fitText || '';
+  document.getElementById('fSpec').value = p.spec || '';
+  formImg = p.img;
+  document.getElementById('fImgPrev').src = formImg;
+  formMotos = new Set(p.fits || ['msx']);
+  syncFormMotoButtons();
+  document.getElementById('fDeleteBtn').style.display = 'inline-flex';
+  document.getElementById('editSheet').classList.add('open');
+}
+
+function openNewModal(){
+  editingId = null;
+  const nextNum = String(INVENTORY.length + 15).padStart(3,'0');
+  document.getElementById('modalTitle').textContent = 'Nuevo Repuesto o Accesorio';
+  document.getElementById('fName').value = '';
+  document.getElementById('fBrand').value = 'Honda OEM';
+  document.getElementById('fSku').value = `GB-RP-${nextNum}`;
+  document.getElementById('fCat').value = 'Frenos';
+  document.getElementById('fTag').value = 'Nuevo';
+  document.getElementById('fPrice').value = 85;
+  document.getElementById('fStock').value = 5;
+  document.getElementById('fFitText').value = 'Honda MSX 125 · Pulsar NS 200';
+  document.getElementById('fSpec').value = 'Repuesto verificado con garantía en Taller GB.';
+  formImg = 'assets/productos/disco-freno.jpg';
+  document.getElementById('fImgPrev').src = formImg;
+  formMotos = new Set(['msx','pulsar']);
+  syncFormMotoButtons();
+  document.getElementById('fDeleteBtn').style.display = 'none';
+  document.getElementById('editSheet').classList.add('open');
+}
+
+function closeEditModal(){
+  document.getElementById('editSheet').classList.remove('open');
+}
+
+function syncFormMotoButtons(){
+  document.querySelectorAll('#fMotoChecks .m-chk').forEach(btn=>{
+    btn.classList.toggle('on', formMotos.has(btn.dataset.m));
+  });
+}
+
+function toggleFormMoto(m, btn){
+  if(formMotos.has(m)){
+    if(formMotos.size > 1) formMotos.delete(m);
+  } else {
+    formMotos.add(m);
+  }
+  syncFormMotoButtons();
+  autoUpdateFitText();
+}
+
+function selectAllMotosInForm(){
+  ['msx','nmax','pulsar','xr','duke'].forEach(m=>formMotos.add(m));
+  syncFormMotoButtons();
+  document.getElementById('fFitText').value = 'Universal (Compatible con los 5 modelos)';
+}
+
+function autoUpdateFitText(){
+  const arr = [...formMotos];
+  if(arr.length === 5){
+    document.getElementById('fFitText').value = 'Universal (Todas las motos)';
+  } else if(arr.length === 1){
+    document.getElementById('fFitText').value = 'Exclusivo ' + MOTO_LABELS[arr[0]];
+  } else {
+    document.getElementById('fFitText').value = arr.map(k=>MOTO_LABELS[k]).join(' · ');
+  }
+}
+
+function selectPresetPhoto(val){
+  if(!val) return;
+  formImg = val;
+  document.getElementById('fImgPrev').src = formImg;
+}
+
+function handlePhotoUpload(ev){
+  const file = ev.target.files?.[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const maxD = 380;
+      const scale = Math.min(1, maxD / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width * scale);
+      c.height = Math.round(img.height * scale);
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      formImg = c.toDataURL('image/jpeg', 0.82);
+      document.getElementById('fImgPrev').src = formImg;
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveModalItem(){
+  const name = (document.getElementById('fName').value || '').trim();
+  if(!name){
+    document.getElementById('fName').focus();
+    return;
+  }
+  const fitsArr = [...formMotos];
+  const itemData = {
+    id: editingId || ('item_' + Date.now()),
+    sku: (document.getElementById('fSku').value || 'GB-RP-099').trim(),
+    brand: (document.getElementById('fBrand').value || 'GB').trim(),
+    name,
+    cat: document.getElementById('fCat').value,
+    price: Math.max(1, Number(document.getElementById('fPrice').value) || 50),
+    stock: Math.max(0, Number(document.getElementById('fStock').value) || 0),
+    tag: (document.getElementById('fTag').value || '').trim(),
+    tagType: fitsArr.length === 1 ? 'excl' : '',
+    excl: fitsArr.length === 1,
+    fits: fitsArr,
+    fitText: (document.getElementById('fFitText').value || 'Universal').trim(),
+    img: formImg,
+    spec: (document.getElementById('fSpec').value || '').trim(),
+    models: (document.getElementById('fFitText').value || 'Universal').trim()
+  };
+
+  if(editingId){
+    const idx = INVENTORY.findIndex(x=>x.id===editingId);
+    if(idx >= 0) INVENTORY[idx] = {...INVENTORY[idx], ...itemData};
+    saveInventory(`✓ Actualizado: ${itemData.name}`);
+  } else {
+    INVENTORY.unshift(itemData);
+    saveInventory(`✓ Nuevo repuesto agregado: ${itemData.name}`);
+  }
+  closeEditModal();
+  renderAdminList();
+}
+
+function deleteCurrentItem(){
+  if(!editingId) return;
+  const p = INVENTORY.find(x=>x.id===editingId);
+  INVENTORY = INVENTORY.filter(x=>x.id!==editingId);
+  saveInventory(`Eliminado: ${p ? p.name : ''}`);
+  closeEditModal();
+  renderAdminList();
+}
+
+function exportInventoryJson(){
+  const blob = new Blob([JSON.stringify(INVENTORY, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'inventario-gb-taller.json';
+  a.click();
+}
+
+function importInventoryJson(ev){
+  const file = ev.target.files?.[0];
+  if(!file) return;
+  const r = new FileReader();
+  r.onload = e => {
+    try{
+      const parsed = JSON.parse(e.target.result);
+      if(Array.isArray(parsed) && parsed.length > 0){
+        INVENTORY = parsed;
+        saveInventory(`✓ Importados ${parsed.length} productos`);
+        renderAdminList();
+      }
+    }catch(_){}
+  };
+  r.readAsText(file);
+}
+
+function resetFactoryInventory(){
+  INVENTORY = JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
+  saveInventory('↺ Restaurados los 16 productos originales');
+  renderAdminList();
+}
+
+renderAdminList();
+if(location.hash === '#edit'){
+  openEditModal('disco');
+}
+</script>
+</body>
+</html>
