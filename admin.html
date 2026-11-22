@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script type="module" src="assets/firebase-sync.js"></script>
 <style>
 :root{
   --asfalto:#090A0D;
@@ -384,6 +385,27 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
   box-shadow:0 0 8px var(--verde);animation:pulseLive 1.8s infinite;
 }
 @keyframes pulseLive{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.8)}}
+
+/* ---------- BARRA DE CONEXIÓN CLOUD FIREBASE (TIEMPO REAL MULTI-DISPOSITIVO) ---------- */
+.cloud-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:11px 14px;border-radius:15px;margin-bottom:14px;
+  background:linear-gradient(135deg,rgba(245,183,0,.1),rgba(19,22,28,.96));
+  border:1px solid rgba(245,183,0,.38);
+}
+.cloud-bar.connected{
+  background:linear-gradient(135deg,rgba(52,211,153,.11),rgba(19,22,28,.96));
+  border-color:rgba(52,211,153,.4);
+}
+.cloud-bar-l{display:flex;align-items:center;gap:10px;min-width:0}
+.cloud-dot{
+  width:10px;height:10px;border-radius:50%;background:var(--oro);
+  box-shadow:0 0 10px var(--oro);flex:none;
+}
+.cloud-bar.connected .cloud-dot{background:var(--verde);box-shadow:0 0 10px var(--verde);animation:pulseLive 1.8s infinite}
+.cloud-bar b{display:block;font-size:12.5px;color:#fff}
+.cloud-bar small{display:block;font-size:11px;color:var(--texto-2);margin-top:1px}
+.cloud-bar-acts{display:flex;gap:8px;align-items:center}
 </style>
 </head>
 <body>
@@ -406,6 +428,21 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
 </header>
 
 <main class="shell">
+
+  <!-- BARRA DE SINCRONIZACIÓN EN LA NUBE (FIREBASE FIRESTORE TIEMPO REAL) -->
+  <section class="cloud-bar" id="cloudBar" aria-label="Estado de conexión en la nube Firebase">
+    <div class="cloud-bar-l">
+      <i class="cloud-dot"></i>
+      <div>
+        <b id="cloudBarTitle">☁️ Nube Firebase lista (gb-taller-pe · southamerica-east1)</b>
+        <small id="cloudBarSub">Conecta tu cuenta Google Admin (thekingkoox@gmail.com) para sincronizar inventario y recibir pedidos al instante desde cualquier celular.</small>
+      </div>
+    </div>
+    <div class="cloud-bar-acts">
+      <button class="btn gold" id="cloudLoginBtn" style="height:36px;font-size:12px" onclick="loginFirebaseAdmin()">🔐 Conectar Google Admin</button>
+      <button class="btn ghost" id="cloudLogoutBtn" style="display:none;height:34px;font-size:11.5px" onclick="logoutFirebaseAdmin()">Cerrar nube</button>
+    </div>
+  </section>
 
   <!-- NAVEGACIÓN PRINCIPAL DEL PANEL ADMIN (INVENTARIO Y PEDIDOS) -->
   <nav class="adm-tabs" aria-label="Módulos del Administrador">
@@ -780,6 +817,9 @@ function quickStock(id, delta){
   if(!p) return;
   p.stock = Math.max(0, (Number(p.stock)||0) + delta);
   saveInventory(`Stock de ${p.sku}: ${p.stock} uds`);
+  if(window.GBCloud && window.GBCloud.isAdmin()){
+    window.GBCloud.upsertProduct(p).catch(e=>console.warn('Cloud stock:', e));
+  }
   renderAdminList();
 }
 
@@ -789,6 +829,9 @@ function quickPrice(id, val){
   const num = Math.max(1, Number(val)||p.price);
   p.price = num;
   saveInventory(`Precio ${p.sku}: S/ ${num}`);
+  if(window.GBCloud && window.GBCloud.isAdmin()){
+    window.GBCloud.upsertProduct(p).catch(e=>console.warn('Cloud price:', e));
+  }
 }
 
 function renderAdminList(){
@@ -999,15 +1042,22 @@ function saveModalItem(){
     INVENTORY.unshift(itemData);
     saveInventory(`✓ Nuevo repuesto agregado: ${itemData.name}`);
   }
+  if(window.GBCloud && window.GBCloud.isAdmin()){
+    window.GBCloud.upsertProduct(itemData).catch(e=>console.warn('Cloud upsert:', e));
+  }
   closeEditModal();
   renderAdminList();
 }
 
 function deleteCurrentItem(){
   if(!editingId) return;
-  const p = INVENTORY.find(x=>x.id===editingId);
-  INVENTORY = INVENTORY.filter(x=>x.id!==editingId);
+  const delId = editingId;
+  const p = INVENTORY.find(x=>x.id===delId);
+  INVENTORY = INVENTORY.filter(x=>x.id!==delId);
   saveInventory(`Eliminado: ${p ? p.name : ''}`);
+  if(window.GBCloud && window.GBCloud.isAdmin()){
+    window.GBCloud.deleteProduct(delId).catch(e=>console.warn('Cloud delete:', e));
+  }
   closeEditModal();
   renderAdminList();
 }
@@ -1030,6 +1080,9 @@ function importInventoryJson(ev){
       if(Array.isArray(parsed) && parsed.length > 0){
         INVENTORY = parsed;
         saveInventory(`✓ Importados ${parsed.length} productos`);
+        if(window.GBCloud && window.GBCloud.isAdmin()){
+          window.GBCloud.replaceAllInventory(INVENTORY).catch(err=>console.warn('Cloud import:', err));
+        }
         renderAdminList();
       }
     }catch(_){}
@@ -1040,6 +1093,9 @@ function importInventoryJson(ev){
 function resetFactoryInventory(){
   INVENTORY = JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
   saveInventory('↺ Restaurados los 16 productos originales');
+  if(window.GBCloud && window.GBCloud.isAdmin()){
+    window.GBCloud.replaceAllInventory(INVENTORY).catch(err=>console.warn('Cloud reset:', err));
+  }
   renderAdminList();
 }
 
@@ -1132,6 +1188,12 @@ function setSaleFilter(f, btn){
 function confirmSaleAndDeductStock(saleId){
   const sale = SALES.find(s=>s.id===saleId);
   if(!sale) return;
+  if(window.GBCloud && window.GBCloud.isAdmin() && sale._docId){
+    window.GBCloud.confirmSaleAndDeductStock(sale, INVENTORY)
+      .then(()=>showAdmToast(`✓ ${sale.id} confirmado en la nube y stock descontado`))
+      .catch(err=>showAdmToast('⚠ Error al confirmar en nube: ' + (err?.message || err)));
+    return;
+  }
   let deductedCount = 0;
   if(!sale.stockDeducted){
     sale.items.forEach(it=>{
@@ -1152,6 +1214,19 @@ function confirmSaleAndDeductStock(saleId){
 function setSaleStatus(saleId, newStatus){
   const sale = SALES.find(s=>s.id===saleId);
   if(!sale) return;
+  if(window.GBCloud && window.GBCloud.isAdmin() && sale._docId){
+    if((newStatus === 'Pagado' || newStatus === 'Entregado') && !sale.stockDeducted){
+      window.GBCloud.confirmSaleAndDeductStock(sale, INVENTORY).then(()=>{
+        if(newStatus === 'Entregado') return window.GBCloud.updateSaleStatus(sale._docId, 'Entregado');
+      }).then(()=>showAdmToast(`✓ ${sale.id} actualizado a ${newStatus} en la nube`))
+        .catch(err=>console.warn(err));
+      return;
+    }
+    window.GBCloud.updateSaleStatus(sale._docId, newStatus)
+      .then(()=>showAdmToast(`✓ ${sale.id} → ${newStatus} en la nube`))
+      .catch(err=>console.warn(err));
+    return;
+  }
   if((newStatus === 'Pagado' || newStatus === 'Entregado') && !sale.stockDeducted){
     confirmSaleAndDeductStock(saleId);
     if(newStatus === 'Entregado'){
@@ -1191,7 +1266,8 @@ function addDemoSaleOrder(){
   const total = pick.items.reduce((s,i)=>s + i.qty * i.price, 0);
   const demo = {
     id: `#GB-${nextNum}`,
-    date: 'Justo ahora',
+    date: new Date().toLocaleString('es-PE', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }),
+    createdAt: Date.now(),
     client: pick.client,
     phone: pick.phone,
     moto: pick.moto,
@@ -1203,11 +1279,17 @@ function addDemoSaleOrder(){
     total,
     items: pick.items
   };
-  SALES.unshift(demo);
   flashSaleId = demo.id;
   if(saleFilter !== 'all' && saleFilter !== 'Pendiente'){
     setSaleFilter('Pendiente');
   }
+  if(window.GBCloud && window.GBCloud.isAdmin()){
+    window.GBCloud.createSaleOrder(demo)
+      .then(()=>showAdmToast(`🔔 Pedido ${demo.id} enviado en vivo a Firebase`))
+      .catch(err=>showAdmToast('⚠ Error en nube: ' + (err?.message || err)));
+    return;
+  }
+  SALES.unshift(demo);
   saveSales(`🔔 Nuevo pedido entrante ${demo.id} por S/ ${demo.total}`);
 }
 
@@ -1359,6 +1441,128 @@ function checkAdminHash(){
 }
 checkAdminHash();
 window.addEventListener('hashchange', checkAdminHash);
+
+/* ==========================================================================
+   CONEXIÓN EN TIEMPO REAL CON FIREBASE CLOUD FIRESTORE (MULTI-DISPOSITIVO)
+   ========================================================================== */
+let unsubCloudInv = null;
+let unsubCloudSales = null;
+let cloudSalesInitialized = false;
+
+function sortByDefaultOrderAdm(cloudItems){
+  const orderMap = new Map(DEFAULT_INVENTORY.map((x, idx) => [x.id, idx]));
+  return cloudItems.slice().sort((a, b) => {
+    const ia = orderMap.has(a.id) ? orderMap.get(a.id) : -1;
+    const ib = orderMap.has(b.id) ? orderMap.get(b.id) : -1;
+    if(ia === -1 && ib === -1) return (b.updatedAt || 0) - (a.updatedAt || 0);
+    if(ia === -1) return -1;
+    if(ib === -1) return 1;
+    return ia - ib;
+  });
+}
+
+async function loginFirebaseAdmin(){
+  if(!window.GBCloud){
+    showAdmToast('Cargando conexión con Firebase...');
+    return;
+  }
+  try{
+    const user = await window.GBCloud.signInAdminGoogle();
+    if(user && !window.GBCloud.isAdmin()){
+      showAdmToast(`⚠ Esta cuenta (${user.email}) no es el Admin autorizado (${window.GBCloud.ADMIN_EMAIL})`);
+    }
+  }catch(err){
+    showAdmToast('⚠ No se pudo iniciar sesión: ' + (err?.message || err));
+  }
+}
+
+async function logoutFirebaseAdmin(){
+  if(window.GBCloud) await window.GBCloud.signOutAdmin();
+  showAdmToast('Sesión de nube cerrada');
+}
+
+function initAdminCloudSync(){
+  if(!window.GBCloud) return;
+
+  // Escuchar inventario público en tiempo real siempre
+  if(unsubCloudInv) unsubCloudInv();
+  unsubCloudInv = window.GBCloud.subscribeInventory((cloudItems)=>{
+    if(Array.isArray(cloudItems) && cloudItems.length > 0){
+      INVENTORY = sortByDefaultOrderAdm(cloudItems);
+      const ser = JSON.stringify(INVENTORY);
+      lastInvSnapshot = ser;
+      try{ localStorage.setItem('gb_inventory_v1', ser); }catch(_){}
+      renderAdminList();
+    }
+  }, err => console.warn('Cloud inv listener:', err?.message || err));
+
+  // Escuchar autenticación del administrador (thekingkoox@gmail.com)
+  window.GBCloud.onAuthChange(async (user, isAdm) => {
+    const bar = document.getElementById('cloudBar');
+    const title = document.getElementById('cloudBarTitle');
+    const sub = document.getElementById('cloudBarSub');
+    const loginBtn = document.getElementById('cloudLoginBtn');
+    const logoutBtn = document.getElementById('cloudLogoutBtn');
+    const badge = document.getElementById('liveSyncBadge');
+
+    if(isAdm){
+      bar.classList.add('connected');
+      title.textContent = `● Nube Firebase Conectada en Tiempo Real (${user.email})`;
+      sub.textContent = 'Todos los pedidos desde cualquier celular y cambios de stock/precio se sincronizan al instante.';
+      loginBtn.style.display = 'none';
+      logoutBtn.style.display = 'inline-flex';
+      if(badge) badge.innerHTML = '<i></i>Firebase Cloud En Vivo';
+
+      // Subir los 16 productos iniciales si la base Firestore está vacía
+      try{
+        const seeded = await window.GBCloud.seedInventoryIfEmpty(INVENTORY.length ? INVENTORY : DEFAULT_INVENTORY);
+        if(seeded) showAdmToast('☁️ Catálogo inicial (16 repuestos) publicado en Firestore');
+      }catch(e){
+        console.warn('Seed inventory:', e);
+      }
+
+      // Suscribirse en vivo a la colección de pedidos (sales)
+      if(unsubCloudSales) unsubCloudSales();
+      cloudSalesInitialized = false;
+      unsubCloudSales = window.GBCloud.subscribeSales((cloudSales)=>{
+        const prevTop = SALES[0]?.id;
+        SALES = cloudSales;
+        const ser = JSON.stringify(SALES);
+        lastSalesSnapshot = ser;
+        try{ localStorage.setItem('gb_sales_v1', ser); }catch(_){}
+        if(cloudSalesInitialized && cloudSales[0] && cloudSales[0].id !== prevTop){
+          flashSaleId = cloudSales[0].id;
+          showAdmToast(`🔔 Nuevo pedido en vivo: ${cloudSales[0].id} (${cloudSales[0].client})`);
+        }
+        cloudSalesInitialized = true;
+        renderSalesList();
+      }, err => {
+        console.warn('Cloud sales listener:', err?.message || err);
+        showAdmToast('⚠ Error leyendo pedidos en nube: ' + (err?.message || err));
+      });
+    } else {
+      bar.classList.remove('connected');
+      if(unsubCloudSales){ unsubCloudSales(); unsubCloudSales = null; }
+      if(user){
+        title.textContent = `⚠ Cuenta sin permisos de Admin: ${user.email}`;
+        sub.textContent = `Cierra sesión e inicia con ${window.GBCloud.ADMIN_EMAIL} para gestionar la nube.`;
+        loginBtn.style.display = 'inline-flex';
+        loginBtn.textContent = 'Cambiar cuenta Google';
+        logoutBtn.style.display = 'inline-flex';
+      } else {
+        title.textContent = '☁️ Nube Firebase lista (gb-taller-pe · southamerica-east1)';
+        sub.textContent = 'Conecta tu cuenta Google Admin (thekingkoox@gmail.com) para sincronizar inventario y recibir pedidos al instante desde cualquier celular.';
+        loginBtn.style.display = 'inline-flex';
+        loginBtn.textContent = '🔐 Conectar Google Admin';
+        logoutBtn.style.display = 'none';
+      }
+      if(badge) badge.innerHTML = '<i></i>Sincronización local';
+    }
+  });
+}
+
+if(window.GBCloud) initAdminCloudSync();
+window.addEventListener('gb-cloud-ready', initAdminCloudSync);
 </script>
 </body>
 </html>

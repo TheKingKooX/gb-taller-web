@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="assets/qrcode.min.js"></script>
 <script src="assets/jsQR.min.js"></script>
+<script type="module" src="assets/firebase-sync.js"></script>
 <style>
 :root{
   --asfalto:#090A0D;
@@ -1496,9 +1497,11 @@ function recordCheckoutOrderToAdmin(){
     if(m){ const n = parseInt(m[1], 10); if(n > maxN) maxN = n; }
   });
   const nextNum = maxN + 1;
+  const nowDateStr = new Date().toLocaleString('es-PE', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
   const newSale = {
     id: `#GB-${nextNum}`,
-    date: 'Justo ahora',
+    date: nowDateStr,
+    createdAt: Date.now(),
     client: cName,
     phone: cPhone || '987654321',
     moto: selectedMoto,
@@ -1515,8 +1518,41 @@ function recordCheckoutOrderToAdmin(){
     localStorage.setItem('gb_sales_v1', JSON.stringify(sales));
     if(SYNC_CH) SYNC_CH.postMessage({ type:'sales_updated', orderId:newSale.id, ts:Date.now() });
   }catch(_){}
-  showCustomToast(`✓ PEDIDO ${newSale.id} REGISTRADO`, 'Enviado al Panel Administrador y WhatsApp');
+  if(window.GBCloud){
+    window.GBCloud.createSaleOrder(newSale)
+      .then(()=>showCustomToast(`✓ PEDIDO ${newSale.id} EN LA NUBE`, 'Sincronizado en vivo con el Panel Admin'))
+      .catch(err=>console.warn('Firestore createSaleOrder:', err));
+  } else {
+    showCustomToast(`✓ PEDIDO ${newSale.id} REGISTRADO`, 'Enviado al Panel Administrador y WhatsApp');
+  }
 }
+
+function sortByDefaultOrder(cloudItems){
+  const orderMap = new Map(DEFAULT_INVENTORY.map((x, idx) => [x.id, idx]));
+  return cloudItems.slice().sort((a, b) => {
+    const ia = orderMap.has(a.id) ? orderMap.get(a.id) : -1;
+    const ib = orderMap.has(b.id) ? orderMap.get(b.id) : -1;
+    if(ia === -1 && ib === -1) return (b.updatedAt || 0) - (a.updatedAt || 0);
+    if(ia === -1) return -1;
+    if(ib === -1) return 1;
+    return ia - ib;
+  });
+}
+
+function initStoreCloudSync(){
+  if(!window.GBCloud) return;
+  window.GBCloud.subscribeInventory((cloudItems)=>{
+    if(Array.isArray(cloudItems) && cloudItems.length > 0){
+      INVENTORY = sortByDefaultOrder(cloudItems);
+      try{ localStorage.setItem('gb_inventory_v1', JSON.stringify(INVENTORY)); }catch(_){}
+      changeMoto(currentMotoKey);
+    }
+  }, (err)=>{
+    console.warn('Firestore inventory listener:', err?.message || err);
+  });
+}
+if(window.GBCloud) initStoreCloudSync();
+window.addEventListener('gb-cloud-ready', initStoreCloudSync);
 
 function reloadInventoryFromStorage(){
   INVENTORY = loadSharedInventory();

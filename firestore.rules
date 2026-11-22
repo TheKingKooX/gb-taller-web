@@ -1,0 +1,342 @@
+rules_version = '2';
+
+// ===============================================================
+// Assumed Data Model — GB Taller y Repuestos (gb-taller-pe)
+// ===============================================================
+//
+// Admin Identity:
+//   - Single verified workshop owner:
+//     request.auth != null &&
+//     request.auth.token.email_verified == true &&
+//     request.auth.token.email == 'thekingkoox@gmail.com'
+//
+// Collection: inventory
+// Document ID: {productId} (e.g., 'disco', 'faja', 'item_173...')
+// Access: Public read (catalog storefront, zero PII); Admin-only create/update/delete.
+// Fields:
+//   - id: string (required, immutable on update, 1..64 chars)
+//   - sku: string (required, 1..40 chars)
+//   - brand: string (required, 1..80 chars)
+//   - name: string (required, 1..160 chars)
+//   - cat: string (required, 1..40 chars)
+//   - price: number (required, >= 0 && <= 100000)
+//   - was: number | null (optional, if non-null >= 0 && <= 100000)
+//   - stock: number (required, >= 0 && <= 100000)
+//   - tag: string (optional, 0..40 chars)
+//   - tagType: string (optional, 0..20 chars)
+//   - excl: bool (optional)
+//   - fits: list<string> (required, max 10 items, each string 1..40 chars)
+//   - fitText: string (optional, 0..160 chars)
+//   - img: string (required, 1..750000 chars; asset path, https URL, or data:image/ URL)
+//   - spec: string (optional, 0..1000 chars)
+//   - models: string (optional, 0..500 chars)
+//   - updatedAt: number | timestamp (optional, non-negative number or timestamp)
+//
+// Collection: sales
+// Document ID: {saleId}
+// Access: Public/unauthenticated create (storefront checkout, strict schema,
+//         status MUST be 'Pendiente' and stockDeducted MUST be false);
+//         Admin-only read, update, and delete (protects customer PII).
+// Fields:
+//   - id: string (required, immutable on update, 3..24 chars, e.g., '#GB-1043')
+//   - date: string (required, 1..60 chars)
+//   - createdAt: number | timestamp (required, immutable on update; recent on public create)
+//   - client: string (required, 1..80 chars) [PII]
+//   - phone: string (required, 6..15 chars, digits/+/-/spaces) [PII]
+//   - moto: string (required, 1..100 chars) [PII]
+//   - delivery: string (required, 1..140 chars) [PII]
+//   - install: bool (required)
+//   - payMethod: string (required, 1..80 chars)
+//   - status: string (required, enum: 'Pendiente' | 'Pagado' | 'Entregado' | 'Cancelado';
+//                     MUST be 'Pendiente' on non-admin create)
+//   - stockDeducted: bool (required; MUST be false on non-admin create)
+//   - total: number (required, > 0 && <= 50000)
+//   - items: list<map> (required, 1..30 items; each map strictly has
+//                       {id, sku, name, qty, price})
+//   - updatedAt: number | timestamp (optional, Admin update only)
+//
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    // Check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if the authenticated user is the verified workshop owner (Admin)
+    function isAdmin() {
+      return isAuthenticated() &&
+             'email_verified' in request.auth.token &&
+             request.auth.token.email_verified == true &&
+             'email' in request.auth.token &&
+             request.auth.token.email == 'thekingkoox@gmail.com';
+    }
+
+    // Validate required fields exist
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    // Validate that the document contains only the allowed fields
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // Validate that immutable fields have not changed on update
+    function areImmutableFieldsUnchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    // Validate string length on a field
+    function validStringLength(data, field, minLen, maxLen) {
+      return data[field] is string &&
+             data[field].size() >= minLen &&
+             data[field].size() <= maxLen;
+    }
+
+    // Validate optional string (if present, must be string within length)
+    function isValidOptionalString(data, field, minLen, maxLen) {
+      return !(field in data) ||
+             (data[field] is string &&
+              data[field].size() >= minLen &&
+              data[field].size() <= maxLen);
+    }
+
+    // Validate optional boolean
+    function isValidOptionalBool(data, field) {
+      return !(field in data) || data[field] is bool;
+    }
+
+    // Validate optional timestamp or non-negative epoch number
+    function isValidOptionalTimestampOrNumber(data, field) {
+      return !(field in data) ||
+             data[field] is timestamp ||
+             (data[field] is number && data[field] >= 0 && data[field] <= 9999999999999);
+    }
+
+    // Validate that a timestamp is recent (within the last 5 minutes)
+    function isRecent(time) {
+      return time is timestamp &&
+             time > request.time - duration.value(5, 'm') &&
+             time <= request.time;
+    }
+
+    // Validate createdAt on public checkout creation (prevents wild past/future spoofing)
+    function isReasonableCreatedAt(val) {
+      return isRecent(val) ||
+             (val is number &&
+              val >= request.time.toMillis() - 86400000 &&
+              val <= request.time.toMillis() + 86400000);
+    }
+
+    // ===============================================================
+    // Domain Validators — Inventory
+    // ===============================================================
+
+    // Validate a single entry in the fits list
+    function isValidFitEntry(fits, idx) {
+      return fits.size() <= idx ||
+             (fits[idx] is string &&
+              fits[idx].size() >= 1 &&
+              fits[idx].size() <= 40);
+    }
+
+    // Deep inspection of inventory fits array (max 10 strings)
+    function isValidFitsList(fits) {
+      return fits is list &&
+             fits.size() <= 10 &&
+             isValidFitEntry(fits, 0) &&
+             isValidFitEntry(fits, 1) &&
+             isValidFitEntry(fits, 2) &&
+             isValidFitEntry(fits, 3) &&
+             isValidFitEntry(fits, 4) &&
+             isValidFitEntry(fits, 5) &&
+             isValidFitEntry(fits, 6) &&
+             isValidFitEntry(fits, 7) &&
+             isValidFitEntry(fits, 8) &&
+             isValidFitEntry(fits, 9);
+    }
+
+    // Validate product image: relative asset path, https URL, or base64 data:image/ URL (<= ~732KB)
+    function isValidProductImg(img) {
+      return img is string &&
+             img.size() >= 1 &&
+             img.size() <= 750000 &&
+             (
+               (img.size() <= 512 &&
+                !img.matches('.*\\.\\..*') &&
+                (img.matches('^assets/[a-zA-Z0-9._/-]+$') ||
+                 img.matches('^https://.*'))) ||
+               (img.size() > 22 && img[0:11] == 'data:image/')
+             );
+    }
+
+    // Validate optional 'was' (previous/strikethrough price) field
+    function isValidOptionalWas(data) {
+      return !('was' in data) ||
+             data.was == null ||
+             (data.was is number && data.was >= 0 && data.was <= 100000);
+    }
+
+    // Full inventory document validator (called in BOTH create and update)
+    function isValidInventoryItem(data) {
+      return hasOnlyAllowedFields([
+               'id', 'sku', 'brand', 'name', 'cat', 'price', 'was',
+               'stock', 'tag', 'tagType', 'excl', 'fits', 'fitText',
+               'img', 'spec', 'models', 'updatedAt'
+             ]) &&
+             hasRequiredFields([
+               'id', 'sku', 'brand', 'name', 'cat', 'price', 'stock', 'fits', 'img'
+             ]) &&
+             validStringLength(data, 'id', 1, 64) &&
+             validStringLength(data, 'sku', 1, 40) &&
+             validStringLength(data, 'brand', 1, 80) &&
+             validStringLength(data, 'name', 1, 160) &&
+             validStringLength(data, 'cat', 1, 40) &&
+             data.price is number && data.price >= 0 && data.price <= 100000 &&
+             isValidOptionalWas(data) &&
+             data.stock is number && data.stock >= 0 && data.stock <= 100000 &&
+             isValidOptionalString(data, 'tag', 0, 40) &&
+             isValidOptionalString(data, 'tagType', 0, 20) &&
+             isValidOptionalBool(data, 'excl') &&
+             isValidFitsList(data.fits) &&
+             isValidOptionalString(data, 'fitText', 0, 160) &&
+             isValidProductImg(data.img) &&
+             isValidOptionalString(data, 'spec', 0, 1000) &&
+             isValidOptionalString(data, 'models', 0, 500) &&
+             isValidOptionalTimestampOrNumber(data, 'updatedAt');
+    }
+
+    // ===============================================================
+    // Domain Validators — Sales / Checkout Orders
+    // ===============================================================
+
+    // Validate a single line item inside sales.items
+    function isValidSaleItem(item) {
+      return item is map &&
+             item.keys().hasOnly(['id', 'sku', 'name', 'qty', 'price']) &&
+             item.keys().size() == 5 &&
+             item.id is string && item.id.size() >= 1 && item.id.size() <= 64 &&
+             item.sku is string && item.sku.size() >= 1 && item.sku.size() <= 40 &&
+             item.name is string && item.name.size() >= 1 && item.name.size() <= 160 &&
+             item.qty is int && item.qty >= 1 && item.qty <= 100 &&
+             item.price is number && item.price >= 0 && item.price <= 50000;
+    }
+
+    function isValidSaleItemAt(items, idx) {
+      return items.size() <= idx || isValidSaleItem(items[idx]);
+    }
+
+    function isValidSaleItemsChunk(items, base) {
+      return isValidSaleItemAt(items, base) &&
+             isValidSaleItemAt(items, base + 1) &&
+             isValidSaleItemAt(items, base + 2) &&
+             isValidSaleItemAt(items, base + 3) &&
+             isValidSaleItemAt(items, base + 4);
+    }
+
+    // Deep inspection of sales.items list (1..30 validated item maps)
+    function isValidSaleItemsList(items) {
+      return items is list &&
+             items.size() >= 1 &&
+             items.size() <= 30 &&
+             isValidSaleItemsChunk(items, 0) &&
+             isValidSaleItemsChunk(items, 5) &&
+             isValidSaleItemsChunk(items, 10) &&
+             isValidSaleItemsChunk(items, 15) &&
+             isValidSaleItemsChunk(items, 20) &&
+             isValidSaleItemsChunk(items, 25);
+    }
+
+    // Validate allowed order status workflow transitions on Admin update
+    function isValidSaleStatusTransition(prevStatus, nextStatus) {
+      return prevStatus == nextStatus ||
+             (prevStatus == 'Pendiente' && nextStatus in ['Pagado', 'Entregado', 'Cancelado']) ||
+             (prevStatus == 'Pagado' && nextStatus in ['Entregado', 'Cancelado']) ||
+             (prevStatus == 'Cancelado' && nextStatus == 'Pendiente');
+    }
+
+    // Full sale document validator (called in BOTH create and update)
+    function isValidSale(data) {
+      return hasOnlyAllowedFields([
+               'id', 'date', 'createdAt', 'client', 'phone', 'moto',
+               'delivery', 'install', 'payMethod', 'status',
+               'stockDeducted', 'total', 'items', 'updatedAt'
+             ]) &&
+             hasRequiredFields([
+               'id', 'date', 'createdAt', 'client', 'phone', 'moto',
+               'delivery', 'install', 'payMethod', 'status',
+               'stockDeducted', 'total', 'items'
+             ]) &&
+             validStringLength(data, 'id', 3, 24) &&
+             validStringLength(data, 'date', 1, 60) &&
+             (data.createdAt is timestamp ||
+              (data.createdAt is number && data.createdAt > 0 && data.createdAt <= 9999999999999)) &&
+             validStringLength(data, 'client', 1, 80) &&
+             validStringLength(data, 'phone', 6, 15) &&
+             data.phone.matches('^[0-9+ -]+$') &&
+             validStringLength(data, 'moto', 1, 100) &&
+             validStringLength(data, 'delivery', 1, 140) &&
+             data.install is bool &&
+             validStringLength(data, 'payMethod', 1, 80) &&
+             data.status in ['Pendiente', 'Pagado', 'Entregado', 'Cancelado'] &&
+             data.stockDeducted is bool &&
+             data.total is number && data.total > 0 && data.total <= 50000 &&
+             isValidSaleItemsList(data.items) &&
+             isValidOptionalTimestampOrNumber(data, 'updatedAt');
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    // Public product catalog (no PII). Admin-only mutations.
+    match /inventory/{productId} {
+      allow read: if true;
+      allow create: if isAdmin() &&
+                       isValidInventoryItem(request.resource.data);
+      allow update: if isAdmin() &&
+                       isValidInventoryItem(request.resource.data) &&
+                       areImmutableFieldsUnchanged(['id']);
+      allow delete: if isAdmin();
+    }
+
+    // Customer checkout orders (contains PII: phone, name, delivery address).
+    // Storefront customers may create new 'Pendiente' orders without Firebase Auth,
+    // but ONLY Admin can read, list, update, or delete orders.
+    match /sales/{saleId} {
+      allow read: if isAdmin();
+      allow create: if isValidSale(request.resource.data) &&
+                       (
+                         (
+                           !('updatedAt' in request.resource.data) &&
+                           request.resource.data.status == 'Pendiente' &&
+                           request.resource.data.stockDeducted == false &&
+                           isReasonableCreatedAt(request.resource.data.createdAt)
+                         ) ||
+                         isAdmin()
+                       );
+      allow update: if isAdmin() &&
+                       isValidSale(request.resource.data) &&
+                       areImmutableFieldsUnchanged(['id', 'createdAt']) &&
+                       isValidSaleStatusTransition(resource.data.status, request.resource.data.status) &&
+                       (!resource.data.stockDeducted ||
+                        request.resource.data.stockDeducted == true ||
+                        request.resource.data.status == 'Cancelado');
+      allow delete: if isAdmin();
+    }
+
+    // ===============================================================
+    // Default Deny — Block all unspecified collections & subcollections
+    // ===============================================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
