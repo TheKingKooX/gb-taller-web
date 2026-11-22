@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="assets/qrcode.min.js"></script>
 <script src="assets/jsQR.min.js"></script>
-<script type="module" src="assets/firebase-sync.js"></script>
+<script type="module" src="assets/firebase-sync.js?v=3"></script>
 <style>
 :root{
   --asfalto:#090A0D;
@@ -983,6 +983,10 @@ select.login-in{-webkit-appearance:none;appearance:none}
         <h3>Pedido #GB-1042</h3>
         <span class="pill" id="cartItemsPill">3 ítems</span>
       </header>
+      <div id="storeCloudPill" style="display:flex;align-items:center;justify-content:space-between;padding:6px 11px;margin-bottom:10px;border-radius:10px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.28);font-size:11px;color:#A7F3D0;font-weight:700">
+        <span id="storeCloudTxt">⏳ Conectando con Nube GB...</span>
+        <span style="font-family:var(--mono);opacity:.8">v3</span>
+      </div>
 
       <div class="c-list" id="cartList"></div>
 
@@ -1193,7 +1197,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
             <span id="citaSummaryTxt">Mar 24 Nov · 2:00 pm</span>
             <b class="price" id="citaPriceTxt">S/ 120</b>
           </div>
-          <a class="btn wa" id="citaWaBtn" href="#" target="_blank">
+          <a class="btn wa" id="citaWaBtn" href="#" target="_blank" onclick="return submitCitaOrder(event, this)">
             <i data-i="wa"></i>Confirmar cita por WhatsApp
           </a>
         </div>
@@ -1225,7 +1229,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
     </div>
     <div class="sheet-actions">
       <button class="btn ghost" id="shAddBtn"><i data-i="plus"></i>Agregar al pedido</button>
-      <a class="btn wa" id="shWaBtn" href="#" target="_blank"><i data-i="wa"></i>Pedir por WhatsApp</a>
+      <a class="btn wa" id="shWaBtn" href="#" target="_blank" onclick="return submitSingleProductOrder(event, this)"><i data-i="wa"></i>Pedir por WhatsApp</a>
     </div>
   </div>
 </div>
@@ -1546,11 +1550,12 @@ async function recordCheckoutOrderToAdmin(){
     if(SYNC_CH) SYNC_CH.postMessage({ type:'sales_updated', orderId:newSale.id, ts:Date.now() });
   }catch(_){}
 
-  if(window.GBCloud){
+  const cloud = await waitForCloudReady(2500);
+  if(cloud){
     try{
       await Promise.race([
-        window.GBCloud.createSaleOrder(newSale),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000))
+        cloud.createSaleOrder(newSale),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000))
       ]);
       showCustomToast(`✓ PEDIDO ${newSale.id} EN LA NUBE`, 'Recibido al instante en el Panel Admin');
     }catch(err){
@@ -1575,8 +1580,95 @@ function sortByDefaultOrder(cloudItems){
   });
 }
 
+async function waitForCloudReady(maxMs = 2500){
+  if(window.GBCloud) return window.GBCloud;
+  return new Promise(resolve => {
+    const t = setTimeout(() => resolve(window.GBCloud || null), maxMs);
+    window.addEventListener('gb-cloud-ready', () => {
+      clearTimeout(t);
+      resolve(window.GBCloud || null);
+    }, { once: true });
+  });
+}
+
+async function sendOrderPayloadToCloudAndOpenWa(saleObj, waHref, statusEl){
+  const prevTxt = statusEl ? statusEl.textContent : '';
+  if(statusEl) statusEl.textContent = '⏳ Guardando en Nube Taller GB...';
+  const cloud = await waitForCloudReady(2500);
+  if(cloud){
+    try{
+      await Promise.race([
+        cloud.createSaleOrder(saleObj),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000))
+      ]);
+      showCustomToast(`✓ PEDIDO ${saleObj.id} EN LA NUBE`, 'Recibido al instante en el Panel Admin');
+    }catch(err){
+      console.warn('Firestore createSaleOrder:', err);
+      showCustomToast(`⚠ ERROR NUBE (${saleObj.id})`, String(err?.code || err?.message || 'sin conexión'));
+    }
+  } else {
+    showCustomToast(`✓ PEDIDO ${saleObj.id} REGISTRADO`, 'Enviando por WhatsApp...');
+  }
+  if(statusEl && prevTxt) statusEl.textContent = prevTxt;
+  if(waHref && waHref.startsWith('https://wa.me/')){
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if(isMobile) window.location.href = waHref;
+    else window.open(waHref, '_blank', 'noopener');
+  }
+}
+
+async function submitSingleProductOrder(ev, anchorEl){
+  if(ev) ev.preventDefault();
+  if(!activeSheetProduct) return false;
+  const p = activeSheetProduct;
+  const uniqueNum = Math.floor(1050 + (Date.now() % 8900));
+  const cName = (document.getElementById('custName')?.value || currentUser?.name || 'Cliente GB').trim();
+  const cPhone = (document.getElementById('custPhone')?.value || currentUser?.phone || '987654321').replace(/\D/g, '').slice(0, 9);
+  const saleObj = {
+    id: `#GB-${uniqueNum}`,
+    date: new Date().toLocaleString('es-PE', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }),
+    client: cName,
+    phone: cPhone.length >= 6 ? cPhone : '987654321',
+    moto: selectedMoto,
+    delivery: 'Pedido directo desde ficha',
+    install: false,
+    payMethod: 'WhatsApp Directo',
+    status: 'Pendiente',
+    stockDeducted: false,
+    total: p.price,
+    items: [{ id:p.id, sku:p.sku, name:p.name, qty:1, price:p.price }]
+  };
+  await sendOrderPayloadToCloudAndOpenWa(saleObj, anchorEl?.href, anchorEl);
+  return false;
+}
+
+async function submitCitaOrder(ev, anchorEl){
+  if(ev) ev.preventDefault();
+  const uniqueNum = Math.floor(1050 + (Date.now() % 8900));
+  const cName = (document.getElementById('custName')?.value || currentUser?.name || 'Cliente GB').trim();
+  const cPhone = (document.getElementById('custPhone')?.value || currentUser?.phone || '987654321').replace(/\D/g, '').slice(0, 9);
+  const saleObj = {
+    id: `#CITA-${uniqueNum}`,
+    date: new Date().toLocaleString('es-PE', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }),
+    client: cName,
+    phone: cPhone.length >= 6 ? cPhone : '987654321',
+    moto: selectedMoto,
+    delivery: `Cita Taller: ${citaDay} · ${citaSlot}`,
+    install: true,
+    payMethod: 'Cita en Taller',
+    status: 'Pendiente',
+    stockDeducted: false,
+    total: citaPrice || 35,
+    items: [{ id:'cita-taller', sku:'GB-CITA', name:`Cita: ${citaService}`, qty:1, price:citaPrice || 35 }]
+  };
+  await sendOrderPayloadToCloudAndOpenWa(saleObj, anchorEl?.href, anchorEl);
+  return false;
+}
+
 function initStoreCloudSync(){
   if(!window.GBCloud) return;
+  const ct = document.getElementById('storeCloudTxt');
+  if(ct) ct.textContent = '● Nube Firebase GB conectada en tiempo real';
   window.GBCloud.subscribeInventory((cloudItems)=>{
     if(Array.isArray(cloudItems) && cloudItems.length > 0){
       INVENTORY = sortByDefaultOrder(cloudItems);
@@ -1832,9 +1924,11 @@ function singleWaLink(p){
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 }
 
+let activeSheetProduct = null;
 function openSheet(id){
   const p = INVENTORY.find(x=>x.id===id);
   if(!p) return;
+  activeSheetProduct = p;
   document.getElementById('shImg').src = p.img;
   document.getElementById('shBrandSku').textContent = `${p.brand.toUpperCase()} · ${p.sku}`;
   document.getElementById('shName').textContent = p.name;
