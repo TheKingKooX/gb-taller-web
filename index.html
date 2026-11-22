@@ -890,7 +890,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
         <span class="eta"><i data-i="clock"></i><span id="orderEtaTxt">Hoy, 5:00 pm</span></span>
       </div>
 
-      <div class="plate-lookup">
+      <div class="plate-lookup" id="plateLookupBar">
         <small>PLACA:</small>
         <button class="plate-chip on" onclick="loadPlateOrder('ABC-123','msx',4,'#0231','Hoy, 5:00 pm',this)">ABC-123</button>
         <button class="plate-chip" onclick="loadPlateOrder('4582-JM','nmax',5,'#0234','¡Lista hoy!',this)">4582-JM</button>
@@ -1180,7 +1180,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
           <span id="totPayLabel">Total a pagar con Yape QR</span>
           <b class="price" id="cartTotal">S/ 195</b>
         </div>
-        <a class="btn wa" id="waSendBtn" href="#" target="_blank">
+        <a class="btn wa" id="waSendBtn" href="#" target="_blank" onclick="recordCheckoutOrderToAdmin()">
           <i data-i="wa"></i><span id="waSendBtnTxt">Confirmar Yapeo y enviar pedido por WhatsApp</span>
         </a>
       </div>
@@ -1335,7 +1335,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
 
     <div class="sheet-actions">
       <button class="btn yape-btn" id="ymCopyOpenBtn" onclick="copyAndOpenYape()">Abrir Yape y copiar N°</button>
-      <a class="btn wa" id="ymWaBtn" href="#" target="_blank"><i data-i="wa"></i>Ya yapeé · Enviar por WA</a>
+      <a class="btn wa" id="ymWaBtn" href="#" target="_blank" onclick="recordCheckoutOrderToAdmin()"><i data-i="wa"></i>Ya yapeé · Enviar por WA</a>
     </div>
   </div>
 </div>
@@ -1555,10 +1555,98 @@ function loadSharedInventory(){
 }
 let INVENTORY = loadSharedInventory();
 
+const DEFAULT_ORDERS = [
+  { id:'#0231', plate:'ABC-123', client:'Carlos Mendoza', phone:'987654321', motoKey:'msx', stage:4, mech:'Andrés', budget:280, eta:'Hoy, 5:00 pm', note:'Instalando kit de arrastre DID 428 Oro y pastillas Brembo.' },
+  { id:'#0234', plate:'4582-JM', client:'Luis Quispe', phone:'945112890', motoKey:'nmax', stage:5, mech:'Andrés', budget:220, eta:'¡Lista hoy!', note:'Cambio de faja CVT Yamaha y rodillos Dr. Pulley completado. Prueba de ruta OK.' },
+  { id:'#0238', plate:'9104-KP', client:'Marco Paredes', phone:'912334567', motoKey:'pulsar', stage:2, mech:'Jhonatan', budget:140, eta:'Mañana 11 am', note:'Revisión de triple bujía DTS-i, limpieza de inyector y nivel de refrigerante.' }
+];
+
+function loadSharedOrders(){
+  try{
+    const raw = localStorage.getItem('gb_orders_v1');
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } else {
+      localStorage.setItem('gb_orders_v1', JSON.stringify(DEFAULT_ORDERS));
+    }
+  }catch(_){}
+  return DEFAULT_ORDERS.slice();
+}
+let WORKSHOP_ORDERS = loadSharedOrders();
+
+function renderPlateLookupBar(activePlate){
+  const bar = document.getElementById('plateLookupBar');
+  if(!bar) return;
+  const chips = WORKSHOP_ORDERS.slice(0, 5).map((o, idx)=>{
+    const isAct = activePlate ? (o.plate === activePlate) : (idx === 0);
+    return `<button class="plate-chip ${isAct?'on':''}" onclick="selectWorkshopOrderByPlate('${o.plate}',this)">${o.plate}</button>`;
+  }).join('');
+  bar.innerHTML = `<small>PLACA:</small>${chips}`;
+}
+
+function selectWorkshopOrderByPlate(plate, btn){
+  const ord = WORKSHOP_ORDERS.find(o=>o.plate===plate) || WORKSHOP_ORDERS[0];
+  if(!ord) return;
+  document.querySelectorAll('.plate-chip').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  document.getElementById('orderHdrTxt').textContent = `Orden ${ord.id} · ${ord.client.split(' ')[0]} (${ord.plate})`;
+  document.getElementById('orderEtaTxt').textContent = ord.eta || 'Hoy, 5:00 pm';
+  if(MOTOS[ord.motoKey]) MOTOS[ord.motoKey].plate = ord.plate;
+  changeMoto(ord.motoKey || 'msx');
+  setOrderStage(ord.stage || 4);
+  if(ord.note) document.getElementById('stDesc').textContent = ord.note;
+}
+
+function recordCheckoutOrderToAdmin(){
+  const entries = Object.entries(cart).map(([id,qty])=>{
+    const item = INVENTORY.find(x=>x.id===id);
+    return item ? { id:item.id, sku:item.sku, name:item.name, qty, price:item.price } : null;
+  }).filter(Boolean);
+  if(!entries.length) return;
+  const totalPrice = entries.reduce((s,x)=>s + x.qty * x.price, 0);
+  const cName = (document.getElementById('custName')?.value || 'Cliente GB').trim();
+  const cPhone = (document.getElementById('custPhone')?.value || '987654321').replace(/\D/g, '').slice(0, 9);
+  const cAddr = (document.getElementById('custAddress')?.value || '').trim();
+
+  let sales = [];
+  try{
+    const raw = localStorage.getItem('gb_sales_v1');
+    if(raw) sales = JSON.parse(raw);
+  }catch(_){}
+  if(!Array.isArray(sales)) sales = [];
+
+  const nextNum = 1043 + sales.length;
+  const newSale = {
+    id: `#GB-${nextNum}`,
+    date: 'Justo ahora',
+    client: cName,
+    phone: cPhone || '987654321',
+    moto: selectedMoto,
+    delivery: deliveryMode + (deliveryMode.includes('domicilio') && cAddr ? ` (${cAddr})` : ''),
+    install: wantInstall,
+    payMethod: payMethod === 'Tarjeta' && cardAuthRef ? `Tarjeta ${cardBrand} •••• ${cardLast4}` : payMethod,
+    status: 'Pendiente',
+    stockDeducted: false,
+    total: totalPrice,
+    items: entries
+  };
+  sales.unshift(newSale);
+  try{ localStorage.setItem('gb_sales_v1', JSON.stringify(sales)); }catch(_){}
+  showCustomToast(`✓ PEDIDO ${newSale.id} REGISTRADO`, 'Enviado al Panel Administrador y WhatsApp');
+}
+
 window.addEventListener('storage', e => {
   if(e.key === 'gb_inventory_v1'){
     INVENTORY = loadSharedInventory();
     changeMoto(currentMotoKey);
+  }
+  if(e.key === 'gb_orders_v1'){
+    WORKSHOP_ORDERS = loadSharedOrders();
+    const curPlate = document.getElementById('motoPlate')?.textContent;
+    renderPlateLookupBar(curPlate);
+    const matching = WORKSHOP_ORDERS.find(o=>o.plate===curPlate);
+    if(matching) selectWorkshopOrderByPlate(matching.plate);
   }
 });
 
@@ -2486,6 +2574,11 @@ function logoutWaSession(){
 
 hydrateIcons();
 applyUserSessionToUi();
+renderPlateLookupBar(currentUser?.plate);
+if(currentUser?.plate){
+  const liveOrd = WORKSHOP_ORDERS.find(o=>o.plate===currentUser.plate);
+  if(liveOrd) selectWorkshopOrderByPlate(liveOrd.plate);
+}
 function checkHashTab(){
   const h = (location.hash || '').replace('#','');
   if(['inicio','tienda','pedido','taller'].includes(h)) switchTab(h);

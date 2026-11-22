@@ -269,6 +269,104 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
 }
 .toast.show{transform:translate(-50%,0);opacity:1}
 .toast span{color:var(--verde)}
+
+/* ---------- NAVEGACIÓN 3 PESTAÑAS ADMIN 360° ---------- */
+.adm-tabs{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;
+  padding:5px;border-radius:15px;background:var(--pista);
+  border:1px solid var(--linea);margin-bottom:16px;
+}
+.adm-tab{
+  height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:7px;
+  font-size:12.5px;font-weight:700;color:var(--texto-2);transition:all .16s ease;padding:0 8px;
+}
+.adm-tab:hover{color:var(--texto)}
+.adm-tab.on{background:var(--texto);color:var(--asfalto);font-weight:800;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+.adm-tab .t-cnt{
+  font-size:10.5px;font-weight:800;padding:1px 7px;border-radius:99px;
+  background:rgba(255,255,255,.1);color:var(--oro-claro);
+}
+.adm-tab.on .t-cnt{background:rgba(9,10,13,.16);color:#090A0D}
+.adm-pane{display:none}
+.adm-pane.active{display:block;animation:fadeIn .18s ease}
+@keyframes fadeIn{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ---------- TARJETAS DE ÓRDENES DE TALLER (ETAPAS 1-5) ---------- */
+.ord-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:860px){.ord-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ord-card{
+  padding:14px;border-radius:18px;background:var(--pista);border:1px solid var(--linea);
+  display:flex;flex-direction:column;gap:11px;box-shadow:inset 0 1px 0 var(--luz);
+}
+.ord-card.st-5{border-color:rgba(52,211,153,.42);background:linear-gradient(165deg,rgba(52,211,153,.06),var(--pista) 65%)}
+.ord-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ord-h-left{display:flex;align-items:center;gap:10px;min-width:0}
+.ord-thumb{width:54px;height:54px;border-radius:12px;object-fit:cover;border:1px solid var(--linea);background:var(--asfalto);flex:none}
+.ord-plate{
+  display:inline-block;padding:2px 7px;border-radius:5px;background:var(--oro);color:#1a1300;
+  font-family:var(--display);font-size:13px;font-weight:900;letter-spacing:.7px;
+}
+.ord-id{font-size:11px;font-weight:800;color:var(--texto-2);margin-left:5px}
+.ord-title{font-size:14px;font-weight:700;color:var(--texto);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ord-sub{font-size:11.5px;color:var(--texto-2);margin-top:1px}
+.ord-price{font-family:var(--display);font-size:24px;font-weight:800;color:#fff;text-align:right;line-height:1}
+.ord-eta{display:block;font-size:10.5px;color:var(--oro-claro);font-weight:700;margin-top:2px;text-align:right}
+
+/* Selector interactivo de etapas 1..5 */
+.stepper{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.step-btn{
+  padding:7px 4px;border-radius:10px;background:var(--asfalto);border:1px solid var(--linea);
+  text-align:center;transition:all .15s;
+}
+.step-btn b{display:block;font-family:var(--display);font-size:16px;line-height:1;color:var(--texto-3)}
+.step-btn small{display:block;font-size:9px;color:var(--texto-3);font-weight:700;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.step-btn.done{background:rgba(245,183,0,.1);border-color:rgba(245,183,0,.35)}
+.step-btn.done b,.step-btn.done small{color:var(--oro-claro)}
+.step-btn.cur{background:var(--oro);border-color:var(--oro)}
+.step-btn.cur b,.step-btn.cur small{color:#1a1300}
+.ord-card.st-5 .step-btn.cur{background:var(--verde);border-color:var(--verde)}
+.ord-note{
+  padding:9px 11px;border-radius:11px;background:var(--asfalto);border:1px solid var(--linea);
+  font-size:12px;color:var(--texto-2);line-height:1.4;
+}
+.ord-note b{color:var(--texto)}
+.ord-acts{display:flex;gap:7px;flex-wrap:wrap}
+.btn.wa-sm{
+  background:linear-gradient(135deg,#22C55E,#16A34A);color:#041A0C;font-weight:800;
+  height:36px;font-size:12px;padding:0 12px;border-radius:10px;flex:1;
+}
+.btn.act-sm{height:36px;font-size:12px;padding:0 11px;border-radius:10px}
+
+/* ---------- TARJETAS DE PEDIDOS DE TIENDA ---------- */
+.sale-card{
+  padding:14px;border-radius:18px;background:var(--pista);border:1px solid var(--linea);
+  display:flex;flex-direction:column;gap:10px;
+}
+.sale-card.paid{border-color:rgba(52,211,153,.35)}
+.sale-card.pend{border-color:rgba(245,183,0,.38)}
+.sale-h{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap}
+.st-badge{
+  padding:3px 9px;border-radius:99px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;
+}
+.st-badge.pend{background:rgba(245,183,0,.16);color:var(--oro-claro);border:1px solid rgba(245,183,0,.4)}
+.st-badge.paid{background:rgba(52,211,153,.14);color:var(--verde);border:1px solid rgba(52,211,153,.38)}
+.st-badge.deliv{background:rgba(96,165,250,.14);color:#93C5FD;border:1px solid rgba(96,165,250,.38)}
+.st-badge.canc{background:rgba(227,32,27,.14);color:#FCA5A5;border:1px solid rgba(227,32,27,.38)}
+.pay-tag{
+  display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;
+  font-size:10.5px;font-weight:700;background:var(--asfalto);border:1px solid var(--linea);color:var(--texto-2);
+}
+.pay-tag.yape{border-color:rgba(169,75,192,.5);color:#e4b5f2}
+.pay-tag.card{border-color:rgba(245,183,0,.4);color:var(--oro-claro)}
+.sale-items{
+  padding:9px 11px;border-radius:11px;background:var(--asfalto);border:1px solid var(--linea);
+  display:flex;flex-direction:column;gap:5px;font-size:12px;
+}
+.sale-item-row{display:flex;justify-content:space-between;gap:8px;color:var(--texto-2)}
+.sale-item-row b{color:var(--texto);font-weight:600}
+.stock-ded-pill{
+  font-size:10.5px;color:var(--verde);font-weight:700;display:inline-flex;align-items:center;gap:4px;
+}
 </style>
 </head>
 <body>
@@ -278,19 +376,40 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
     <div class="gb-wrap">
       <div class="gb" role="img" aria-label="Logo GB"></div>
       <div class="gb-txt">
-        <b>PANEL ADMINISTRADOR · INVENTARIO</b>
+        <b>PANEL ADMINISTRADOR 360° · GB</b>
         <small id="admWaSession">WHATSAPP ADMIN: +51 960 628 745 · SINCRONIZADO EN VIVO</small>
       </div>
     </div>
     <div class="top-acts">
       <a class="btn ghost" href="index.html#login" title="Cambiar cuenta WhatsApp">Cuenta WA</a>
       <a class="btn ghost" href="index.html">← Ver Tienda</a>
-      <button class="btn gold" onclick="openNewModal()">+ Nuevo Repuesto</button>
+      <button class="btn gold" id="topPrimaryBtn" onclick="onTopPrimaryAction()">+ Nuevo Repuesto</button>
     </div>
   </div>
 </header>
 
 <main class="shell">
+
+  <!-- NAVEGACIÓN PRINCIPAL DEL PANEL ADMIN 360° -->
+  <nav class="adm-tabs" aria-label="Módulos del Administrador">
+    <button class="adm-tab on" id="tabBtn-inv" onclick="switchAdminTab('inv')">
+      <span>📦 Inventario</span>
+      <b class="t-cnt" id="cntTabInv">16</b>
+    </button>
+    <button class="adm-tab" id="tabBtn-ordenes" onclick="switchAdminTab('ordenes')">
+      <span>🔧 Taller</span>
+      <b class="t-cnt" id="cntTabOrd">3</b>
+    </button>
+    <button class="adm-tab" id="tabBtn-pedidos" onclick="switchAdminTab('pedidos')">
+      <span>🛒 Pedidos</span>
+      <b class="t-cnt" id="cntTabPed">3</b>
+    </button>
+  </nav>
+
+  <!-- ======================================================================
+       PESTAÑA 1 · INVENTARIO DE REPUESTOS
+       ====================================================================== -->
+  <div class="adm-pane active" id="pane-inv">
 
   <!-- 4 KPIs EN TIEMPO REAL -->
   <section class="kpis" aria-label="Resumen del inventario">
@@ -371,8 +490,170 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
       <button class="btn ghost" onclick="resetFactoryInventory()">↺ Restaurar 16 originales</button>
     </div>
   </section>
+  </div><!-- /#pane-inv -->
+
+  <!-- ======================================================================
+       PESTAÑA 2 · ÓRDENES DE TALLER EN VIVO (CONTROL DEL TACÓMETRO 1–5)
+       ====================================================================== -->
+  <div class="adm-pane" id="pane-ordenes">
+    <section class="kpis" aria-label="Resumen de órdenes de taller">
+      <div class="kpi">
+        <small>ÓRDENES EN TALLER <span>🔧</span></small>
+        <strong id="kpiOrdTotal">3</strong>
+        <span class="sub">Sincronizadas con el tacómetro web</span>
+      </div>
+      <div class="kpi warn">
+        <small>EN DIAGNÓSTICO / REPARACIÓN <span>⚙</span></small>
+        <strong id="kpiOrdProg">2</strong>
+        <span class="sub">Etapas 1 a 4 activas</span>
+      </div>
+      <div class="kpi val">
+        <small>LISTAS PARA ENTREGA <span>✓</span></small>
+        <strong id="kpiOrdReady">1</strong>
+        <span class="sub">Etapa 5 (Prueba superada)</span>
+      </div>
+      <div class="kpi">
+        <small>PRESUPUESTO EN CURSO <span>S/</span></small>
+        <strong id="kpiOrdBudget">S/ 640</strong>
+        <span class="sub">Suma de trabajos activos</span>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div class="toolbar-row">
+        <label class="search">
+          <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="qOrder" type="text" placeholder="Buscar por placa (ABC-123), cliente, WhatsApp o N° de orden..." oninput="renderOrdersList()">
+        </label>
+        <button class="btn gold" onclick="openNewOrderModal()">+ Ingresar Nueva Moto / Orden</button>
+      </div>
+      <div class="pills" id="ordFilterPills">
+        <button class="on" onclick="setOrderFilter('all',this)">Todas las órdenes</button>
+        <button onclick="setOrderFilter('active',this)">En proceso (Etapas 1–4)</button>
+        <button onclick="setOrderFilter('ready',this)">✓ Listas para entrega (Etapa 5)</button>
+      </div>
+    </section>
+
+    <section class="ord-grid" id="ordersGrid"></section>
+  </div><!-- /#pane-ordenes -->
+
+  <!-- ======================================================================
+       PESTAÑA 3 · PEDIDOS DE TIENDA (YAPE QR / TARJETA + DESCUENTO DE STOCK)
+       ====================================================================== -->
+  <div class="adm-pane" id="pane-pedidos">
+    <section class="kpis" aria-label="Resumen de pedidos de tienda">
+      <div class="kpi">
+        <small>PEDIDOS REGISTRADOS <span>🛒</span></small>
+        <strong id="kpiSaleTotal">3</strong>
+        <span class="sub">Recibidos desde Checkout web</span>
+      </div>
+      <div class="kpi warn">
+        <small>PENDIENTES DE PAGO <span>⏳</span></small>
+        <strong id="kpiSalePend">1</strong>
+        <span class="sub">Por confirmar Yape / Tarjeta</span>
+      </div>
+      <div class="kpi val">
+        <small>PAGADOS / ENTREGADOS <span>✓</span></small>
+        <strong id="kpiSalePaid">2</strong>
+        <span class="sub">Con stock descontado</span>
+      </div>
+      <div class="kpi val">
+        <small>VENTAS CONFIRMADAS <span>S/</span></small>
+        <strong id="kpiSaleRev">S/ 565</strong>
+        <span class="sub">Ingresos verificados</span>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div class="toolbar-row">
+        <label class="search">
+          <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="qSale" type="text" placeholder="Buscar por N° pedido (#GB-1041), cliente, WhatsApp o método de pago..." oninput="renderSalesList()">
+        </label>
+        <button class="btn ghost" onclick="addDemoSaleOrder()">+ Simular Pedido Entrante</button>
+      </div>
+      <div class="pills" id="saleFilterPills">
+        <button class="on" onclick="setSaleFilter('all',this)">Todos los pedidos</button>
+        <button class="warn-p" onclick="setSaleFilter('Pendiente',this)">⏳ Pendientes</button>
+        <button onclick="setSaleFilter('Pagado',this)">✓ Pagados</button>
+        <button onclick="setSaleFilter('Entregado',this)">📦 Entregados</button>
+      </div>
+    </section>
+
+    <section class="ord-grid" id="salesGrid"></section>
+  </div><!-- /#pane-pedidos -->
 
 </main>
+
+<!-- MODAL PARA CREAR / EDITAR ORDEN DE TALLER -->
+<div class="sheet-backdrop" id="orderSheet" onclick="if(event.target===this)closeOrderModal()">
+  <div class="sheet" role="dialog" aria-modal="true">
+    <div class="sheet-h">
+      <h3 id="ordModalTitle">Nueva Orden de Taller</h3>
+      <button class="btn ghost" style="height:34px;padding:0 10px" onclick="closeOrderModal()">✕ Cerrar</button>
+    </div>
+
+    <div class="f-grid">
+      <div class="f-field">
+        <label>N° de Orden</label>
+        <input class="f-in" id="oId" type="text" placeholder="#0241">
+      </div>
+      <div class="f-field">
+        <label>Placa de la Moto</label>
+        <input class="f-in" id="oPlate" type="text" placeholder="Ej. 7841-AB" style="text-transform:uppercase;font-weight:800">
+      </div>
+      <div class="f-field">
+        <label>Nombre del Cliente</label>
+        <input class="f-in" id="oClient" type="text" placeholder="Ej. Carlos Mendoza">
+      </div>
+      <div class="f-field">
+        <label>WhatsApp Cliente (9 dígitos)</label>
+        <input class="f-in" id="oPhone" type="tel" maxlength="11" placeholder="987 654 321">
+      </div>
+      <div class="f-field">
+        <label>Motocicleta</label>
+        <select class="f-in" id="oMoto">
+          <option value="msx">Honda MSX 125 (Grom)</option>
+          <option value="nmax">Yamaha NMAX 155 CVT</option>
+          <option value="pulsar">Bajaj Pulsar NS 200 FI</option>
+          <option value="xr">Honda XR 190L Enduro</option>
+          <option value="duke">KTM Duke 200 / 250 NG</option>
+        </select>
+      </div>
+      <div class="f-field">
+        <label>Etapa Actual (Tacómetro 1–5)</label>
+        <select class="f-in" id="oStage">
+          <option value="1">1 · Recibida en taller</option>
+          <option value="2">2 · En diagnóstico</option>
+          <option value="3">3 · Presupuesto aprobado</option>
+          <option value="4">4 · En reparación</option>
+          <option value="5">5 · ¡Lista para entrega!</option>
+        </select>
+      </div>
+      <div class="f-field">
+        <label>Mecánico asignado</label>
+        <input class="f-in" id="oMech" type="text" placeholder="Andrés">
+      </div>
+      <div class="f-field">
+        <label>Presupuesto (S/)</label>
+        <input class="f-in" id="oBudget" type="number" min="0" step="5" placeholder="280">
+      </div>
+      <div class="f-field full">
+        <label>Hora / Fecha estimada de entrega (ETA)</label>
+        <input class="f-in" id="oEta" type="text" placeholder="Ej. Hoy, 5:00 pm / ¡Lista hoy!">
+      </div>
+      <div class="f-field full">
+        <label>Avance / Trabajo realizado (visible en el tacómetro del cliente)</label>
+        <textarea class="f-in" id="oNote" placeholder="Ej. Instalando kit de arrastre DID 428 Oro y cambio de aceite Motul 7100..."></textarea>
+      </div>
+    </div>
+
+    <div class="sheet-f">
+      <button class="btn ghost" id="oDeleteBtn" style="flex:0 0 auto;color:#ff6b68" onclick="deleteCurrentOrder()">Eliminar</button>
+      <button class="btn gold" onclick="saveOrderModal()">✓ Guardar Orden y Sincronizar</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL PARA AGREGAR O EDITAR REPUESTO COMPLETO -->
 <div class="sheet-backdrop" id="editSheet" onclick="if(event.target===this)closeEditModal()">
@@ -601,6 +882,8 @@ function quickPrice(id, val){
 
 function renderAdminList(){
   updateKpis();
+  const cInv = document.getElementById('cntTabInv');
+  if(cInv) cInv.textContent = INVENTORY.length;
   const q = (document.getElementById('qAdmin').value || '').toLowerCase().trim();
   const motoF = document.getElementById('motoAdminFilter').value;
   const sortF = document.getElementById('sortAdmin').value;
@@ -849,17 +1132,476 @@ function resetFactoryInventory(){
   renderAdminList();
 }
 
+/* ==========================================================================
+   MÓDULO 2: ÓRDENES DE TALLER EN VIVO (gb_orders_v1 — SINCRONIZA TACÓMETRO)
+   ========================================================================== */
+const MOTO_CATALOG_META = {
+  msx:    { label:'Honda MSX 125 (Grom)', img:'assets/motos/msx-125.jpg' },
+  nmax:   { label:'Yamaha NMAX 155 CVT', img:'assets/motos/nmax-155.jpg' },
+  pulsar: { label:'Bajaj Pulsar NS 200 FI', img:'assets/motos/pulsar-200.jpg' },
+  xr:     { label:'Honda XR 190L Enduro', img:'assets/productos/llanta-cocada.jpg' },
+  duke:   { label:'KTM Duke 200 / 250 NG', img:'assets/productos/escape-carbono.jpg' }
+};
+
+const STAGE_LABELS = {
+  1: { short:'Recibida', full:'Recibida en taller' },
+  2: { short:'Diagnóstico', full:'En diagnóstico' },
+  3: { short:'Aprobado', full:'Presupuesto aprobado' },
+  4: { short:'Reparación', full:'En reparación' },
+  5: { short:'¡Lista!', full:'¡Lista para entrega!' }
+};
+
+const DEFAULT_ORDERS = [
+  { id:'#0231', plate:'ABC-123', client:'Carlos Mendoza', phone:'987654321', motoKey:'msx', stage:4, mech:'Andrés', budget:280, eta:'Hoy, 5:00 pm', note:'Instalando kit de arrastre DID 428 Oro y pastillas Brembo.' },
+  { id:'#0234', plate:'4582-JM', client:'Luis Quispe', phone:'945112890', motoKey:'nmax', stage:5, mech:'Andrés', budget:220, eta:'¡Lista hoy!', note:'Cambio de faja CVT Yamaha y rodillos Dr. Pulley completado. Prueba de ruta OK.' },
+  { id:'#0238', plate:'9104-KP', client:'Marco Paredes', phone:'912334567', motoKey:'pulsar', stage:2, mech:'Jhonatan', budget:140, eta:'Mañana 11 am', note:'Revisión de triple bujía DTS-i, limpieza de inyector y nivel de refrigerante.' }
+];
+
+function loadOrders(){
+  try{
+    const raw = localStorage.getItem('gb_orders_v1');
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } else {
+      localStorage.setItem('gb_orders_v1', JSON.stringify(DEFAULT_ORDERS));
+    }
+  }catch(_){}
+  return JSON.parse(JSON.stringify(DEFAULT_ORDERS));
+}
+let ORDERS = loadOrders();
+let orderFilter = 'all';
+let editingOrderId = null;
+
+function saveOrders(msg){
+  try{ localStorage.setItem('gb_orders_v1', JSON.stringify(ORDERS)); }catch(_){}
+  if(msg) showToast(msg);
+  renderOrdersList();
+}
+
+function fmtPe(raw){
+  const d = String(raw || '').replace(/\D/g, '').slice(0, 9);
+  return d.length === 9 ? `${d.slice(0,3)} ${d.slice(3,6)} ${d.slice(6,9)}` : d;
+}
+
+function setOrderFilter(f, btn){
+  orderFilter = f;
+  document.querySelectorAll('#ordFilterPills button').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  renderOrdersList();
+}
+
+function setOrderStageAdmin(orderId, newStage){
+  const ord = ORDERS.find(o=>o.id===orderId);
+  if(!ord) return;
+  ord.stage = newStage;
+  if(newStage === 5 && !ord.eta.toLowerCase().includes('lista')) ord.eta = '¡Lista para recoger!';
+  saveOrders(`✓ Orden ${ord.id} (${ord.plate}) → Etapa ${newStage}: ${STAGE_LABELS[newStage].full}`);
+}
+
+function buildOrderWaNotifyLink(ord){
+  const st = STAGE_LABELS[ord.stage] || STAGE_LABELS[4];
+  const m = MOTO_CATALOG_META[ord.motoKey] || MOTO_CATALOG_META.msx;
+  const phone51 = '51' + String(ord.phone || '').replace(/\D/g, '').slice(-9);
+  const txt =
+`Hola *${ord.client}*! Te escribimos de *GB Taller y Repuestos* 🏍️🔧
+
+Actualización de tu orden *${ord.id}*:
+• *Moto:* ${m.label} (Placa *${ord.plate}*)
+• *Estado actual:* Etapa ${ord.stage} de 5 — *${st.full}*
+• *Detalle:* ${ord.note}
+• *Entrega estimada:* ${ord.eta}
+• *Presupuesto:* S/ ${Number(ord.budget || 0).toLocaleString('es-PE')}
+
+Puedes ver tu tacómetro en vivo aquí: https://thekingkoox.github.io/gb-taller-web/`;
+  return `https://wa.me/${phone51}?text=${encodeURIComponent(txt)}`;
+}
+
+function renderOrdersList(){
+  const q = (document.getElementById('qOrder')?.value || '').trim().toLowerCase();
+  document.getElementById('cntTabOrd').textContent = ORDERS.length;
+  document.getElementById('kpiOrdTotal').textContent = ORDERS.length;
+  document.getElementById('kpiOrdReady').textContent = ORDERS.filter(o=>o.stage === 5).length;
+  document.getElementById('kpiOrdProg').textContent = ORDERS.filter(o=>o.stage < 5).length;
+  const totalBudget = ORDERS.reduce((s,o)=>s + Number(o.budget || 0), 0);
+  document.getElementById('kpiOrdBudget').textContent = 'S/ ' + totalBudget.toLocaleString('es-PE');
+
+  const list = ORDERS.filter(o=>{
+    if(orderFilter === 'active' && o.stage >= 5) return false;
+    if(orderFilter === 'ready' && o.stage !== 5) return false;
+    if(q && !(o.id.toLowerCase().includes(q) || o.plate.toLowerCase().includes(q) || o.client.toLowerCase().includes(q) || String(o.phone).includes(q))) return false;
+    return true;
+  });
+
+  const grid = document.getElementById('ordersGrid');
+  if(!list.length){
+    grid.innerHTML = `<div class="ord-card" style="grid-column:1/-1;text-align:center;color:var(--texto-2);padding:28px">No se encontraron órdenes con ese filtro.</div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(o=>{
+    const m = MOTO_CATALOG_META[o.motoKey] || MOTO_CATALOG_META.msx;
+    const stepsHtml = [1,2,3,4,5].map(st=>{
+      const cls = st === o.stage ? 'cur' : (st < o.stage ? 'done' : '');
+      return `<button class="step-btn ${cls}" onclick="setOrderStageAdmin('${o.id}',${st})" title="Cambiar a Etapa ${st}: ${STAGE_LABELS[st].full}">
+        <b>${st}</b><small>${STAGE_LABELS[st].short}</small>
+      </button>`;
+    }).join('');
+
+    return `
+      <article class="ord-card ${o.stage===5?'st-5':''}">
+        <div class="ord-h">
+          <div class="ord-h-left">
+            <img class="ord-thumb" src="${m.img}" alt="${m.label}">
+            <div style="min-width:0">
+              <div><span class="ord-plate">${o.plate}</span><span class="ord-id">Orden ${o.id} · Mec: ${o.mech || 'Andrés'}</span></div>
+              <div class="ord-title">${o.client} · ${m.label}</div>
+              <div class="ord-sub">WhatsApp: +51 ${fmtPe(o.phone)}</div>
+            </div>
+          </div>
+          <div>
+            <div class="ord-price">S/ ${Number(o.budget || 0).toLocaleString('es-PE')}</div>
+            <span class="ord-eta">${o.eta}</span>
+          </div>
+        </div>
+
+        <div class="stepper" aria-label="Control de etapas del tacómetro">${stepsHtml}</div>
+
+        <div class="ord-note">
+          <b>Etapa ${o.stage} (${STAGE_LABELS[o.stage].full}):</b> ${o.note}
+        </div>
+
+        <div class="ord-acts">
+          <a class="btn wa-sm" href="${buildOrderWaNotifyLink(o)}" target="_blank">📲 Avisar avance por WhatsApp</a>
+          <button class="btn ghost act-sm" onclick="openEditOrderModal('${o.id}')">✎ Editar</button>
+          ${o.stage < 5 ? `<button class="btn gold act-sm" onclick="setOrderStageAdmin('${o.id}',${o.stage+1})">Avanzar → ${o.stage+1}</button>` : ''}
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+function openNewOrderModal(){
+  editingOrderId = null;
+  document.getElementById('ordModalTitle').textContent = 'Ingresar Nueva Moto al Taller';
+  document.getElementById('oId').value = '#0' + (240 + ORDERS.length);
+  document.getElementById('oPlate').value = '';
+  document.getElementById('oClient').value = '';
+  document.getElementById('oPhone').value = '';
+  document.getElementById('oMoto').value = 'msx';
+  document.getElementById('oStage').value = '1';
+  document.getElementById('oMech').value = 'Andrés';
+  document.getElementById('oBudget').value = '150';
+  document.getElementById('oEta').value = 'Hoy, 6:00 pm';
+  document.getElementById('oNote').value = 'Moto recibida en taller para revisión general y presupuesto.';
+  document.getElementById('oDeleteBtn').style.display = 'none';
+  document.getElementById('orderSheet').classList.add('open');
+}
+
+function openEditOrderModal(id){
+  const o = ORDERS.find(x=>x.id===id);
+  if(!o) return;
+  editingOrderId = id;
+  document.getElementById('ordModalTitle').textContent = `Editar Orden ${o.id}`;
+  document.getElementById('oId').value = o.id;
+  document.getElementById('oPlate').value = o.plate;
+  document.getElementById('oClient').value = o.client;
+  document.getElementById('oPhone').value = fmtPe(o.phone);
+  document.getElementById('oMoto').value = o.motoKey;
+  document.getElementById('oStage').value = String(o.stage);
+  document.getElementById('oMech').value = o.mech || 'Andrés';
+  document.getElementById('oBudget').value = o.budget;
+  document.getElementById('oEta').value = o.eta;
+  document.getElementById('oNote').value = o.note;
+  document.getElementById('oDeleteBtn').style.display = 'inline-flex';
+  document.getElementById('orderSheet').classList.add('open');
+}
+
+function closeOrderModal(){
+  document.getElementById('orderSheet').classList.remove('open');
+}
+
+function saveOrderModal(){
+  const id = (document.getElementById('oId').value || '#0241').trim();
+  const plate = (document.getElementById('oPlate').value || 'SIN-PLA').trim().toUpperCase();
+  const client = (document.getElementById('oClient').value || 'Cliente GB').trim();
+  const phone = (document.getElementById('oPhone').value || '987654321').replace(/\D/g, '').slice(0, 9);
+  const motoKey = document.getElementById('oMoto').value;
+  const stage = Math.max(1, Math.min(5, parseInt(document.getElementById('oStage').value, 10) || 1));
+  const mech = (document.getElementById('oMech').value || 'Andrés').trim();
+  const budget = Math.max(0, parseInt(document.getElementById('oBudget').value, 10) || 0);
+  const eta = (document.getElementById('oEta').value || 'Hoy, 6:00 pm').trim();
+  const note = (document.getElementById('oNote').value || 'En revisión en Taller GB.').trim();
+
+  const data = { id, plate, client, phone, motoKey, stage, mech, budget, eta, note };
+  if(editingOrderId){
+    const idx = ORDERS.findIndex(x=>x.id===editingOrderId);
+    if(idx >= 0) ORDERS[idx] = data;
+    saveOrders(`✓ Orden ${id} actualizada y sincronizada con la tienda`);
+  } else {
+    ORDERS.unshift(data);
+    saveOrders(`✓ Nueva orden ${id} (${plate}) creada en el tacómetro`);
+  }
+  closeOrderModal();
+}
+
+function deleteCurrentOrder(){
+  if(!editingOrderId) return;
+  ORDERS = ORDERS.filter(x=>x.id!==editingOrderId);
+  closeOrderModal();
+  saveOrders(`Orden ${editingOrderId} eliminada`);
+}
+
+/* ==========================================================================
+   MÓDULO 3: PEDIDOS DE TIENDA (gb_sales_v1 — CONFIRMAR Y DESCONTAR STOCK)
+   ========================================================================== */
+const DEFAULT_SALES = [
+  {
+    id:'#GB-1042', date:'Hoy · 1:18 am', client:'Carlos Mendoza', phone:'987654321',
+    moto:'Honda MSX 125 (ABC-123)', delivery:'Recoger en taller GB', install:true,
+    payMethod:'Yape QR', status:'Pendiente', stockDeducted:false, total:195,
+    items:[
+      { id:'disco', sku:'GB-FR-014', name:'Disco de freno delantero Wave 220mm', qty:1, price:95 },
+      { id:'pastillas', sku:'GB-FR-029', name:'Pastillas de freno sinterizadas cobre', qty:1, price:55 },
+      { id:'aceite', sku:'GB-MT-003', name:'Aceite 4T 10W-40 100% Sintético 1L', qty:1, price:45 }
+    ]
+  },
+  {
+    id:'#GB-1041', date:'Ayer · 6:45 pm', client:'Luis Quispe', phone:'945112890',
+    moto:'Yamaha NMAX 155 (4582-JM)', delivery:'Recoger en taller GB', install:true,
+    payMethod:'Tarjeta VISA •••• 4242', status:'Pagado', stockDeducted:true, total:220,
+    items:[
+      { id:'faja', sku:'GB-TR-021', name:'Faja / Correa de Transmisión CVT Reforzada', qty:1, price:145 },
+      { id:'rodillos', sku:'GB-TR-024', name:'Kit 6 Rodillos / Polines de Variador 13g', qty:1, price:75 }
+    ]
+  },
+  {
+    id:'#GB-1040', date:'Ayer · 3:10 pm', client:'Marco Paredes', phone:'912334567',
+    moto:'Pulsar NS 200 FI (9104-KP)', delivery:'Envío a domicilio (Surco)', install:false,
+    payMethod:'Yape QR', status:'Entregado', stockDeducted:true, total:358,
+    items:[
+      { id:'radiador', sku:'GB-MT-035', name:'Radiador Aluminio + Electroventilador 200cc', qty:1, price:290 },
+      { id:'bujias3', sku:'GB-MT-031', name:'Kit 3 Bujías Iridio Triple Chispa DTS-i', qty:1, price:68 }
+    ]
+  }
+];
+
+function loadSales(){
+  try{
+    const raw = localStorage.getItem('gb_sales_v1');
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } else {
+      localStorage.setItem('gb_sales_v1', JSON.stringify(DEFAULT_SALES));
+    }
+  }catch(_){}
+  return JSON.parse(JSON.stringify(DEFAULT_SALES));
+}
+let SALES = loadSales();
+let saleFilter = 'all';
+
+function saveSales(msg){
+  try{ localStorage.setItem('gb_sales_v1', JSON.stringify(SALES)); }catch(_){}
+  if(msg) showToast(msg);
+  renderSalesList();
+}
+
+function setSaleFilter(f, btn){
+  saleFilter = f;
+  document.querySelectorAll('#saleFilterPills button').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  renderSalesList();
+}
+
+function confirmSaleAndDeductStock(saleId){
+  const sale = SALES.find(s=>s.id===saleId);
+  if(!sale) return;
+  let deductedCount = 0;
+  if(!sale.stockDeducted){
+    sale.items.forEach(it=>{
+      const invItem = INVENTORY.find(p=>p.id===it.id || p.sku===it.sku);
+      if(invItem){
+        invItem.stock = Math.max(0, Number(invItem.stock) - Number(it.qty || 1));
+        deductedCount += Number(it.qty || 1);
+      }
+    });
+    sale.stockDeducted = true;
+    saveInventory();
+    renderAdminList();
+  }
+  sale.status = 'Pagado';
+  saveSales(`✓ ${sale.id} confirmado · ${deductedCount} unidad(es) descontadas del inventario`);
+}
+
+function setSaleStatus(saleId, newStatus){
+  const sale = SALES.find(s=>s.id===saleId);
+  if(!sale) return;
+  if((newStatus === 'Pagado' || newStatus === 'Entregado') && !sale.stockDeducted){
+    confirmSaleAndDeductStock(saleId);
+    if(newStatus === 'Entregado'){
+      sale.status = 'Entregado';
+      saveSales(`✓ ${sale.id} marcado como Entregado (stock descontado)`);
+    }
+    return;
+  }
+  sale.status = newStatus;
+  saveSales(`✓ Estado de ${sale.id} cambiado a ${newStatus}`);
+}
+
+function buildSaleWaNotifyLink(s){
+  const phone51 = '51' + String(s.phone || '').replace(/\D/g, '').slice(-9);
+  const itemsTxt = s.items.map(i=>`• ${i.qty}x ${i.name}`).join('\n');
+  const txt =
+`Hola *${s.client}*! Te confirmamos desde *GB Taller y Repuestos* ✅
+
+Tu pedido *${s.id}* está en estado: *${s.status.toUpperCase()}*
+${itemsTxt}
+
+• *Total:* S/ ${Number(s.total || 0).toLocaleString('es-PE')} (${s.payMethod})
+• *Modalidad:* ${s.delivery}${s.install ? ' + Instalación en taller' : ''}
+
+¡Gracias por tu preferencia!`;
+  return `https://wa.me/${phone51}?text=${encodeURIComponent(txt)}`;
+}
+
+function addDemoSaleOrder(){
+  const nextNum = 1043 + SALES.length;
+  const demo = {
+    id: `#GB-${nextNum}`,
+    date: 'Justo ahora',
+    client: 'Diego Rojas',
+    phone: '991204588',
+    moto: 'KTM Duke 200 (6018-KT)',
+    delivery: 'Recoger en taller GB',
+    install: true,
+    payMethod: 'Yape QR',
+    status: 'Pendiente',
+    stockDeducted: false,
+    total: 425,
+    items: [
+      { id:'escape', sku:'GB-AC-048', name:'Escape Deportivo Slip-On Fibra de Carbono', qty:1, price:380 },
+      { id:'aceite', sku:'GB-MT-003', name:'Aceite 4T 10W-40 100% Sintético 1L', qty:1, price:45 }
+    ]
+  };
+  SALES.unshift(demo);
+  saveSales(`🔔 Nuevo pedido entrante ${demo.id} por S/ ${demo.total}`);
+}
+
+function renderSalesList(){
+  const q = (document.getElementById('qSale')?.value || '').trim().toLowerCase();
+  document.getElementById('cntTabPed').textContent = SALES.length;
+  document.getElementById('kpiSaleTotal').textContent = SALES.length;
+  document.getElementById('kpiSalePend').textContent = SALES.filter(s=>s.status==='Pendiente').length;
+  const confirmed = SALES.filter(s=>s.status==='Pagado' || s.status==='Entregado');
+  document.getElementById('kpiSalePaid').textContent = confirmed.length;
+  document.getElementById('kpiSaleRev').textContent = 'S/ ' + confirmed.reduce((acc,s)=>acc + Number(s.total||0), 0).toLocaleString('es-PE');
+
+  const list = SALES.filter(s=>{
+    if(saleFilter !== 'all' && s.status !== saleFilter) return false;
+    if(q && !(s.id.toLowerCase().includes(q) || s.client.toLowerCase().includes(q) || String(s.phone).includes(q) || s.payMethod.toLowerCase().includes(q))) return false;
+    return true;
+  });
+
+  const grid = document.getElementById('salesGrid');
+  if(!list.length){
+    grid.innerHTML = `<div class="sale-card" style="grid-column:1/-1;text-align:center;color:var(--texto-2);padding:28px">No hay pedidos con ese filtro.</div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(s=>{
+    const stCls = s.status==='Pendiente' ? 'pend' : (s.status==='Pagado' ? 'paid' : (s.status==='Entregado' ? 'deliv' : 'canc'));
+    const payCls = s.payMethod.toLowerCase().includes('yape') ? 'yape' : (s.payMethod.toLowerCase().includes('tarj') ? 'card' : '');
+    return `
+      <article class="sale-card ${stCls}">
+        <div class="sale-h">
+          <div>
+            <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+              <b style="font-size:15px">${s.id}</b>
+              <span class="st-badge ${stCls}">${s.status}</span>
+              <span class="pay-tag ${payCls}">${s.payMethod}</span>
+            </div>
+            <div class="ord-sub" style="margin-top:4px"><b style="color:#fff">${s.client}</b> · +51 ${fmtPe(s.phone)} · ${s.date}</div>
+            <div class="ord-sub">${s.moto} · ${s.delivery}${s.install ? ' · Con instalación' : ''}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="ord-price">S/ ${Number(s.total || 0).toLocaleString('es-PE')}</div>
+            ${s.stockDeducted ? `<span class="stock-ded-pill">✓ Stock descontado</span>` : `<span style="font-size:10.5px;color:var(--oro-claro);font-weight:700">Stock por descontar</span>`}
+          </div>
+        </div>
+
+        <div class="sale-items">
+          ${s.items.map(i=>`<div class="sale-item-row"><span><b>${i.qty}x</b> ${i.name} <small style="color:var(--texto-3)">[${i.sku}]</small></span><b>S/ ${(i.qty*i.price).toLocaleString('es-PE')}</b></div>`).join('')}
+        </div>
+
+        <div class="ord-acts">
+          ${s.status === 'Pendiente'
+            ? `<button class="btn gold act-sm" style="flex:1" onclick="confirmSaleAndDeductStock('${s.id}')">✓ Confirmar Pago y Descontar Stock</button>`
+            : (s.status === 'Pagado'
+                ? `<button class="btn ghost act-sm" style="flex:1;color:#93C5FD;border-color:rgba(96,165,250,.4)" onclick="setSaleStatus('${s.id}','Entregado')">📦 Marcar Entregado</button>`
+                : '')
+          }
+          <a class="btn wa-sm" style="flex:0 0 auto" href="${buildSaleWaNotifyLink(s)}" target="_blank">📲 WhatsApp Cliente</a>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+/* ==========================================================================
+   NAVEGACIÓN ENTRE LAS 3 PESTAÑAS DEL PANEL ADMIN 360°
+   ========================================================================== */
+let currentAdminTab = 'inv';
+
+function switchAdminTab(tab){
+  currentAdminTab = tab;
+  ['inv','ordenes','pedidos'].forEach(t=>{
+    document.getElementById('pane-'+t).classList.toggle('active', t===tab);
+    document.getElementById('tabBtn-'+t).classList.toggle('on', t===tab);
+  });
+  const topBtn = document.getElementById('topPrimaryBtn');
+  if(topBtn){
+    if(tab === 'ordenes') topBtn.textContent = '+ Nueva Orden Taller';
+    else if(tab === 'pedidos') topBtn.textContent = '+ Simular Pedido';
+    else topBtn.textContent = '+ Nuevo Repuesto';
+  }
+}
+
+function onTopPrimaryAction(){
+  if(currentAdminTab === 'ordenes') openNewOrderModal();
+  else if(currentAdminTab === 'pedidos') addDemoSaleOrder();
+  else openNewModal();
+}
+
+window.addEventListener('storage', e => {
+  if(e.key === 'gb_inventory_v1'){ INVENTORY = loadInventory(); renderAdminList(); }
+  if(e.key === 'gb_orders_v1'){ ORDERS = loadOrders(); renderOrdersList(); }
+  if(e.key === 'gb_sales_v1'){ SALES = loadSales(); renderSalesList(); }
+});
+
 renderAdminList();
+document.getElementById('cntTabInv').textContent = INVENTORY.length;
+renderOrdersList();
+renderSalesList();
+
 try{
   const u = JSON.parse(localStorage.getItem('gb_user_session_v1') || 'null');
   if(u && u.phone){
-    const ph = String(u.phone).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
+    const ph = fmtPe(u.phone);
     document.getElementById('admWaSession').textContent = `SESIÓN WHATSAPP: ${u.name.toUpperCase()} (+51 ${ph})`;
   }
 }catch(_){}
-if(location.hash === '#edit'){
-  openEditModal('disco');
+
+function checkAdminHash(){
+  const h = (location.hash || '').replace('#','');
+  if(h === 'ordenes') switchAdminTab('ordenes');
+  if(h === 'pedidos') switchAdminTab('pedidos');
+  if(h === 'inventario') switchAdminTab('inv');
+  if(h === 'edit') openEditModal('disco');
+  if(h === 'neworder'){ switchAdminTab('ordenes'); openNewOrderModal(); }
 }
+checkAdminHash();
+window.addEventListener('hashchange', checkAdminHash);
 </script>
 </body>
 </html>
