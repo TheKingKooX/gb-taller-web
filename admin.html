@@ -367,6 +367,23 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
 .stock-ded-pill{
   font-size:10.5px;color:var(--verde);font-weight:700;display:inline-flex;align-items:center;gap:4px;
 }
+.sale-card.new-flash{
+  animation:newOrderFlash 1.4s ease;
+}
+@keyframes newOrderFlash{
+  0%{box-shadow:0 0 0 3px rgba(245,183,0,.75);background:rgba(245,183,0,.14)}
+  100%{box-shadow:none;background:var(--pista)}
+}
+.live-sync-pill{
+  display:inline-flex;align-items:center;gap:6px;padding:0 11px;height:32px;border-radius:99px;
+  background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.32);
+  color:var(--verde);font-size:11px;font-weight:700;white-space:nowrap;
+}
+.live-sync-pill i{
+  width:7px;height:7px;border-radius:50%;background:var(--verde);
+  box-shadow:0 0 8px var(--verde);animation:pulseLive 1.8s infinite;
+}
+@keyframes pulseLive{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.8)}}
 </style>
 </head>
 <body>
@@ -521,13 +538,17 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
           <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
           <input id="qSale" type="text" placeholder="Buscar por N° pedido (#GB-1041), cliente, WhatsApp o método de pago..." oninput="renderSalesList()">
         </label>
-        <button class="btn ghost" onclick="addDemoSaleOrder()">+ Simular Pedido Entrante</button>
+        <button class="btn ghost" onclick="forceSyncNow()" title="Sincronizar pedidos ahora">↻ Actualizar</button>
+        <button class="btn gold" onclick="addDemoSaleOrder()">+ Simular Pedido Entrante</button>
       </div>
-      <div class="pills" id="saleFilterPills">
-        <button class="on" onclick="setSaleFilter('all',this)">Todos los pedidos</button>
-        <button class="warn-p" onclick="setSaleFilter('Pendiente',this)">⏳ Pendientes</button>
-        <button onclick="setSaleFilter('Pagado',this)">✓ Pagados</button>
-        <button onclick="setSaleFilter('Entregado',this)">📦 Entregados</button>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+        <div class="pills" id="saleFilterPills">
+          <button class="on" data-sf="all" onclick="setSaleFilter('all',this)">Todos los pedidos</button>
+          <button class="warn-p" data-sf="Pendiente" onclick="setSaleFilter('Pendiente',this)">⏳ Pendientes</button>
+          <button data-sf="Pagado" onclick="setSaleFilter('Pagado',this)">✓ Pagados</button>
+          <button data-sf="Entregado" onclick="setSaleFilter('Entregado',this)">📦 Entregados</button>
+        </div>
+        <span class="live-sync-pill" id="liveSyncBadge"><i></i>Sincronización en vivo</span>
       </div>
     </section>
 
@@ -695,9 +716,17 @@ let formMotos = new Set(['msx']);
 let formImg = 'assets/productos/disco-freno.jpg';
 let toastT = null;
 
+const SYNC_CH = (typeof BroadcastChannel === 'function') ? new BroadcastChannel('gb_taller_sync') : null;
+let lastInvSnapshot = '';
+let lastSalesSnapshot = '';
+let flashSaleId = '';
+
 function saveInventory(msg){
   try{
-    localStorage.setItem('gb_inventory_v1', JSON.stringify(INVENTORY));
+    const serialized = JSON.stringify(INVENTORY);
+    localStorage.setItem('gb_inventory_v1', serialized);
+    lastInvSnapshot = serialized;
+    if(SYNC_CH) SYNC_CH.postMessage({ type:'inventory_updated', ts:Date.now() });
   }catch(_){}
   updateKpis();
   if(msg) showAdmToast(msg);
@@ -708,8 +737,9 @@ function showAdmToast(txt){
   document.getElementById('admToastTxt').textContent = txt;
   el.classList.add('show');
   clearTimeout(toastT);
-  toastT = setTimeout(()=>el.classList.remove('show'), 2200);
+  toastT = setTimeout(()=>el.classList.remove('show'), 2600);
 }
+const showToast = showAdmToast;
 
 function updateKpis(){
   const totalItems = INVENTORY.length;
@@ -1067,18 +1097,35 @@ function loadSales(){
   return JSON.parse(JSON.stringify(DEFAULT_SALES));
 }
 let SALES = loadSales();
+lastSalesSnapshot = localStorage.getItem('gb_sales_v1') || JSON.stringify(SALES);
+lastInvSnapshot = localStorage.getItem('gb_inventory_v1') || JSON.stringify(INVENTORY);
 let saleFilter = 'all';
 
+function getNextSaleNumber(){
+  let maxN = 1042;
+  SALES.forEach(s=>{
+    const m = String(s.id || '').match(/(\d+)/);
+    if(m){ const n = parseInt(m[1], 10); if(n > maxN) maxN = n; }
+  });
+  return maxN + 1;
+}
+
 function saveSales(msg){
-  try{ localStorage.setItem('gb_sales_v1', JSON.stringify(SALES)); }catch(_){}
-  if(msg) showToast(msg);
+  try{
+    const serialized = JSON.stringify(SALES);
+    localStorage.setItem('gb_sales_v1', serialized);
+    lastSalesSnapshot = serialized;
+    if(SYNC_CH) SYNC_CH.postMessage({ type:'sales_updated', ts:Date.now() });
+  }catch(_){}
   renderSalesList();
+  if(msg) showAdmToast(msg);
 }
 
 function setSaleFilter(f, btn){
   saleFilter = f;
-  document.querySelectorAll('#saleFilterPills button').forEach(b=>b.classList.remove('on'));
-  if(btn) btn.classList.add('on');
+  document.querySelectorAll('#saleFilterPills button').forEach(b=>{
+    b.classList.toggle('on', btn ? b === btn : b.dataset.sf === f);
+  });
   renderSalesList();
 }
 
@@ -1134,25 +1181,33 @@ ${itemsTxt}
 }
 
 function addDemoSaleOrder(){
-  const nextNum = 1043 + SALES.length;
+  const nextNum = getNextSaleNumber();
+  const sampleClients = [
+    { client:'Diego Rojas', phone:'991204588', moto:'KTM Duke 200 (6018-KT)', payMethod:'Yape QR', items:[{ id:'escape', sku:'GB-AC-048', name:'Escape Deportivo Slip-On Fibra de Carbono', qty:1, price:380 }, { id:'aceite', sku:'GB-MT-003', name:'Aceite 4T 10W-40 100% Sintético 1L', qty:1, price:45 }] },
+    { client:'Kevin Torres', phone:'984312099', moto:'Yamaha NMAX 155 (4582-JM)', payMethod:'Tarjeta VISA •••• 1111', items:[{ id:'faja', sku:'GB-TR-021', name:'Faja / Correa de Transmisión CVT Reforzada', qty:1, price:145 }, { id:'bateria', sku:'GB-EL-005', name:'Batería 12V 5Ah Libre Mantenimiento', qty:1, price:120 }] },
+    { client:'José Ramírez', phone:'976543210', moto:'Honda XR 190L (7320-XR)', payMethod:'Yape QR', items:[{ id:'llanta', sku:'GB-SU-042', name:'Llanta Doble Propósito 110/90-17 Cocada', qty:1, price:245 }, { id:'guantes', sku:'GB-AC-059', name:'Guantes Tácticos con Nudillos de Carbono', qty:1, price:85 }] }
+  ];
+  const pick = sampleClients[nextNum % sampleClients.length];
+  const total = pick.items.reduce((s,i)=>s + i.qty * i.price, 0);
   const demo = {
     id: `#GB-${nextNum}`,
     date: 'Justo ahora',
-    client: 'Diego Rojas',
-    phone: '991204588',
-    moto: 'KTM Duke 200 (6018-KT)',
+    client: pick.client,
+    phone: pick.phone,
+    moto: pick.moto,
     delivery: 'Recoger en taller GB',
     install: true,
-    payMethod: 'Yape QR',
+    payMethod: pick.payMethod,
     status: 'Pendiente',
     stockDeducted: false,
-    total: 425,
-    items: [
-      { id:'escape', sku:'GB-AC-048', name:'Escape Deportivo Slip-On Fibra de Carbono', qty:1, price:380 },
-      { id:'aceite', sku:'GB-MT-003', name:'Aceite 4T 10W-40 100% Sintético 1L', qty:1, price:45 }
-    ]
+    total,
+    items: pick.items
   };
   SALES.unshift(demo);
+  flashSaleId = demo.id;
+  if(saleFilter !== 'all' && saleFilter !== 'Pendiente'){
+    setSaleFilter('Pendiente');
+  }
   saveSales(`🔔 Nuevo pedido entrante ${demo.id} por S/ ${demo.total}`);
 }
 
@@ -1180,8 +1235,9 @@ function renderSalesList(){
   grid.innerHTML = list.map(s=>{
     const stCls = s.status==='Pendiente' ? 'pend' : (s.status==='Pagado' ? 'paid' : (s.status==='Entregado' ? 'deliv' : 'canc'));
     const payCls = s.payMethod.toLowerCase().includes('yape') ? 'yape' : (s.payMethod.toLowerCase().includes('tarj') ? 'card' : '');
+    const isFlash = s.id === flashSaleId ? 'new-flash' : '';
     return `
-      <article class="sale-card ${stCls}">
+      <article class="sale-card ${stCls} ${isFlash}">
         <div class="sale-h">
           <div>
             <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
@@ -1231,6 +1287,7 @@ function switchAdminTab(tab){
   if(topBtn){
     topBtn.textContent = (tab === 'pedidos') ? '+ Simular Pedido' : '+ Nuevo Repuesto';
   }
+  syncFromStorage(false);
 }
 
 function onTopPrimaryAction(){
@@ -1238,10 +1295,49 @@ function onTopPrimaryAction(){
   else openNewModal();
 }
 
+function syncFromStorage(notifyNew){
+  try{
+    const rawInv = localStorage.getItem('gb_inventory_v1') || '';
+    if(rawInv && rawInv !== lastInvSnapshot){
+      lastInvSnapshot = rawInv;
+      INVENTORY = loadInventory();
+      renderAdminList();
+    }
+    const rawSales = localStorage.getItem('gb_sales_v1') || '';
+    if(rawSales && rawSales !== lastSalesSnapshot){
+      const prevTopId = SALES[0]?.id;
+      lastSalesSnapshot = rawSales;
+      SALES = loadSales();
+      const newTop = SALES[0];
+      if(notifyNew && newTop && newTop.id !== prevTopId){
+        flashSaleId = newTop.id;
+        showAdmToast(`🔔 Nuevo pedido recibido: ${newTop.id} (${newTop.client})`);
+      }
+      renderSalesList();
+    }
+  }catch(_){}
+}
+
+function forceSyncNow(){
+  lastInvSnapshot = '';
+  lastSalesSnapshot = '';
+  syncFromStorage(false);
+  showAdmToast('✓ Inventario y pedidos sincronizados');
+}
+
 window.addEventListener('storage', e => {
-  if(e.key === 'gb_inventory_v1'){ INVENTORY = loadInventory(); renderAdminList(); }
-  if(e.key === 'gb_sales_v1'){ SALES = loadSales(); renderSalesList(); }
+  if(e.key === 'gb_inventory_v1' || e.key === 'gb_sales_v1'){
+    syncFromStorage(true);
+  }
 });
+if(SYNC_CH){
+  SYNC_CH.onmessage = () => syncFromStorage(true);
+}
+window.addEventListener('focus', () => syncFromStorage(true));
+document.addEventListener('visibilitychange', () => {
+  if(!document.hidden) syncFromStorage(true);
+});
+setInterval(() => syncFromStorage(true), 800);
 
 renderAdminList();
 document.getElementById('cntTabInv').textContent = INVENTORY.length;

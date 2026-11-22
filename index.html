@@ -1470,6 +1470,7 @@ function loadSharedInventory(){
   return DEFAULT_INVENTORY.slice();
 }
 let INVENTORY = loadSharedInventory();
+const SYNC_CH = (typeof BroadcastChannel === 'function') ? new BroadcastChannel('gb_taller_sync') : null;
 
 function recordCheckoutOrderToAdmin(){
   const entries = Object.entries(cart).map(([id,qty])=>{
@@ -1489,7 +1490,12 @@ function recordCheckoutOrderToAdmin(){
   }catch(_){}
   if(!Array.isArray(sales)) sales = [];
 
-  const nextNum = 1043 + sales.length;
+  let maxN = 1042;
+  sales.forEach(s=>{
+    const m = String(s.id || '').match(/(\d+)/);
+    if(m){ const n = parseInt(m[1], 10); if(n > maxN) maxN = n; }
+  });
+  const nextNum = maxN + 1;
   const newSale = {
     id: `#GB-${nextNum}`,
     date: 'Justo ahora',
@@ -1505,16 +1511,26 @@ function recordCheckoutOrderToAdmin(){
     items: entries
   };
   sales.unshift(newSale);
-  try{ localStorage.setItem('gb_sales_v1', JSON.stringify(sales)); }catch(_){}
+  try{
+    localStorage.setItem('gb_sales_v1', JSON.stringify(sales));
+    if(SYNC_CH) SYNC_CH.postMessage({ type:'sales_updated', orderId:newSale.id, ts:Date.now() });
+  }catch(_){}
   showCustomToast(`✓ PEDIDO ${newSale.id} REGISTRADO`, 'Enviado al Panel Administrador y WhatsApp');
 }
 
+function reloadInventoryFromStorage(){
+  INVENTORY = loadSharedInventory();
+  changeMoto(currentMotoKey);
+}
 window.addEventListener('storage', e => {
-  if(e.key === 'gb_inventory_v1'){
-    INVENTORY = loadSharedInventory();
-    changeMoto(currentMotoKey);
-  }
+  if(e.key === 'gb_inventory_v1') reloadInventoryFromStorage();
 });
+if(SYNC_CH){
+  SYNC_CH.onmessage = e => {
+    if(e.data?.type === 'inventory_updated') reloadInventoryFromStorage();
+  };
+}
+window.addEventListener('focus', reloadInventoryFromStorage);
 
 const STAGES = {
   1:{ang:-72, fill:20, step:'Etapa 1 de 5', title:'Recibida en taller', desc:'Moto registrada en recepción con Andrés.'},
