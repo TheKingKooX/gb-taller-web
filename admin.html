@@ -1400,11 +1400,34 @@ function syncFromStorage(notifyNew){
   }catch(_){}
 }
 
-function forceSyncNow(){
+async function forceSyncNow(){
+  if(window.GBCloud && window.GBCloud.isAdmin()){
+    try{
+      const [cloudInv, cloudSales] = await Promise.all([
+        window.GBCloud.fetchInventoryOnce(),
+        window.GBCloud.fetchSalesOnce()
+      ]);
+      if(cloudInv.length){
+        INVENTORY = sortByDefaultOrderAdm(cloudInv);
+        lastInvSnapshot = JSON.stringify(INVENTORY);
+        try{ localStorage.setItem('gb_inventory_v1', lastInvSnapshot); }catch(_){}
+        renderAdminList();
+      }
+      SALES = cloudSales;
+      lastSalesSnapshot = JSON.stringify(SALES);
+      try{ localStorage.setItem('gb_sales_v1', lastSalesSnapshot); }catch(_){}
+      renderSalesList();
+      showAdmToast(`☁️ Nube actualizada: ${SALES.length} pedido(s) en Firestore`);
+      return;
+    }catch(err){
+      showAdmToast('⚠ Error leyendo nube: ' + (err?.code || err?.message || err));
+      return;
+    }
+  }
   lastInvSnapshot = '';
   lastSalesSnapshot = '';
   syncFromStorage(false);
-  showAdmToast('✓ Inventario y pedidos sincronizados');
+  showAdmToast('⚠ Modo local · Pulsa "🔐 Conectar Google Admin" arriba para ver pedidos desde celulares');
 }
 
 window.addEventListener('storage', e => {

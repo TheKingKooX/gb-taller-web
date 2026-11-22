@@ -1,11 +1,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
 import {
   getFirestore, collection, doc, setDoc, updateDoc, deleteDoc,
-  onSnapshot, query, orderBy, writeBatch, getDocs
+  onSnapshot, writeBatch, getDocs, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
-  signOut, onAuthStateChanged
+  getRedirectResult, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -25,13 +25,35 @@ const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: "select_account" });
 
+// Procesar resultado si el navegador usó signInWithRedirect (ej. móvil o popup bloqueado)
+getRedirectResult(auth).catch((err) => {
+  if (err && err.code) console.warn("Auth redirect result:", err.code);
+});
+
 let currentAuthUser = null;
 
 function isAdminUser(u) {
   return Boolean(u && u.emailVerified && u.email && u.email.toLowerCase() === ADMIN_EMAIL);
 }
 
-function sanitizeProduct(p, idx = 0) {
+function toMillis(ts) {
+  if (!ts) return 0;
+  if (typeof ts === "number") return ts;
+  if (typeof ts.toMillis === "function") return ts.toMillis();
+  if (typeof ts.seconds === "number") return ts.seconds * 1000;
+  return 0;
+}
+
+function normalizeSaleDoc(d) {
+  const data = d.data();
+  return {
+    ...data,
+    createdAt: toMillis(data.createdAt),
+    _docId: d.id
+  };
+}
+
+function sanitizeProduct(p) {
   const out = {
     id: String(p.id || ("prod-" + Date.now())),
     sku: String(p.sku || "GB-RP-001"),
@@ -58,24 +80,30 @@ function sanitizeProduct(p, idx = 0) {
 
 function sanitizeSaleForCreate(s) {
   const items = Array.isArray(s.items) ? s.items.slice(0, 30).map(i => ({
-    id: String(i.id || ""),
-    sku: String(i.sku || ""),
-    name: String(i.name || "Repuesto").slice(0, 120),
-    qty: Math.max(1, Math.floor(Number(i.qty) || 1)),
-    price: Math.max(0, Number(i.price) || 0)
+    id: String(i.id || "item").slice(0, 64) || "item",
+    sku: String(i.sku || "GB-SKU").slice(0, 40) || "GB-SKU",
+    name: String(i.name || "Repuesto").slice(0, 160) || "Repuesto",
+    qty: Math.max(1, Math.min(100, Math.floor(Number(i.qty) || 1))),
+    price: Math.max(0, Math.min(50000, Number(i.price) || 0))
   })) : [];
+  if (!items.length) {
+    items.push({ id: "general", sku: "GB-GEN-001", name: "Pedido Taller GB", qty: 1, price: 1 });
+  }
   const computedTotal = items.reduce((acc, it) => acc + it.qty * it.price, 0);
   const total = Math.max(1, Math.min(50000, Number(s.total) || computedTotal || 1));
+  const rawPhone = String(s.phone || "").replace(/\D/g, "").slice(0, 15);
+  const safePhone = rawPhone.length >= 6 ? rawPhone : "987654321";
+
   return {
     id: String(s.id || ("#GB-" + Math.floor(1050 + Math.random() * 8900))).slice(0, 24),
     date: String(s.date || new Date().toLocaleString("es-PE", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })).slice(0, 60),
-    createdAt: Number(s.createdAt) || Date.now(),
+    createdAt: serverTimestamp(),
     client: String(s.client || "Cliente GB").trim().slice(0, 80) || "Cliente GB",
-    phone: String(s.phone || "987654321").replace(/\D/g, "").slice(0, 15) || "987654321",
-    moto: String(s.moto || "Moto por confirmar").slice(0, 100),
-    delivery: String(s.delivery || "Recoger en taller GB").slice(0, 140),
+    phone: safePhone,
+    moto: String(s.moto || "Moto por confirmar").slice(0, 100) || "Moto por confirmar",
+    delivery: String(s.delivery || "Recoger en taller GB").slice(0, 140) || "Recoger en taller GB",
     install: Boolean(s.install),
-    payMethod: String(s.payMethod || "Yape QR").slice(0, 80),
+    payMethod: String(s.payMethod || "Yape QR").slice(0, 80) || "Yape QR",
     status: "Pendiente",
     stockDeducted: false,
     total,
@@ -127,13 +155,20 @@ const GBCloud = {
     );
   },
 
+  async fetchInventoryOnce() {
+    const snap = await getDocs(collection(db, "inventory"));
+    const items = [];
+    snap.forEach((d) => items.push({ ...d.data(), id: d.id }));
+    return items;
+  },
+
   async seedInventoryIfEmpty(defaultList) {
     if (!isAdminUser(currentAuthUser)) return false;
     const snap = await getDocs(collection(db, "inventory"));
     if (!snap.empty) return false;
     const batch = writeBatch(db);
-    defaultList.forEach((item, idx) => {
-      const clean = sanitizeProduct(item, idx);
+    defaultList.forEach((item) => {
+      const clean = sanitizeProduct(item);
       batch.set(doc(db, "inventory", clean.id), clean);
     });
     await batch.commit();
@@ -160,8 +195,8 @@ const GBCloud = {
     existing.forEach((d) => {
       if (!keepIds.has(d.id)) batch.delete(d.ref);
     });
-    list.forEach((item, idx) => {
-      const clean = sanitizeProduct(item, idx);
+    list.forEach((item) => {
+      const clean = sanitizeProduct(item);
       batch.set(doc(db, "inventory", clean.id), clean);
     });
     await batch.commit();
@@ -169,24 +204,32 @@ const GBCloud = {
 
   async createSaleOrder(saleObj) {
     const clean = sanitizeSaleForCreate(saleObj);
-    const docId = `sale_${clean.createdAt}_${Math.floor(100 + Math.random() * 900)}`;
+    const docId = `sale_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}`;
     await setDoc(doc(db, "sales", docId), clean);
-    return { ...clean, _docId: docId };
+    return { ...clean, createdAt: Date.now(), _docId: docId };
   },
 
   subscribeSales(onData, onError) {
-    const q = query(collection(db, "sales"), orderBy("createdAt", "desc"));
     return onSnapshot(
-      q,
+      collection(db, "sales"),
       (snap) => {
         const list = [];
-        snap.forEach((d) => list.push({ ...d.data(), _docId: d.id }));
+        snap.forEach((d) => list.push(normalizeSaleDoc(d)));
+        list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
         onData(list, snap.metadata);
       },
       (err) => {
         if (onError) onError(err);
       }
     );
+  },
+
+  async fetchSalesOnce() {
+    const snap = await getDocs(collection(db, "sales"));
+    const list = [];
+    snap.forEach((d) => list.push(normalizeSaleDoc(d)));
+    list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    return list;
   },
 
   async confirmSaleAndDeductStock(sale, inventoryList) {

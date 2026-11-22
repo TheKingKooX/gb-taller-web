@@ -1134,7 +1134,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
           <span id="totPayLabel">Total a pagar con Yape QR</span>
           <b class="price" id="cartTotal">S/ 195</b>
         </div>
-        <a class="btn wa" id="waSendBtn" href="#" target="_blank" onclick="recordCheckoutOrderToAdmin()">
+        <a class="btn wa" id="waSendBtn" href="#" target="_blank" onclick="return submitCheckoutOrder(event, this)">
           <i data-i="wa"></i><span id="waSendBtnTxt">Confirmar Yapeo y enviar pedido por WhatsApp</span>
         </a>
       </div>
@@ -1252,7 +1252,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
 
     <div class="sheet-actions">
       <button class="btn yape-btn" id="ymCopyOpenBtn" onclick="copyAndOpenYape()">Abrir Yape y copiar N°</button>
-      <a class="btn wa" id="ymWaBtn" href="#" target="_blank" onclick="recordCheckoutOrderToAdmin()"><i data-i="wa"></i>Ya yapeé · Enviar por WA</a>
+      <a class="btn wa" id="ymWaBtn" href="#" target="_blank" onclick="return submitCheckoutOrder(event, this)"><i data-i="wa"></i>Ya yapeé · Enviar por WA</a>
     </div>
   </div>
 </div>
@@ -1473,12 +1473,44 @@ function loadSharedInventory(){
 let INVENTORY = loadSharedInventory();
 const SYNC_CH = (typeof BroadcastChannel === 'function') ? new BroadcastChannel('gb_taller_sync') : null;
 
-function recordCheckoutOrderToAdmin(){
+let isSubmittingOrder = false;
+
+async function submitCheckoutOrder(ev, anchorEl){
+  if(ev) ev.preventDefault();
+  if(isSubmittingOrder) return false;
+  const waHref = anchorEl?.href || document.getElementById('waSendBtn')?.href || '';
+  const btnTxtEl = document.getElementById('waSendBtnTxt');
+  const prevTxt = btnTxtEl ? btnTxtEl.textContent : '';
+
+  isSubmittingOrder = true;
+  if(btnTxtEl) btnTxtEl.textContent = '⏳ Guardando pedido en Taller GB...';
+
+  try{
+    await recordCheckoutOrderToAdmin();
+  }catch(err){
+    console.warn('Error registrando pedido:', err);
+  }finally{
+    isSubmittingOrder = false;
+    if(btnTxtEl && prevTxt) btnTxtEl.textContent = prevTxt;
+  }
+
+  if(waHref && waHref.startsWith('https://wa.me/')){
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if(isMobile){
+      window.location.href = waHref;
+    } else {
+      window.open(waHref, '_blank', 'noopener');
+    }
+  }
+  return false;
+}
+
+async function recordCheckoutOrderToAdmin(){
   const entries = Object.entries(cart).map(([id,qty])=>{
     const item = INVENTORY.find(x=>x.id===id);
     return item ? { id:item.id, sku:item.sku, name:item.name, qty, price:item.price } : null;
   }).filter(Boolean);
-  if(!entries.length) return;
+  if(!entries.length) return null;
   const totalPrice = entries.reduce((s,x)=>s + x.qty * x.price, 0);
   const cName = (document.getElementById('custName')?.value || 'Cliente GB').trim();
   const cPhone = (document.getElementById('custPhone')?.value || '987654321').replace(/\D/g, '').slice(0, 9);
@@ -1491,19 +1523,14 @@ function recordCheckoutOrderToAdmin(){
   }catch(_){}
   if(!Array.isArray(sales)) sales = [];
 
-  let maxN = 1042;
-  sales.forEach(s=>{
-    const m = String(s.id || '').match(/(\d+)/);
-    if(m){ const n = parseInt(m[1], 10); if(n > maxN) maxN = n; }
-  });
-  const nextNum = maxN + 1;
+  const uniqueNum = Math.floor(1050 + (Date.now() % 8900));
   const nowDateStr = new Date().toLocaleString('es-PE', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
   const newSale = {
-    id: `#GB-${nextNum}`,
+    id: `#GB-${uniqueNum}`,
     date: nowDateStr,
     createdAt: Date.now(),
     client: cName,
-    phone: cPhone || '987654321',
+    phone: cPhone.length >= 6 ? cPhone : '987654321',
     moto: selectedMoto,
     delivery: deliveryMode + (deliveryMode.includes('domicilio') && cAddr ? ` (${cAddr})` : ''),
     install: wantInstall,
@@ -1518,13 +1545,22 @@ function recordCheckoutOrderToAdmin(){
     localStorage.setItem('gb_sales_v1', JSON.stringify(sales));
     if(SYNC_CH) SYNC_CH.postMessage({ type:'sales_updated', orderId:newSale.id, ts:Date.now() });
   }catch(_){}
+
   if(window.GBCloud){
-    window.GBCloud.createSaleOrder(newSale)
-      .then(()=>showCustomToast(`✓ PEDIDO ${newSale.id} EN LA NUBE`, 'Sincronizado en vivo con el Panel Admin'))
-      .catch(err=>console.warn('Firestore createSaleOrder:', err));
+    try{
+      await Promise.race([
+        window.GBCloud.createSaleOrder(newSale),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000))
+      ]);
+      showCustomToast(`✓ PEDIDO ${newSale.id} EN LA NUBE`, 'Recibido al instante en el Panel Admin');
+    }catch(err){
+      console.warn('Firestore createSaleOrder:', err);
+      showCustomToast(`⚠ GUARDADO LOCAL (${newSale.id})`, 'Nube: ' + (err?.code || err?.message || 'reintentando'));
+    }
   } else {
     showCustomToast(`✓ PEDIDO ${newSale.id} REGISTRADO`, 'Enviado al Panel Administrador y WhatsApp');
   }
+  return newSale;
 }
 
 function sortByDefaultOrder(cloudItems){
