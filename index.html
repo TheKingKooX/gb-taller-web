@@ -824,7 +824,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
     <nav class="desk-nav">
       <a class="on" href="#scr-tienda">Catálogo (16)</a>
       <a href="#scr-pedido">Checkout Yape QR</a>
-      <a href="#scr-taller">Taller y Citas</a>
+      <a href="#scr-taller">Agendar Cita</a>
       <a href="admin.html" style="color:var(--oro)">⚙ Panel Admin</a>
       <a href="mobile.html">Vista 4 Pantallas</a>
     </nav>
@@ -883,56 +883,9 @@ select.login-in{-webkit-appearance:none;appearance:none}
       <i data-i="down"></i>
     </div>
 
-    <!-- Tacómetro con consulta rápida por placa -->
-    <section class="track" aria-label="Estado de tu moto">
-      <div class="track-h">
-        <span id="orderHdrTxt">Orden #0231 · Andrés</span>
-        <span class="eta"><i data-i="clock"></i><span id="orderEtaTxt">Hoy, 5:00 pm</span></span>
-      </div>
-
-      <div class="plate-lookup" id="plateLookupBar">
-        <small>PLACA:</small>
-        <button class="plate-chip on" onclick="loadPlateOrder('ABC-123','msx',4,'#0231','Hoy, 5:00 pm',this)">ABC-123</button>
-        <button class="plate-chip" onclick="loadPlateOrder('4582-JM','nmax',5,'#0234','¡Lista hoy!',this)">4582-JM</button>
-        <button class="plate-chip" onclick="loadPlateOrder('9104-KP','pulsar',2,'#0238','Mañana 11 am',this)">9104-KP</button>
-      </div>
-
-      <svg class="gauge" viewBox="0 0 240 126" aria-hidden="true">
-        <defs><linearGradient id="oroGrad" x1="0" x2="1"><stop offset="0" stop-color="#F5B700"/><stop offset="1" stop-color="#FFE07D"/></linearGradient></defs>
-        <path class="g-track" d="M26 116 A94 94 0 0 1 214 116" pathLength="100"/>
-        <path class="g-red"   d="M26 116 A94 94 0 0 1 214 116" pathLength="100"/>
-        <path class="g-fill"  id="gaugeFill" d="M26 116 A94 94 0 0 1 214 116" pathLength="100"/>
-        <line class="g-tick d" x1="40" y1="116" x2="48" y2="116"/>
-        <line class="g-tick d" x1="63" y1="59" x2="69" y2="65"/>
-        <line class="g-tick d" x1="120" y1="36" x2="120" y2="44"/>
-        <line class="g-tick d" x1="177" y1="59" x2="171" y2="65"/>
-        <line class="g-tick"   x1="200" y1="116" x2="192" y2="116"/>
-        <text class="g-num d" data-st="1" onclick="setOrderStage(1)" x="60" y="114">1</text>
-        <text class="g-num d" data-st="2" onclick="setOrderStage(2)" x="79" y="76">2</text>
-        <text class="g-num d" data-st="3" onclick="setOrderStage(3)" x="120" y="59">3</text>
-        <text class="g-num act" data-st="4" onclick="setOrderStage(4)" x="161" y="76">4</text>
-        <text class="g-num"   data-st="5" onclick="setOrderStage(5)" x="180" y="114">5</text>
-        <g class="needle" id="gaugeNeedle">
-          <line x1="120" y1="116" x2="120" y2="44"/>
-          <circle cx="120" cy="46" r="2.5" fill="#FFE07D"/>
-        </g>
-        <circle class="hub" cx="120" cy="116" r="6.5"/>
-      </svg>
-      <div class="stage">
-        <small id="stStep">Etapa 4 de 5</small>
-        <strong id="stTitle">En reparación</strong>
-        <p id="stDesc">Instalando kit de arrastre DID 428 Oro</p>
-      </div>
-
-      <div class="track-a">
-        <button class="btn ghost" onclick="openTallerMode('orden')">Detalle de orden</button>
-        <a class="btn wa-mini" href="https://wa.me/51960628745?text=Hola%20Taller%20GB,%20quiero%20consultar%20por%20la%20Orden%20de%20mi%20moto" target="_blank"><i data-i="wa"></i>Consultar taller</a>
-      </div>
-    </section>
-
-    <button class="book" onclick="openTallerMode('cita')">
+    <button class="book" onclick="switchTab('taller')">
       <span class="book-ic"><i data-i="cal"></i></span>
-      <div><b>Agendar servicio en taller</b><small>Próximo turno libre: mañana, 9:00 am</small></div>
+      <div><b>Agendar servicio en taller</b><small>Mantenimiento, frenos o instalación · Mañana 9:00 am</small></div>
       <i data-i="right"></i>
     </button>
 
@@ -1187,53 +1140,16 @@ select.login-in{-webkit-appearance:none;appearance:none}
     </section>
 
     <!-- ==================================================================
-         PANTALLA 4 · ORDEN DE TALLER Y AGENDAR CITA
+         PANTALLA 4 · AGENDAR CITA EN TALLER GB
          ================================================================== -->
     <section class="app-screen" id="scr-taller">
       <header class="hdr3">
         <button class="ib" onclick="switchTab('inicio')" aria-label="Volver"><i data-i="back"></i></button>
-        <h3 id="tallerTitle">Orden #0231</h3>
-        <span class="pill">Hoy 5:00 pm</span>
+        <h3 id="tallerTitle">Agendar Cita</h3>
+        <span class="pill">Lun–Sáb</span>
       </header>
 
-      <div class="sub-tabs">
-        <button class="on" id="tabBtnOrden" onclick="openTallerMode('orden')">Seguimiento #0231</button>
-        <button id="tabBtnCita" onclick="openTallerMode('cita')">Agendar Cita</button>
-      </div>
-
-      <div id="viewOrden">
-        <div class="sum"><div><small>Honda MSX 125 · ABC-123</small><strong>En reparación</strong></div><span class="pill">Etapa 4 de 5</span></div>
-
-        <ol class="tl">
-          <li class="d"><div class="h"><b>Recibida en taller GB</b><time>8:12 am</time></div><p>Ingreso por ruido en transmisión y revisión de frenos</p></li>
-          <li class="d">
-            <div class="h"><b>Diagnóstico con fotos</b><time>9:40 am</time></div>
-            <p>Cadena estirada y pastillas al 15%. Repuestos asignados:</p>
-            <div class="ph">
-              <img src="assets/productos/kit-arrastre.jpg" alt="Kit de arrastre">
-              <img src="assets/productos/pastillas-freno.jpg" alt="Pastillas de freno">
-              <img src="assets/productos/aceite-4t.jpg" alt="Aceite 4T">
-            </div>
-          </li>
-          <li class="d"><div class="h"><b>Presupuesto aprobado</b><time>10:05 am</time></div><p>Aprobaste S/ 280 por WhatsApp</p></li>
-          <li class="now"><div class="h"><b>En reparación</b><time>Ahora</time></div><p>Montando kit de arrastre DID Oro y pastillas Brembo</p></li>
-          <li><div class="h"><b>Lista para entrega</b><time>5:00 pm aprox.</time></div></li>
-        </ol>
-
-        <section class="quote">
-          <h4><span>● Repuestos apartados</span>Resumen #0231</h4>
-          <div class="ln"><span>1x Kit de arrastre DID 428</span><span>S/ 185</span></div>
-          <div class="ln"><span>1x Pastillas Brembo cobre</span><span>S/ 55</span></div>
-          <div class="ln"><span>Mano de obra e instalación</span><span>S/ 40</span></div>
-          <div class="ln tot"><span>Total al recoger</span><b class="price">S/ 280</b></div>
-        </section>
-
-        <a class="btn wa" style="width:100%" href="https://wa.me/51960628745?text=Hola%20GB,%20escribo%20por%20mi%20Orden%20%230231%20(Honda%20MSX%20125%20placa%20ABC-123)" target="_blank">
-          <i data-i="wa"></i>Escribir al mecánico por WhatsApp
-        </a>
-      </div>
-
-      <div id="viewCita" style="display:none">
+      <div id="viewCita">
         <button class="svc-card on" onclick="selectService('Mantenimiento general completo',120,this)">
           <span class="svc-ic"><i data-i="wrench"></i></span>
           <div><b>Mantenimiento general</b><small>2 horas · Revisión de 25 puntos</small></div>
@@ -1370,7 +1286,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
     <!-- PASO 1: INGRESAR NÚMERO DE WHATSAPP Y MOTO -->
     <div id="loginStep1">
       <p style="font-size:12px;color:var(--texto-2);margin-bottom:9px">
-        Ingresa tu <b style="color:#fff">número de WhatsApp</b> para vincular tu moto, ver el estado de tu orden en vivo y autocompletar tus pedidos:
+        Ingresa tu <b style="color:#fff">número de WhatsApp</b> para vincular tu moto, filtrar repuestos compatibles y autocompletar tus pedidos y citas:
       </p>
 
       <div class="wa-phone-box">
@@ -1485,7 +1401,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
     <b class="t-badge cart-count">3</b>
   </button>
   <button id="nav-taller" onclick="switchTab('taller')">
-    <i data-i="bike"></i><span>Taller</span>
+    <i data-i="cal"></i><span>Citas</span>
   </button>
 </nav>
 
@@ -1555,49 +1471,6 @@ function loadSharedInventory(){
 }
 let INVENTORY = loadSharedInventory();
 
-const DEFAULT_ORDERS = [
-  { id:'#0231', plate:'ABC-123', client:'Carlos Mendoza', phone:'987654321', motoKey:'msx', stage:4, mech:'Andrés', budget:280, eta:'Hoy, 5:00 pm', note:'Instalando kit de arrastre DID 428 Oro y pastillas Brembo.' },
-  { id:'#0234', plate:'4582-JM', client:'Luis Quispe', phone:'945112890', motoKey:'nmax', stage:5, mech:'Andrés', budget:220, eta:'¡Lista hoy!', note:'Cambio de faja CVT Yamaha y rodillos Dr. Pulley completado. Prueba de ruta OK.' },
-  { id:'#0238', plate:'9104-KP', client:'Marco Paredes', phone:'912334567', motoKey:'pulsar', stage:2, mech:'Jhonatan', budget:140, eta:'Mañana 11 am', note:'Revisión de triple bujía DTS-i, limpieza de inyector y nivel de refrigerante.' }
-];
-
-function loadSharedOrders(){
-  try{
-    const raw = localStorage.getItem('gb_orders_v1');
-    if(raw){
-      const parsed = JSON.parse(raw);
-      if(Array.isArray(parsed) && parsed.length > 0) return parsed;
-    } else {
-      localStorage.setItem('gb_orders_v1', JSON.stringify(DEFAULT_ORDERS));
-    }
-  }catch(_){}
-  return DEFAULT_ORDERS.slice();
-}
-let WORKSHOP_ORDERS = loadSharedOrders();
-
-function renderPlateLookupBar(activePlate){
-  const bar = document.getElementById('plateLookupBar');
-  if(!bar) return;
-  const chips = WORKSHOP_ORDERS.slice(0, 5).map((o, idx)=>{
-    const isAct = activePlate ? (o.plate === activePlate) : (idx === 0);
-    return `<button class="plate-chip ${isAct?'on':''}" onclick="selectWorkshopOrderByPlate('${o.plate}',this)">${o.plate}</button>`;
-  }).join('');
-  bar.innerHTML = `<small>PLACA:</small>${chips}`;
-}
-
-function selectWorkshopOrderByPlate(plate, btn){
-  const ord = WORKSHOP_ORDERS.find(o=>o.plate===plate) || WORKSHOP_ORDERS[0];
-  if(!ord) return;
-  document.querySelectorAll('.plate-chip').forEach(b=>b.classList.remove('on'));
-  if(btn) btn.classList.add('on');
-  document.getElementById('orderHdrTxt').textContent = `Orden ${ord.id} · ${ord.client.split(' ')[0]} (${ord.plate})`;
-  document.getElementById('orderEtaTxt').textContent = ord.eta || 'Hoy, 5:00 pm';
-  if(MOTOS[ord.motoKey]) MOTOS[ord.motoKey].plate = ord.plate;
-  changeMoto(ord.motoKey || 'msx');
-  setOrderStage(ord.stage || 4);
-  if(ord.note) document.getElementById('stDesc').textContent = ord.note;
-}
-
 function recordCheckoutOrderToAdmin(){
   const entries = Object.entries(cart).map(([id,qty])=>{
     const item = INVENTORY.find(x=>x.id===id);
@@ -1640,13 +1513,6 @@ window.addEventListener('storage', e => {
   if(e.key === 'gb_inventory_v1'){
     INVENTORY = loadSharedInventory();
     changeMoto(currentMotoKey);
-  }
-  if(e.key === 'gb_orders_v1'){
-    WORKSHOP_ORDERS = loadSharedOrders();
-    const curPlate = document.getElementById('motoPlate')?.textContent;
-    renderPlateLookupBar(curPlate);
-    const matching = WORKSHOP_ORDERS.find(o=>o.plate===curPlate);
-    if(matching) selectWorkshopOrderByPlate(matching.plate);
   }
 });
 
@@ -1823,29 +1689,6 @@ function copyAndOpenYape(){
   setTimeout(()=>{ window.location.href = 'yape://'; }, 350);
 }
 
-function setOrderStage(n){
-  const s = STAGES[n];
-  document.getElementById('gaugeNeedle').style.transform = `rotate(${s.ang}deg)`;
-  document.getElementById('gaugeFill').style.strokeDasharray = `${s.fill} 100`;
-  document.getElementById('stStep').textContent = s.step;
-  document.getElementById('stTitle').textContent = s.title;
-  document.getElementById('stDesc').textContent = s.desc;
-  document.querySelectorAll('.g-num').forEach(el=>{
-    const st = Number(el.dataset.st);
-    el.classList.toggle('act', st===n);
-    el.classList.toggle('d', st<=n);
-  });
-}
-
-function loadPlateOrder(plate, motoKey, stageNum, orderNum, eta, btn){
-  document.querySelectorAll('.plate-chip').forEach(b=>b.classList.remove('on'));
-  if(btn) btn.classList.add('on');
-  document.getElementById('orderHdrTxt').textContent = `Orden ${orderNum} · Placa ${plate}`;
-  document.getElementById('orderEtaTxt').textContent = eta;
-  changeMoto(motoKey);
-  setOrderStage(stageNum);
-}
-
 function switchTab(tab){
   ['inicio','tienda','pedido','taller'].forEach(t=>{
     document.getElementById('scr-'+t).classList.toggle('active', t===tab);
@@ -1853,16 +1696,6 @@ function switchTab(tab){
     if(btn) btn.classList.toggle('on', t===tab);
   });
   window.scrollTo({top:0, behavior:'smooth'});
-}
-
-function openTallerMode(mode){
-  switchTab('taller');
-  const isOrden = mode === 'orden';
-  document.getElementById('viewOrden').style.display = isOrden ? 'block' : 'none';
-  document.getElementById('viewCita').style.display = isOrden ? 'none' : 'block';
-  document.getElementById('tabBtnOrden').classList.toggle('on', isOrden);
-  document.getElementById('tabBtnCita').classList.toggle('on', !isOrden);
-  document.getElementById('tallerTitle').textContent = isOrden ? 'Orden #0231' : 'Agendar cita';
 }
 
 function isCompatible(p, motoKey){
@@ -1997,7 +1830,7 @@ function renderCatalog(){
 
   const feat = document.getElementById('homeFeaturedGrid');
   if(feat){
-    const featList = INVENTORY.filter(p=>isCompatible(p, currentMotoKey)).slice(0,2);
+    const featList = INVENTORY.filter(p=>isCompatible(p, currentMotoKey)).slice(0,4);
     feat.innerHTML = featList.map(productCardHtml).join('');
     hydrateIcons(feat);
   }
@@ -2422,19 +2255,11 @@ function applyUserSessionToUi(){
       if(cvH) cvH.textContent = currentUser.name.toUpperCase();
     }
 
-    // Sincronizar moto, placa y tacómetro del cliente
+    // Sincronizar moto y placa del cliente
     if(MOTOS[currentUser.motoKey] && currentUser.plate){
       MOTOS[currentUser.motoKey].plate = currentUser.plate;
     }
     changeMoto(currentUser.motoKey || 'msx');
-    if(currentUser.orderId){
-      document.getElementById('orderHdrTxt').textContent = `Orden ${currentUser.orderId} · ${firstName} (${currentUser.plate})`;
-      document.getElementById('orderEtaTxt').textContent = currentUser.eta || 'Hoy, 5:00 pm';
-      setOrderStage(currentUser.stage || 4);
-      document.querySelectorAll('.plate-chip').forEach(b=>{
-        b.classList.toggle('on', b.textContent.trim() === currentUser.plate);
-      });
-    }
 
     document.querySelectorAll('.demo-u-btn').forEach(b=>{
       b.classList.toggle('on', b.dataset.phone === currentUser.phone);
@@ -2574,11 +2399,6 @@ function logoutWaSession(){
 
 hydrateIcons();
 applyUserSessionToUi();
-renderPlateLookupBar(currentUser?.plate);
-if(currentUser?.plate){
-  const liveOrd = WORKSHOP_ORDERS.find(o=>o.plate===currentUser.plate);
-  if(liveOrd) selectWorkshopOrderByPlate(liveOrd.plate);
-}
 function checkHashTab(){
   const h = (location.hash || '').replace('#','');
   if(['inicio','tienda','pedido','taller'].includes(h)) switchTab(h);

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Módulo Archivado · Seguimiento de Reparación GB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --asfalto:#090A0D; --pista:#13161C; --pista-2:#1A1E26; --linea:rgba(255,255,255,.08);
+  --texto:#F5F6F8; --texto-2:#949BA8; --oro:#F5B700; --oro-claro:#FFE07D; --rojo:#E3201B; --verde:#34D399;
+  --display:'Big Shoulders Display',Impact,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--asfalto);color:var(--texto);font-family:Manrope,system-ui,sans-serif;padding:24px 16px 60px}
+a,button{color:inherit;font:inherit;text-decoration:none;background:none;border:0;cursor:pointer}
+.wrap{max-width:980px;margin:0 auto;display:grid;gap:20px}
+@media(min-width:860px){.wrap{grid-template-columns:380px 1fr;align-items:start}}
+.hdr{max-width:980px;margin:0 auto 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.hdr h1{font-family:var(--display);font-size:28px;letter-spacing:.5px}
+.hdr small{display:block;font-size:12px;color:var(--oro)}
+.btn{height:38px;padding:0 14px;border-radius:10px;background:var(--pista);border:1px solid var(--linea);font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.btn.wa{background:linear-gradient(135deg,#22C55E,#16A34A);color:#041A0C;border:0;font-weight:800}
+.card{background:var(--pista);border:1px solid var(--linea);border-radius:20px;padding:18px}
+.track-h{display:flex;justify-content:space-between;font-size:12.5px;color:var(--texto-2);margin-bottom:10px}
+.eta{color:var(--oro-claro);font-weight:700}
+.plates{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.plate-chip{padding:4px 10px;border-radius:8px;background:var(--asfalto);border:1px solid var(--linea);font-size:11.5px;font-weight:800;color:var(--texto-2)}
+.plate-chip.on{background:var(--oro);color:#1a1300;border-color:var(--oro)}
+.gauge{display:block;width:100%;max-width:250px;margin:6px auto}
+.g-track{fill:none;stroke:rgba(255,255,255,.08);stroke-width:6;stroke-linecap:round}
+.g-fill{fill:none;stroke:url(#oroGradMod);stroke-width:6;stroke-linecap:round;transition:stroke-dasharray .4s ease}
+.needle{transform-origin:120px 116px;transition:transform .45s cubic-bezier(.22,1.2,.36,1)}
+.needle line{stroke:var(--rojo);stroke-width:3;stroke-linecap:round}
+.hub{fill:var(--asfalto);stroke:#fff;stroke-width:2}
+.stage{text-align:center;margin-top:8px}
+.stage small{font-size:11px;font-weight:800;color:var(--oro);text-transform:uppercase;letter-spacing:.7px}
+.stage strong{display:block;font-family:var(--display);font-size:32px;margin:2px 0}
+.stage p{font-size:12.5px;color:var(--texto-2)}
+.ord-list{display:grid;gap:12px}
+.ord-item{padding:14px;border-radius:16px;background:var(--pista-2);border:1px solid var(--linea);display:grid;gap:10px}
+.stepper{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.step-btn{padding:7px 4px;border-radius:9px;background:var(--asfalto);border:1px solid var(--linea);text-align:center}
+.step-btn b{display:block;font-family:var(--display);font-size:16px;color:var(--texto-2)}
+.step-btn small{display:block;font-size:9px;color:var(--texto-2)}
+.step-btn.cur{background:var(--oro);border-color:var(--oro)}
+.step-btn.cur b,.step-btn.cur small{color:#1a1300}
+</style>
+</head>
+<body>
+  <header class="hdr">
+    <div>
+      <h1>MÓDULO ARCHIVADO · SEGUIMIENTO DE REPARACIÓN GB</h1>
+      <small>Estructura conservada fuera de la app principal para futura reintegración</small>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a class="btn" href="../../index.html">← Tienda Principal</a>
+      <a class="btn" href="../../admin.html">⚙ Panel Admin</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="plates" id="plateBar"></div>
+      <div id="tachoMount"></div>
+    </section>
+
+    <section class="card">
+      <h2 style="font-family:var(--display);font-size:22px;margin-bottom:12px">CONTROL DE ETAPAS DEL TALLER (1–5)</h2>
+      <div class="ord-list" id="ordAdminList"></div>
+    </section>
+  </main>
+
+  <script src="seguimiento-taller.js"></script>
+  <script>
+    const M = window.GBSeguimientoModule;
+    let orders = M.loadOrders();
+    let activePlate = orders[0].plate;
+
+    function render() {
+      document.getElementById('plateBar').innerHTML = orders.map(o =>
+        `<button class="plate-chip ${o.plate === activePlate ? 'on' : ''}" onclick="selectPlate('${o.plate}')">${o.plate}</button>`
+      ).join('');
+      const active = orders.find(o => o.plate === activePlate) || orders[0];
+      document.getElementById('tachoMount').innerHTML = M.renderTachometerCardHtml(active);
+
+      document.getElementById('ordAdminList').innerHTML = orders.map(o => `
+        <div class="ord-item">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><b style="color:var(--oro)">${o.plate}</b> · ${o.id} · ${o.client}</div>
+            <b>S/ ${o.budget}</b>
+          </div>
+          <div class="stepper">
+            ${[1,2,3,4,5].map(st => `
+              <button class="step-btn ${o.stage === st ? 'cur' : ''}" onclick="setStage('${o.id}',${st})">
+                <b>${st}</b><small>${M.STAGES[st].short}</small>
+              </button>
+            `).join('')}
+          </div>
+          <a class="btn wa" href="${M.buildOrderWhatsAppNotifyUrl(o)}" target="_blank">📲 Avisar avance por WhatsApp</a>
+        </div>
+      `).join('');
+    }
+
+    function selectPlate(plate) { activePlate = plate; render(); }
+    function setStage(id, stage) {
+      const o = orders.find(x => x.id === id);
+      if (!o) return;
+      o.stage = stage;
+      M.saveOrders(orders);
+      activePlate = o.plate;
+      render();
+    }
+    render();
+  </script>
+</body>
+</html>

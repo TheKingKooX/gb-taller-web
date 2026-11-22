@@ -270,9 +270,9 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
 .toast.show{transform:translate(-50%,0);opacity:1}
 .toast span{color:var(--verde)}
 
-/* ---------- NAVEGACIÓN 3 PESTAÑAS ADMIN 360° ---------- */
+/* ---------- NAVEGACIÓN 2 PESTAÑAS ADMIN (INVENTARIO + PEDIDOS) ---------- */
 .adm-tabs{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
   padding:5px;border-radius:15px;background:var(--pista);
   border:1px solid var(--linea);margin-bottom:16px;
 }
@@ -376,7 +376,7 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
     <div class="gb-wrap">
       <div class="gb" role="img" aria-label="Logo GB"></div>
       <div class="gb-txt">
-        <b>PANEL ADMINISTRADOR 360° · GB</b>
+        <b>PANEL ADMINISTRADOR · GB</b>
         <small id="admWaSession">WHATSAPP ADMIN: +51 960 628 745 · SINCRONIZADO EN VIVO</small>
       </div>
     </div>
@@ -390,18 +390,14 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
 
 <main class="shell">
 
-  <!-- NAVEGACIÓN PRINCIPAL DEL PANEL ADMIN 360° -->
+  <!-- NAVEGACIÓN PRINCIPAL DEL PANEL ADMIN (INVENTARIO Y PEDIDOS) -->
   <nav class="adm-tabs" aria-label="Módulos del Administrador">
     <button class="adm-tab on" id="tabBtn-inv" onclick="switchAdminTab('inv')">
       <span>📦 Inventario</span>
       <b class="t-cnt" id="cntTabInv">16</b>
     </button>
-    <button class="adm-tab" id="tabBtn-ordenes" onclick="switchAdminTab('ordenes')">
-      <span>🔧 Taller</span>
-      <b class="t-cnt" id="cntTabOrd">3</b>
-    </button>
     <button class="adm-tab" id="tabBtn-pedidos" onclick="switchAdminTab('pedidos')">
-      <span>🛒 Pedidos</span>
+      <span>🛒 Pedidos Tienda</span>
       <b class="t-cnt" id="cntTabPed">3</b>
     </button>
   </nav>
@@ -493,52 +489,7 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
   </div><!-- /#pane-inv -->
 
   <!-- ======================================================================
-       PESTAÑA 2 · ÓRDENES DE TALLER EN VIVO (CONTROL DEL TACÓMETRO 1–5)
-       ====================================================================== -->
-  <div class="adm-pane" id="pane-ordenes">
-    <section class="kpis" aria-label="Resumen de órdenes de taller">
-      <div class="kpi">
-        <small>ÓRDENES EN TALLER <span>🔧</span></small>
-        <strong id="kpiOrdTotal">3</strong>
-        <span class="sub">Sincronizadas con el tacómetro web</span>
-      </div>
-      <div class="kpi warn">
-        <small>EN DIAGNÓSTICO / REPARACIÓN <span>⚙</span></small>
-        <strong id="kpiOrdProg">2</strong>
-        <span class="sub">Etapas 1 a 4 activas</span>
-      </div>
-      <div class="kpi val">
-        <small>LISTAS PARA ENTREGA <span>✓</span></small>
-        <strong id="kpiOrdReady">1</strong>
-        <span class="sub">Etapa 5 (Prueba superada)</span>
-      </div>
-      <div class="kpi">
-        <small>PRESUPUESTO EN CURSO <span>S/</span></small>
-        <strong id="kpiOrdBudget">S/ 640</strong>
-        <span class="sub">Suma de trabajos activos</span>
-      </div>
-    </section>
-
-    <section class="toolbar">
-      <div class="toolbar-row">
-        <label class="search">
-          <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <input id="qOrder" type="text" placeholder="Buscar por placa (ABC-123), cliente, WhatsApp o N° de orden..." oninput="renderOrdersList()">
-        </label>
-        <button class="btn gold" onclick="openNewOrderModal()">+ Ingresar Nueva Moto / Orden</button>
-      </div>
-      <div class="pills" id="ordFilterPills">
-        <button class="on" onclick="setOrderFilter('all',this)">Todas las órdenes</button>
-        <button onclick="setOrderFilter('active',this)">En proceso (Etapas 1–4)</button>
-        <button onclick="setOrderFilter('ready',this)">✓ Listas para entrega (Etapa 5)</button>
-      </div>
-    </section>
-
-    <section class="ord-grid" id="ordersGrid"></section>
-  </div><!-- /#pane-ordenes -->
-
-  <!-- ======================================================================
-       PESTAÑA 3 · PEDIDOS DE TIENDA (YAPE QR / TARJETA + DESCUENTO DE STOCK)
+       PESTAÑA 2 · PEDIDOS DE TIENDA (YAPE QR / TARJETA + DESCUENTO DE STOCK)
        ====================================================================== -->
   <div class="adm-pane" id="pane-pedidos">
     <section class="kpis" aria-label="Resumen de pedidos de tienda">
@@ -584,76 +535,6 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
   </div><!-- /#pane-pedidos -->
 
 </main>
-
-<!-- MODAL PARA CREAR / EDITAR ORDEN DE TALLER -->
-<div class="sheet-backdrop" id="orderSheet" onclick="if(event.target===this)closeOrderModal()">
-  <div class="sheet" role="dialog" aria-modal="true">
-    <div class="sheet-h">
-      <h3 id="ordModalTitle">Nueva Orden de Taller</h3>
-      <button class="btn ghost" style="height:34px;padding:0 10px" onclick="closeOrderModal()">✕ Cerrar</button>
-    </div>
-
-    <div class="f-grid">
-      <div class="f-field">
-        <label>N° de Orden</label>
-        <input class="f-in" id="oId" type="text" placeholder="#0241">
-      </div>
-      <div class="f-field">
-        <label>Placa de la Moto</label>
-        <input class="f-in" id="oPlate" type="text" placeholder="Ej. 7841-AB" style="text-transform:uppercase;font-weight:800">
-      </div>
-      <div class="f-field">
-        <label>Nombre del Cliente</label>
-        <input class="f-in" id="oClient" type="text" placeholder="Ej. Carlos Mendoza">
-      </div>
-      <div class="f-field">
-        <label>WhatsApp Cliente (9 dígitos)</label>
-        <input class="f-in" id="oPhone" type="tel" maxlength="11" placeholder="987 654 321">
-      </div>
-      <div class="f-field">
-        <label>Motocicleta</label>
-        <select class="f-in" id="oMoto">
-          <option value="msx">Honda MSX 125 (Grom)</option>
-          <option value="nmax">Yamaha NMAX 155 CVT</option>
-          <option value="pulsar">Bajaj Pulsar NS 200 FI</option>
-          <option value="xr">Honda XR 190L Enduro</option>
-          <option value="duke">KTM Duke 200 / 250 NG</option>
-        </select>
-      </div>
-      <div class="f-field">
-        <label>Etapa Actual (Tacómetro 1–5)</label>
-        <select class="f-in" id="oStage">
-          <option value="1">1 · Recibida en taller</option>
-          <option value="2">2 · En diagnóstico</option>
-          <option value="3">3 · Presupuesto aprobado</option>
-          <option value="4">4 · En reparación</option>
-          <option value="5">5 · ¡Lista para entrega!</option>
-        </select>
-      </div>
-      <div class="f-field">
-        <label>Mecánico asignado</label>
-        <input class="f-in" id="oMech" type="text" placeholder="Andrés">
-      </div>
-      <div class="f-field">
-        <label>Presupuesto (S/)</label>
-        <input class="f-in" id="oBudget" type="number" min="0" step="5" placeholder="280">
-      </div>
-      <div class="f-field full">
-        <label>Hora / Fecha estimada de entrega (ETA)</label>
-        <input class="f-in" id="oEta" type="text" placeholder="Ej. Hoy, 5:00 pm / ¡Lista hoy!">
-      </div>
-      <div class="f-field full">
-        <label>Avance / Trabajo realizado (visible en el tacómetro del cliente)</label>
-        <textarea class="f-in" id="oNote" placeholder="Ej. Instalando kit de arrastre DID 428 Oro y cambio de aceite Motul 7100..."></textarea>
-      </div>
-    </div>
-
-    <div class="sheet-f">
-      <button class="btn ghost" id="oDeleteBtn" style="flex:0 0 auto;color:#ff6b68" onclick="deleteCurrentOrder()">Eliminar</button>
-      <button class="btn gold" onclick="saveOrderModal()">✓ Guardar Orden y Sincronizar</button>
-    </div>
-  </div>
-</div>
 
 <!-- MODAL PARA AGREGAR O EDITAR REPUESTO COMPLETO -->
 <div class="sheet-backdrop" id="editSheet" onclick="if(event.target===this)closeEditModal()">
@@ -1132,228 +1013,15 @@ function resetFactoryInventory(){
   renderAdminList();
 }
 
-/* ==========================================================================
-   MÓDULO 2: ÓRDENES DE TALLER EN VIVO (gb_orders_v1 — SINCRONIZA TACÓMETRO)
-   ========================================================================== */
-const MOTO_CATALOG_META = {
-  msx:    { label:'Honda MSX 125 (Grom)', img:'assets/motos/msx-125.jpg' },
-  nmax:   { label:'Yamaha NMAX 155 CVT', img:'assets/motos/nmax-155.jpg' },
-  pulsar: { label:'Bajaj Pulsar NS 200 FI', img:'assets/motos/pulsar-200.jpg' },
-  xr:     { label:'Honda XR 190L Enduro', img:'assets/productos/llanta-cocada.jpg' },
-  duke:   { label:'KTM Duke 200 / 250 NG', img:'assets/productos/escape-carbono.jpg' }
-};
-
-const STAGE_LABELS = {
-  1: { short:'Recibida', full:'Recibida en taller' },
-  2: { short:'Diagnóstico', full:'En diagnóstico' },
-  3: { short:'Aprobado', full:'Presupuesto aprobado' },
-  4: { short:'Reparación', full:'En reparación' },
-  5: { short:'¡Lista!', full:'¡Lista para entrega!' }
-};
-
-const DEFAULT_ORDERS = [
-  { id:'#0231', plate:'ABC-123', client:'Carlos Mendoza', phone:'987654321', motoKey:'msx', stage:4, mech:'Andrés', budget:280, eta:'Hoy, 5:00 pm', note:'Instalando kit de arrastre DID 428 Oro y pastillas Brembo.' },
-  { id:'#0234', plate:'4582-JM', client:'Luis Quispe', phone:'945112890', motoKey:'nmax', stage:5, mech:'Andrés', budget:220, eta:'¡Lista hoy!', note:'Cambio de faja CVT Yamaha y rodillos Dr. Pulley completado. Prueba de ruta OK.' },
-  { id:'#0238', plate:'9104-KP', client:'Marco Paredes', phone:'912334567', motoKey:'pulsar', stage:2, mech:'Jhonatan', budget:140, eta:'Mañana 11 am', note:'Revisión de triple bujía DTS-i, limpieza de inyector y nivel de refrigerante.' }
-];
-
-function loadOrders(){
-  try{
-    const raw = localStorage.getItem('gb_orders_v1');
-    if(raw){
-      const parsed = JSON.parse(raw);
-      if(Array.isArray(parsed) && parsed.length > 0) return parsed;
-    } else {
-      localStorage.setItem('gb_orders_v1', JSON.stringify(DEFAULT_ORDERS));
-    }
-  }catch(_){}
-  return JSON.parse(JSON.stringify(DEFAULT_ORDERS));
-}
-let ORDERS = loadOrders();
-let orderFilter = 'all';
-let editingOrderId = null;
-
-function saveOrders(msg){
-  try{ localStorage.setItem('gb_orders_v1', JSON.stringify(ORDERS)); }catch(_){}
-  if(msg) showToast(msg);
-  renderOrdersList();
-}
-
 function fmtPe(raw){
   const d = String(raw || '').replace(/\D/g, '').slice(0, 9);
   return d.length === 9 ? `${d.slice(0,3)} ${d.slice(3,6)} ${d.slice(6,9)}` : d;
 }
 
-function setOrderFilter(f, btn){
-  orderFilter = f;
-  document.querySelectorAll('#ordFilterPills button').forEach(b=>b.classList.remove('on'));
-  if(btn) btn.classList.add('on');
-  renderOrdersList();
-}
-
-function setOrderStageAdmin(orderId, newStage){
-  const ord = ORDERS.find(o=>o.id===orderId);
-  if(!ord) return;
-  ord.stage = newStage;
-  if(newStage === 5 && !ord.eta.toLowerCase().includes('lista')) ord.eta = '¡Lista para recoger!';
-  saveOrders(`✓ Orden ${ord.id} (${ord.plate}) → Etapa ${newStage}: ${STAGE_LABELS[newStage].full}`);
-}
-
-function buildOrderWaNotifyLink(ord){
-  const st = STAGE_LABELS[ord.stage] || STAGE_LABELS[4];
-  const m = MOTO_CATALOG_META[ord.motoKey] || MOTO_CATALOG_META.msx;
-  const phone51 = '51' + String(ord.phone || '').replace(/\D/g, '').slice(-9);
-  const txt =
-`Hola *${ord.client}*! Te escribimos de *GB Taller y Repuestos* 🏍️🔧
-
-Actualización de tu orden *${ord.id}*:
-• *Moto:* ${m.label} (Placa *${ord.plate}*)
-• *Estado actual:* Etapa ${ord.stage} de 5 — *${st.full}*
-• *Detalle:* ${ord.note}
-• *Entrega estimada:* ${ord.eta}
-• *Presupuesto:* S/ ${Number(ord.budget || 0).toLocaleString('es-PE')}
-
-Puedes ver tu tacómetro en vivo aquí: https://thekingkoox.github.io/gb-taller-web/`;
-  return `https://wa.me/${phone51}?text=${encodeURIComponent(txt)}`;
-}
-
-function renderOrdersList(){
-  const q = (document.getElementById('qOrder')?.value || '').trim().toLowerCase();
-  document.getElementById('cntTabOrd').textContent = ORDERS.length;
-  document.getElementById('kpiOrdTotal').textContent = ORDERS.length;
-  document.getElementById('kpiOrdReady').textContent = ORDERS.filter(o=>o.stage === 5).length;
-  document.getElementById('kpiOrdProg').textContent = ORDERS.filter(o=>o.stage < 5).length;
-  const totalBudget = ORDERS.reduce((s,o)=>s + Number(o.budget || 0), 0);
-  document.getElementById('kpiOrdBudget').textContent = 'S/ ' + totalBudget.toLocaleString('es-PE');
-
-  const list = ORDERS.filter(o=>{
-    if(orderFilter === 'active' && o.stage >= 5) return false;
-    if(orderFilter === 'ready' && o.stage !== 5) return false;
-    if(q && !(o.id.toLowerCase().includes(q) || o.plate.toLowerCase().includes(q) || o.client.toLowerCase().includes(q) || String(o.phone).includes(q))) return false;
-    return true;
-  });
-
-  const grid = document.getElementById('ordersGrid');
-  if(!list.length){
-    grid.innerHTML = `<div class="ord-card" style="grid-column:1/-1;text-align:center;color:var(--texto-2);padding:28px">No se encontraron órdenes con ese filtro.</div>`;
-    return;
-  }
-
-  grid.innerHTML = list.map(o=>{
-    const m = MOTO_CATALOG_META[o.motoKey] || MOTO_CATALOG_META.msx;
-    const stepsHtml = [1,2,3,4,5].map(st=>{
-      const cls = st === o.stage ? 'cur' : (st < o.stage ? 'done' : '');
-      return `<button class="step-btn ${cls}" onclick="setOrderStageAdmin('${o.id}',${st})" title="Cambiar a Etapa ${st}: ${STAGE_LABELS[st].full}">
-        <b>${st}</b><small>${STAGE_LABELS[st].short}</small>
-      </button>`;
-    }).join('');
-
-    return `
-      <article class="ord-card ${o.stage===5?'st-5':''}">
-        <div class="ord-h">
-          <div class="ord-h-left">
-            <img class="ord-thumb" src="${m.img}" alt="${m.label}">
-            <div style="min-width:0">
-              <div><span class="ord-plate">${o.plate}</span><span class="ord-id">Orden ${o.id} · Mec: ${o.mech || 'Andrés'}</span></div>
-              <div class="ord-title">${o.client} · ${m.label}</div>
-              <div class="ord-sub">WhatsApp: +51 ${fmtPe(o.phone)}</div>
-            </div>
-          </div>
-          <div>
-            <div class="ord-price">S/ ${Number(o.budget || 0).toLocaleString('es-PE')}</div>
-            <span class="ord-eta">${o.eta}</span>
-          </div>
-        </div>
-
-        <div class="stepper" aria-label="Control de etapas del tacómetro">${stepsHtml}</div>
-
-        <div class="ord-note">
-          <b>Etapa ${o.stage} (${STAGE_LABELS[o.stage].full}):</b> ${o.note}
-        </div>
-
-        <div class="ord-acts">
-          <a class="btn wa-sm" href="${buildOrderWaNotifyLink(o)}" target="_blank">📲 Avisar avance por WhatsApp</a>
-          <button class="btn ghost act-sm" onclick="openEditOrderModal('${o.id}')">✎ Editar</button>
-          ${o.stage < 5 ? `<button class="btn gold act-sm" onclick="setOrderStageAdmin('${o.id}',${o.stage+1})">Avanzar → ${o.stage+1}</button>` : ''}
-        </div>
-      </article>
-    `;
-  }).join('');
-}
-
-function openNewOrderModal(){
-  editingOrderId = null;
-  document.getElementById('ordModalTitle').textContent = 'Ingresar Nueva Moto al Taller';
-  document.getElementById('oId').value = '#0' + (240 + ORDERS.length);
-  document.getElementById('oPlate').value = '';
-  document.getElementById('oClient').value = '';
-  document.getElementById('oPhone').value = '';
-  document.getElementById('oMoto').value = 'msx';
-  document.getElementById('oStage').value = '1';
-  document.getElementById('oMech').value = 'Andrés';
-  document.getElementById('oBudget').value = '150';
-  document.getElementById('oEta').value = 'Hoy, 6:00 pm';
-  document.getElementById('oNote').value = 'Moto recibida en taller para revisión general y presupuesto.';
-  document.getElementById('oDeleteBtn').style.display = 'none';
-  document.getElementById('orderSheet').classList.add('open');
-}
-
-function openEditOrderModal(id){
-  const o = ORDERS.find(x=>x.id===id);
-  if(!o) return;
-  editingOrderId = id;
-  document.getElementById('ordModalTitle').textContent = `Editar Orden ${o.id}`;
-  document.getElementById('oId').value = o.id;
-  document.getElementById('oPlate').value = o.plate;
-  document.getElementById('oClient').value = o.client;
-  document.getElementById('oPhone').value = fmtPe(o.phone);
-  document.getElementById('oMoto').value = o.motoKey;
-  document.getElementById('oStage').value = String(o.stage);
-  document.getElementById('oMech').value = o.mech || 'Andrés';
-  document.getElementById('oBudget').value = o.budget;
-  document.getElementById('oEta').value = o.eta;
-  document.getElementById('oNote').value = o.note;
-  document.getElementById('oDeleteBtn').style.display = 'inline-flex';
-  document.getElementById('orderSheet').classList.add('open');
-}
-
-function closeOrderModal(){
-  document.getElementById('orderSheet').classList.remove('open');
-}
-
-function saveOrderModal(){
-  const id = (document.getElementById('oId').value || '#0241').trim();
-  const plate = (document.getElementById('oPlate').value || 'SIN-PLA').trim().toUpperCase();
-  const client = (document.getElementById('oClient').value || 'Cliente GB').trim();
-  const phone = (document.getElementById('oPhone').value || '987654321').replace(/\D/g, '').slice(0, 9);
-  const motoKey = document.getElementById('oMoto').value;
-  const stage = Math.max(1, Math.min(5, parseInt(document.getElementById('oStage').value, 10) || 1));
-  const mech = (document.getElementById('oMech').value || 'Andrés').trim();
-  const budget = Math.max(0, parseInt(document.getElementById('oBudget').value, 10) || 0);
-  const eta = (document.getElementById('oEta').value || 'Hoy, 6:00 pm').trim();
-  const note = (document.getElementById('oNote').value || 'En revisión en Taller GB.').trim();
-
-  const data = { id, plate, client, phone, motoKey, stage, mech, budget, eta, note };
-  if(editingOrderId){
-    const idx = ORDERS.findIndex(x=>x.id===editingOrderId);
-    if(idx >= 0) ORDERS[idx] = data;
-    saveOrders(`✓ Orden ${id} actualizada y sincronizada con la tienda`);
-  } else {
-    ORDERS.unshift(data);
-    saveOrders(`✓ Nueva orden ${id} (${plate}) creada en el tacómetro`);
-  }
-  closeOrderModal();
-}
-
-function deleteCurrentOrder(){
-  if(!editingOrderId) return;
-  ORDERS = ORDERS.filter(x=>x.id!==editingOrderId);
-  closeOrderModal();
-  saveOrders(`Orden ${editingOrderId} eliminada`);
-}
-
 /* ==========================================================================
-   MÓDULO 3: PEDIDOS DE TIENDA (gb_sales_v1 — CONFIRMAR Y DESCONTAR STOCK)
+   MÓDULO 2: PEDIDOS DE TIENDA (gb_sales_v1 — CONFIRMAR Y DESCONTAR STOCK)
+   (Nota: El módulo de seguimiento de reparaciones está archivado en
+    modules/seguimiento-taller/ para futura reintegración)
    ========================================================================== */
 const DEFAULT_SALES = [
   {
@@ -1549,39 +1217,34 @@ function renderSalesList(){
 }
 
 /* ==========================================================================
-   NAVEGACIÓN ENTRE LAS 3 PESTAÑAS DEL PANEL ADMIN 360°
+   NAVEGACIÓN ENTRE LAS 2 PESTAÑAS DEL PANEL ADMIN (INVENTARIO + PEDIDOS)
    ========================================================================== */
 let currentAdminTab = 'inv';
 
 function switchAdminTab(tab){
   currentAdminTab = tab;
-  ['inv','ordenes','pedidos'].forEach(t=>{
+  ['inv','pedidos'].forEach(t=>{
     document.getElementById('pane-'+t).classList.toggle('active', t===tab);
     document.getElementById('tabBtn-'+t).classList.toggle('on', t===tab);
   });
   const topBtn = document.getElementById('topPrimaryBtn');
   if(topBtn){
-    if(tab === 'ordenes') topBtn.textContent = '+ Nueva Orden Taller';
-    else if(tab === 'pedidos') topBtn.textContent = '+ Simular Pedido';
-    else topBtn.textContent = '+ Nuevo Repuesto';
+    topBtn.textContent = (tab === 'pedidos') ? '+ Simular Pedido' : '+ Nuevo Repuesto';
   }
 }
 
 function onTopPrimaryAction(){
-  if(currentAdminTab === 'ordenes') openNewOrderModal();
-  else if(currentAdminTab === 'pedidos') addDemoSaleOrder();
+  if(currentAdminTab === 'pedidos') addDemoSaleOrder();
   else openNewModal();
 }
 
 window.addEventListener('storage', e => {
   if(e.key === 'gb_inventory_v1'){ INVENTORY = loadInventory(); renderAdminList(); }
-  if(e.key === 'gb_orders_v1'){ ORDERS = loadOrders(); renderOrdersList(); }
   if(e.key === 'gb_sales_v1'){ SALES = loadSales(); renderSalesList(); }
 });
 
 renderAdminList();
 document.getElementById('cntTabInv').textContent = INVENTORY.length;
-renderOrdersList();
 renderSalesList();
 
 try{
@@ -1594,11 +1257,9 @@ try{
 
 function checkAdminHash(){
   const h = (location.hash || '').replace('#','');
-  if(h === 'ordenes') switchAdminTab('ordenes');
   if(h === 'pedidos') switchAdminTab('pedidos');
   if(h === 'inventario') switchAdminTab('inv');
   if(h === 'edit') openEditModal('disco');
-  if(h === 'neworder'){ switchAdminTab('ordenes'); openNewOrderModal(); }
 }
 checkAdminHash();
 window.addEventListener('hashchange', checkAdminHash);
