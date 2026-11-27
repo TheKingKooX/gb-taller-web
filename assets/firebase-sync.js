@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
 import {
-  getFirestore, collection, doc, setDoc, updateDoc, deleteDoc,
+  getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc,
   onSnapshot, writeBatch, getDocs, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 import {
@@ -379,6 +379,132 @@ const GBCloud = {
     });
     await batch.commit();
     return { ...clean, _docId: docId };
+  },
+
+  async getCustomerByPhone(phone9) {
+    const cleanPhone = String(phone9 || "").replace(/\D/g, "").slice(-9);
+    if (!/^9\d{8}$/.test(cleanPhone)) return null;
+    const snap = await getDoc(doc(db, "customers", cleanPhone));
+    if (!snap.exists()) return null;
+    const d = snap.data() || {};
+    return {
+      ...d,
+      phone: cleanPhone,
+      createdAt: toMillis(d.createdAt),
+      updatedAt: toMillis(d.updatedAt),
+      resetRequestedAt: toMillis(d.resetRequestedAt) || null
+    };
+  },
+
+  async registerCustomer(customerObj) {
+    const cleanPhone = String(customerObj?.phone || "").replace(/\D/g, "").slice(-9);
+    if (!/^9\d{8}$/.test(cleanPhone)) throw new Error("Teléfono inválido");
+    const cleanName = String(customerObj?.name || "").trim().slice(0, 80);
+    if (cleanName.length < 3) throw new Error("Nombre y apellido obligatorio");
+    const nowMs = Date.now();
+    const payload = {
+      phone: cleanPhone,
+      name: cleanName,
+      motoKey: String(customerObj?.motoKey || "msx").slice(0, 20) || "msx",
+      plate: String(customerObj?.plate || "").trim().toUpperCase().slice(0, 12),
+      pin: "",
+      pinSet: false,
+      failedAttempts: 0,
+      resetRequested: false,
+      resetRequestedAt: null,
+      createdAt: nowMs,
+      updatedAt: nowMs
+    };
+    await setDoc(doc(db, "customers", cleanPhone), payload);
+    return payload;
+  },
+
+  async setCustomerPin(phone9, pin4) {
+    const cleanPhone = String(phone9 || "").replace(/\D/g, "").slice(-9);
+    const cleanPin = String(pin4 || "").replace(/\D/g, "");
+    if (!/^9\d{8}$/.test(cleanPhone)) throw new Error("Teléfono inválido");
+    if (!/^\d{4}$/.test(cleanPin)) throw new Error("El PIN debe tener 4 dígitos");
+    const nowMs = Date.now();
+    await updateDoc(doc(db, "customers", cleanPhone), {
+      pin: cleanPin,
+      pinSet: true,
+      failedAttempts: 0,
+      resetRequested: false,
+      resetRequestedAt: null,
+      updatedAt: nowMs
+    });
+    return { pinSet: true, updatedAt: nowMs };
+  },
+
+  async recordCustomerPinFailure(phone9, nextCount) {
+    const cleanPhone = String(phone9 || "").replace(/\D/g, "").slice(-9);
+    if (!/^9\d{8}$/.test(cleanPhone)) return;
+    const count = Math.max(0, Math.min(50, Math.floor(Number(nextCount) || 1)));
+    await updateDoc(doc(db, "customers", cleanPhone), {
+      failedAttempts: count,
+      updatedAt: Date.now()
+    });
+  },
+
+  async clearCustomerPinFailures(phone9) {
+    const cleanPhone = String(phone9 || "").replace(/\D/g, "").slice(-9);
+    if (!/^9\d{8}$/.test(cleanPhone)) return;
+    await updateDoc(doc(db, "customers", cleanPhone), {
+      failedAttempts: 0,
+      updatedAt: Date.now()
+    });
+  },
+
+  async requestCustomerPinReset(phone9) {
+    const cleanPhone = String(phone9 || "").replace(/\D/g, "").slice(-9);
+    if (!/^9\d{8}$/.test(cleanPhone)) throw new Error("Teléfono inválido");
+    const nowMs = Date.now();
+    await updateDoc(doc(db, "customers", cleanPhone), {
+      resetRequested: true,
+      resetRequestedAt: nowMs,
+      updatedAt: nowMs
+    });
+    return { resetRequested: true, resetRequestedAt: nowMs };
+  },
+
+  subscribeCustomers(onData, onError) {
+    return onSnapshot(
+      collection(db, "customers"),
+      (snap) => {
+        const list = [];
+        snap.forEach((d) => {
+          const data = d.data() || {};
+          list.push({
+            ...data,
+            phone: String(data.phone || d.id),
+            createdAt: toMillis(data.createdAt),
+            updatedAt: toMillis(data.updatedAt),
+            resetRequestedAt: toMillis(data.resetRequestedAt) || null
+          });
+        });
+        list.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+        onData(list, snap.metadata);
+      },
+      (err) => {
+        if (onError) onError(err);
+      }
+    );
+  },
+
+  async resetCustomerPin(phone9) {
+    if (!isAdminUser(currentAuthUser)) throw new Error("Admin auth required");
+    const cleanPhone = String(phone9 || "").replace(/\D/g, "").slice(-9);
+    if (!/^9\d{8}$/.test(cleanPhone)) throw new Error("Teléfono inválido");
+    const nowMs = Date.now();
+    await updateDoc(doc(db, "customers", cleanPhone), {
+      pin: "",
+      pinSet: false,
+      failedAttempts: 0,
+      resetRequested: false,
+      resetRequestedAt: null,
+      updatedAt: nowMs
+    });
+    return { pinSet: false, updatedAt: nowMs };
   }
 };
 

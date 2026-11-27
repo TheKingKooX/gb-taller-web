@@ -72,6 +72,29 @@ rules_version = '2';
 //   - receiptCode: string (required, 0..40 chars; MUST be '' on non-admin create)
 //   - updatedAt: number | timestamp (optional, non-negative number or timestamp)
 //
+// Collection: customers
+// Document ID: {phoneId} (9-digit Peruvian WhatsApp number matching ^9[0-9]{8}$)
+// Access: Public single-doc get (login/profile lookup by phoneId; NEVER public list);
+//         Admin-only list and delete;
+//         Public create (initial registration: pinSet == false, pin == '',
+//         failedAttempts == 0, resetRequested == false, resetRequestedAt == null) or Admin create;
+//         Admin update OR public update with immutable phone/name/createdAt for:
+//           - Case A: first-time or post-admin-reset PIN setup (pinSet false -> true, 4-digit pin)
+//           - Case B: failedAttempts, resetRequested/resetRequestedAt, or motoKey/plate update
+//                     without modifying pin or pinSet.
+// Fields:
+//   - phone: string (required, immutable for public, ^9[0-9]{8}$ and == phoneId) [PII]
+//   - name: string (required, immutable for public, 3..80 chars) [PII]
+//   - motoKey: string (required, 1..20 chars)
+//   - plate: string (required, 0..12 chars) [PII]
+//   - pin: string (required, ^([0-9]{4})?$; length 4 if pinSet == true, length 0 if false)
+//   - pinSet: bool (required)
+//   - failedAttempts: int (required, 0..50)
+//   - resetRequested: bool (required)
+//   - resetRequestedAt: null | timestamp | number (required; if number, 0..9999999999999)
+//   - createdAt: timestamp | number (required, immutable for public; if number, 0..9999999999999)
+//   - updatedAt: timestamp | number (required; if number, 0..9999999999999)
+//
 // ===============================================================
 
 service cloud.firestore {
@@ -287,6 +310,55 @@ service cloud.firestore {
     }
 
     // ===============================================================
+    // Domain Validators — Customers (WhatsApp + 4-Digit PIN Profiles)
+    // ===============================================================
+
+    // Validate required timestamp or epoch millis (0..9999999999999)
+    function isCustomerTimeOrNum(val) {
+      return val is timestamp ||
+             (val is number && val >= 0 && val <= 9999999999999);
+    }
+
+    // Full customer document validator (enforced on both create and update)
+    function isValidCustomer(data, phoneId) {
+      return data.keys().hasOnly([
+               'phone', 'name', 'motoKey', 'plate', 'pin', 'pinSet',
+               'failedAttempts', 'resetRequested', 'resetRequestedAt',
+               'createdAt', 'updatedAt'
+             ]) &&
+             data.keys().hasAll([
+               'phone', 'name', 'motoKey', 'plate', 'pin', 'pinSet',
+               'failedAttempts', 'resetRequested', 'resetRequestedAt',
+               'createdAt', 'updatedAt'
+             ]) &&
+             data.phone is string &&
+             data.phone.matches('^9[0-9]{8}$') &&
+             data.phone == phoneId &&
+             validStr(data.name, 3, 80) &&
+             validStr(data.motoKey, 1, 20) &&
+             validStr(data.plate, 0, 12) &&
+             data.pin is string &&
+             data.pin.matches('^([0-9]{4})?$') &&
+             data.pinSet is bool &&
+             ((data.pinSet && data.pin.size() == 4) ||
+              (!data.pinSet && data.pin.size() == 0)) &&
+             data.failedAttempts is int &&
+             data.failedAttempts >= 0 &&
+             data.failedAttempts <= 50 &&
+             data.resetRequested is bool &&
+             (data.resetRequestedAt == null || isCustomerTimeOrNum(data.resetRequestedAt)) &&
+             isCustomerTimeOrNum(data.createdAt) &&
+             isCustomerTimeOrNum(data.updatedAt);
+    }
+
+    // Enforce immutable identity fields on public customer updates
+    function isCustomerPublicImmutableUnchanged(prev, next) {
+      return next.phone == prev.phone &&
+             next.name == prev.name &&
+             next.createdAt == prev.createdAt;
+    }
+
+    // ===============================================================
     // Collection Rules
     // ===============================================================
 
@@ -341,6 +413,47 @@ service cloud.firestore {
       allow update: if isAdmin() &&
                        isValidOrderStatusDoc(request.resource.data) &&
                        isOrderStatusImmutableUnchanged(resource.data, request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    // Registered WhatsApp customers with 4-digit PIN login, failed-attempt tracking,
+    // and admin-assisted PIN reset requests.
+    // Public single-doc get enables lookup by 9-digit phone on login; NEVER public list.
+    match /customers/{phoneId} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create: if isValidCustomer(request.resource.data, phoneId) &&
+                       (
+                         (
+                           request.resource.data.pinSet == false &&
+                           request.resource.data.pin == '' &&
+                           request.resource.data.failedAttempts == 0 &&
+                           request.resource.data.resetRequested == false &&
+                           request.resource.data.resetRequestedAt == null
+                         ) ||
+                         isAdmin()
+                       );
+      allow update: if isValidCustomer(request.resource.data, phoneId) &&
+                       (
+                         isAdmin() ||
+                         (
+                           isCustomerPublicImmutableUnchanged(resource.data, request.resource.data) &&
+                           (
+                             (
+                               resource.data.pinSet == false &&
+                               request.resource.data.pinSet == true &&
+                               request.resource.data.pin.matches('^[0-9]{4}$') &&
+                               request.resource.data.failedAttempts == 0 &&
+                               request.resource.data.resetRequested == false &&
+                               request.resource.data.resetRequestedAt == null
+                             ) ||
+                             (
+                               request.resource.data.pin == resource.data.pin &&
+                               request.resource.data.pinSet == resource.data.pinSet
+                             )
+                           )
+                         )
+                       );
       allow delete: if isAdmin();
     }
 

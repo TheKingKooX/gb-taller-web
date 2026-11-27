@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script type="module" src="assets/firebase-sync.js?v=15"></script>
+<script type="module" src="assets/firebase-sync.js?v=16"></script>
 <style>
 :root{
   --asfalto:#090A0D;
@@ -535,6 +535,15 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
       Para ver o modificar el inventario y confirmar pedidos debes iniciar sesión en la nube de <b>Firebase</b> con la cuenta de administrador autorizada.
     </p>
     <div class="err-pill" id="authGateErr"></div>
+    <div id="adminPhoneGateBox" style="display:none;margin:10px 0 4px;text-align:left">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--texto-2);text-transform:uppercase;margin-bottom:6px">
+        N° WhatsApp Administrador autorizado (+51 924 536 653)
+      </label>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input class="f-in" id="admGatePhoneInput" type="tel" inputmode="numeric" maxlength="11" placeholder="924 536 653" style="flex:1;height:44px;font-family:var(--mono);font-size:15px;font-weight:800" onkeydown="if(event.key==='Enter')verifyAdminGatePhone()">
+        <button class="btn gold" type="button" style="height:44px;white-space:nowrap" onclick="verifyAdminGatePhone()">✓ Verificar N°</button>
+      </div>
+    </div>
     <div style="display:flex;flex-direction:column;gap:10px">
       <button class="btn gold" style="width:100%;height:46px;font-size:14px" id="authGateLoginBtn" onclick="loginFirebaseAdmin()">🔐 Iniciar sesión con Google (Firebase)</button>
       <button class="btn ghost" style="width:100%;display:none" id="authGateLogoutBtn" onclick="logoutFirebaseAdmin()">Cerrar sesión y cambiar cuenta</button>
@@ -748,6 +757,8 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
         <button class="warn-p" data-uf="pend" onclick="setUserFilter('pend',this)">⏳ Con orden pendiente</button>
       </div>
     </section>
+
+    <div id="userResetAlertsBox" style="display:none;margin-bottom:14px"></div>
 
     <section class="usr-grid" id="usersGrid"></section>
   </div><!-- /#pane-usuarios -->
@@ -1010,19 +1021,38 @@ function setStockFilter(mode){
 }
 
 const ADMIN_WA_PHONE = '924536653';
+const ADMIN_SESSION_KEY = 'gb_admin_session_v1';
 let lastAuthUser = null;
 let lastIsFirebaseAdm = false;
 
-function getStoredWaSession(){
+function getAdminPhoneSession(){
   try{
-    const u = JSON.parse(localStorage.getItem('gb_user_session_v1') || 'null');
+    const u = JSON.parse(localStorage.getItem(ADMIN_SESSION_KEY) || 'null');
     return (u && u.phone) ? u : null;
   }catch(_){ return null; }
 }
 
 function isAdminWaSessionActive(){
-  const u = getStoredWaSession();
+  const u = getAdminPhoneSession();
   return Boolean(u && String(u.phone || '').replace(/\D/g, '').slice(-9) === ADMIN_WA_PHONE);
+}
+
+function verifyAdminGatePhone(){
+  const raw = (document.getElementById('admGatePhoneInput')?.value || '').replace(/\D/g, '').slice(-9);
+  const gateErr = document.getElementById('authGateErr');
+  if(raw !== ADMIN_WA_PHONE){
+    if(gateErr){
+      gateErr.textContent = '⚠ Número incorrecto. Solo el número administrador autorizado (+51 924 536 653) puede ingresar.';
+      gateErr.style.display = 'block';
+    }
+    return;
+  }
+  try{
+    localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({ phone: ADMIN_WA_PHONE, verifiedAt: Date.now() }));
+  }catch(_){}
+  if(gateErr) gateErr.style.display = 'none';
+  applyAdminAccessState(lastAuthUser, lastIsFirebaseAdm);
+  showAdmToast('✓ Sesión de Administrador verificada (+51 924 536 653)');
 }
 
 function requireCloudAdmin(){
@@ -1031,7 +1061,7 @@ function requireCloudAdmin(){
     return false;
   }
   if(!isAdminWaSessionActive()){
-    showAdmToast('⚠ Acceso restringido: solo la sesión +51 924 536 653 puede administrar el panel');
+    showAdmToast('⚠ Acceso restringido: verifica el N° administrador +51 924 536 653');
     return false;
   }
   return true;
@@ -1941,8 +1971,61 @@ function printAdminReceipt(){
   win.document.close();
 }
 
+let CUSTOMERS = [];
+const revealedUserPins = new Set();
+
+function toggleRevealUserPin(phone){
+  if(revealedUserPins.has(phone)) revealedUserPins.delete(phone);
+  else revealedUserPins.add(phone);
+  renderUsersList();
+}
+
+function resetCustomerAccount(phone){
+  if(!requireCloudAdmin()) return;
+  const raw9 = String(phone || '').replace(/\D/g, '').slice(-9);
+  if(!window.GBCloud || typeof window.GBCloud.resetCustomerPin !== 'function') return;
+  window.GBCloud.resetCustomerPin(raw9)
+    .then(()=>{
+      const c = CUSTOMERS.find(x => x.phone === raw9);
+      if(c){
+        c.pin = '';
+        c.pinSet = false;
+        c.failedAttempts = 0;
+        c.resetRequested = false;
+        c.resetRequestedAt = null;
+      }
+      revealedUserPins.delete(raw9);
+      renderUsersList();
+      showAdmToast(`🔄 Cuenta +51 ${fmtPe(raw9)} restablecida · El cliente ya puede crear un nuevo PIN`);
+    })
+    .catch(err=>showAdmToast('⚠ Error al restablecer cuenta: ' + (err?.message || err)));
+}
+
 function buildUsersDirectory(){
   const map = new Map();
+
+  for(const c of CUSTOMERS){
+    const raw9 = String(c.phone || '').replace(/\D/g, '').slice(-9);
+    if(!raw9) continue;
+    map.set(raw9, {
+      phone: raw9,
+      name: c.name || 'Cliente GB',
+      motos: new Set(c.motoKey ? [c.motoKey + (c.plate ? ' (' + c.plate + ')' : '')] : []),
+      orders: [],
+      paidCount: 0,
+      pendCount: 0,
+      totalSpent: 0,
+      lastDate: c.updatedAt ? formatAdminReceiptDate(c.updatedAt) : '',
+      lastTs: c.updatedAt || c.createdAt || 0,
+      pin: String(c.pin || ''),
+      pinSet: Boolean(c.pinSet),
+      failedAttempts: Number(c.failedAttempts || 0),
+      resetRequested: Boolean(c.resetRequested),
+      resetRequestedAt: c.resetRequestedAt || null,
+      registeredInCloud: true
+    });
+  }
+
   for(const s of SALES){
     const raw9 = String(s.phone || '').replace(/\D/g, '').slice(-9) || '000000000';
     if(!map.has(raw9)){
@@ -1955,13 +2038,21 @@ function buildUsersDirectory(){
         pendCount: 0,
         totalSpent: 0,
         lastDate: s.date || '',
-        lastTs: s.createdAt || 0
+        lastTs: s.createdAt || 0,
+        pin: '',
+        pinSet: false,
+        failedAttempts: 0,
+        resetRequested: false,
+        resetRequestedAt: null,
+        registeredInCloud: false
       });
     }
     const u = map.get(raw9);
-    if((s.createdAt || 0) >= u.lastTs && s.client){
+    if(!u.registeredInCloud && (s.createdAt || 0) >= u.lastTs && s.client){
       u.name = s.client;
-      u.lastDate = s.date || u.lastDate;
+    }
+    if((s.createdAt || 0) >= u.lastTs && s.date){
+      u.lastDate = s.date;
       u.lastTs = s.createdAt || u.lastTs;
     }
     if(s.moto) u.motos.add(s.moto);
@@ -1973,7 +2064,10 @@ function buildUsersDirectory(){
       u.pendCount++;
     }
   }
-  return Array.from(map.values()).sort((a, b) => (b.lastTs || 0) - (a.lastTs || 0));
+  return Array.from(map.values()).sort((a, b) => {
+    if(a.resetRequested !== b.resetRequested) return a.resetRequested ? -1 : 1;
+    return (b.lastTs || 0) - (a.lastTs || 0);
+  });
 }
 
 function setUserFilter(f, btn){
@@ -1986,14 +2080,55 @@ function setUserFilter(f, btn){
 
 function renderUsersList(){
   const users = buildUsersDirectory();
+  const resetRequests = users.filter(u => u.resetRequested);
+
   const cUsr = document.getElementById('cntTabUsr');
-  if(cUsr) cUsr.textContent = users.length;
+  if(cUsr){
+    cUsr.textContent = resetRequests.length > 0 ? `${users.length} · 🔔${resetRequests.length}` : users.length;
+  }
   const kTot = document.getElementById('kpiUsrTotal');
   const kPaid = document.getElementById('kpiUsrPaid');
   const kRev = document.getElementById('kpiUsrRev');
   if(kTot) kTot.textContent = users.length;
   if(kPaid) kPaid.textContent = users.filter(u => u.paidCount > 0).length;
   if(kRev) kRev.textContent = 'S/ ' + users.reduce((s, u) => s + u.totalSpent, 0).toLocaleString('es-PE');
+
+  const alertsBox = document.getElementById('userResetAlertsBox');
+  if(alertsBox){
+    if(resetRequests.length > 0){
+      alertsBox.style.display = 'block';
+      alertsBox.innerHTML = `
+        <div style="padding:13px 15px;border-radius:15px;background:rgba(225,29,46,.12);border:1px solid rgba(225,29,46,.45)">
+          <b style="display:block;font-size:13.5px;color:#FECACA;margin-bottom:6px">
+            🔔 Solicitudes de restablecimiento de PIN (${resetRequests.length})
+          </b>
+          <div style="font-size:11.5px;color:var(--texto-2);margin-bottom:10px">
+            Comunícate por WhatsApp con el cliente para verificar su identidad antes de restablecer su PIN.
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            ${resetRequests.map(u => {
+              const waMsg = encodeURIComponent(`Hola *${u.name}*! Te escribimos de *GB Taller y Repuestos*. Recibimos tu solicitud para restablecer el PIN de tu cuenta (+51 ${fmtPe(u.phone)}). Por favor confírmanos tu nombre completo y tu moto para verificar tu identidad y habilitar un nuevo PIN.`);
+              return `
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:12px;background:var(--asfalto);border:1px solid rgba(255,255,255,.08)">
+                  <div>
+                    <b style="color:#fff;font-size:13px">${u.name}</b>
+                    <small style="display:block;color:#FCA5A5;font-family:var(--mono);font-size:11px">+51 ${fmtPe(u.phone)} · ${u.failedAttempts} intentos fallidos</small>
+                  </div>
+                  <div style="display:flex;gap:7px;flex-wrap:wrap">
+                    <a class="btn wa-sm" style="height:34px" href="https://wa.me/51${u.phone}?text=${waMsg}" target="_blank" rel="noopener">📲 Verificar por WA</a>
+                    <button class="btn gold" type="button" style="height:34px;font-size:11.5px" onclick="resetCustomerAccount('${u.phone}')">🔄 Restablecer PIN</button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    } else {
+      alertsBox.style.display = 'none';
+      alertsBox.innerHTML = '';
+    }
+  }
 
   const grid = document.getElementById('usersGrid');
   if(!grid) return;
@@ -2017,25 +2152,44 @@ function renderUsersList(){
   grid.innerHTML = list.map(u => {
     const initials = u.name.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('') || 'GB';
     const motosList = Array.from(u.motos).slice(0, 2).join(' · ') || 'Sin moto registrada';
-    const recentHtml = u.orders.slice(0, 3).map(o => {
-      const stCls = o.status==='Pendiente' ? 'pend' : (o.status==='Pagado' ? 'paid' : (o.status==='Entregado' ? 'deliv' : 'canc'));
-      return `<div class="usr-rec-row">
-        <span><b>${o.id}</b> · ${o.date || ''}</span>
-        <span style="display:flex;align-items:center;gap:6px"><span class="st-badge ${stCls}">${o.status}</span><b>S/ ${Number(o.total||0).toLocaleString('es-PE')}</b></span>
-      </div>`;
-    }).join('');
+    const isRevealed = revealedUserPins.has(u.phone);
+    const recentHtml = u.orders.length
+      ? u.orders.slice(0, 3).map(o => {
+          const stCls = o.status==='Pendiente' ? 'pend' : (o.status==='Pagado' ? 'paid' : (o.status==='Entregado' ? 'deliv' : 'canc'));
+          return `<div class="usr-rec-row">
+            <span><b>${o.id}</b> · ${o.date || ''}</span>
+            <span style="display:flex;align-items:center;gap:6px"><span class="st-badge ${stCls}">${o.status}</span><b>S/ ${Number(o.total||0).toLocaleString('es-PE')}</b></span>
+          </div>`;
+        }).join('')
+      : `<div style="font-size:11px;color:var(--texto-3);text-align:center;padding:4px 0">Sin órdenes realizadas aún</div>`;
 
     return `
-      <article class="usr-card">
+      <article class="usr-card" style="${u.resetRequested ? 'border-color:rgba(225,29,46,.55)' : ''}">
         <div class="usr-h">
           <div class="usr-av">${initials}</div>
           <div class="usr-h-info">
             <b>${u.name}</b>
-            <small>+51 ${fmtPe(u.phone)} · Últ. orden: ${u.lastDate || '—'}</small>
+            <small>+51 ${fmtPe(u.phone)} · Últ. actividad: ${u.lastDate || '—'}</small>
           </div>
-          ${u.pendCount > 0 ? `<span class="st-badge pend">${u.pendCount} pend.</span>` : ''}
+          ${u.resetRequested ? `<span class="st-badge canc">🔔 Restablecer</span>` : (u.pendCount > 0 ? `<span class="st-badge pend">${u.pendCount} pend.</span>` : '')}
         </div>
         <div style="font-size:11px;color:var(--texto-2)">🏍 ${motosList}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-radius:11px;background:var(--asfalto);border:1px solid var(--linea)">
+          <span style="font-size:11.5px;color:var(--texto-2)">
+            ${u.pinSet
+              ? `🔐 PIN: <b style="font-family:var(--mono);color:var(--oro-claro);letter-spacing:2px">${isRevealed ? u.pin : '••••'}</b>`
+              : '🔓 PIN: <b style="color:var(--texto-3)">Sin configurar</b>'}
+            ${u.failedAttempts > 0 ? `<small style="margin-left:6px;color:#FCA5A5">(${u.failedAttempts} fallos)</small>` : ''}
+          </span>
+          <div style="display:flex;gap:6px">
+            ${u.pinSet
+              ? `<button class="btn ghost" type="button" style="height:28px;padding:0 9px;font-size:11px" onclick="toggleRevealUserPin('${u.phone}')">${isRevealed ? '🙈 Ocultar' : '👁 Ver PIN'}</button>`
+              : ''}
+            ${u.registeredInCloud
+              ? `<button class="btn ghost" type="button" style="height:28px;padding:0 9px;font-size:11px;color:var(--oro-claro);border-color:rgba(245,183,0,.4)" onclick="resetCustomerAccount('${u.phone}')" title="Restablecer PIN para que el usuario cree uno nuevo">🔄 Restablecer</button>`
+              : ''}
+          </div>
+        </div>
         <div class="usr-stats">
           <div class="usr-stat"><small>Órdenes</small><b>${u.orders.length}</b></div>
           <div class="usr-stat"><small>Validadas</small><b style="color:var(--verde)">${u.paidCount}</b></div>
@@ -2187,7 +2341,7 @@ window.addEventListener('storage', e => {
   if(e.key === 'gb_inventory_v1' || e.key === 'gb_sales_v1'){
     syncFromStorage(true);
   }
-  if(e.key === 'gb_user_session_v1'){
+  if(e.key === ADMIN_SESSION_KEY){
     if(typeof applyAdminAccessState === 'function') applyAdminAccessState(lastAuthUser, lastIsFirebaseAdm);
   }
 });
@@ -2223,6 +2377,7 @@ window.addEventListener('hashchange', checkAdminHash);
 let unsubCloudInv = null;
 let unsubCloudSales = null;
 let unsubCloudOrderStatuses = null;
+let unsubCloudCustomers = null;
 let cloudSalesInitialized = false;
 
 function sortByDefaultOrderAdm(cloudItems){
@@ -2253,8 +2408,9 @@ async function loginFirebaseAdmin(){
 }
 
 async function logoutFirebaseAdmin(){
+  try{ localStorage.removeItem(ADMIN_SESSION_KEY); }catch(_){}
   if(window.GBCloud) await window.GBCloud.signOutAdmin();
-  showAdmToast('Sesión de nube cerrada');
+  showAdmToast('Sesión de administrador cerrada');
 }
 
 async function applyAdminAccessState(user, isFirebaseAdm){
@@ -2263,6 +2419,7 @@ async function applyAdminAccessState(user, isFirebaseAdm){
 
   const gate = document.getElementById('adminAuthGate');
   const gateErr = document.getElementById('authGateErr');
+  const gatePhoneBox = document.getElementById('adminPhoneGateBox');
   const gateLogin = document.getElementById('authGateLoginBtn');
   const gateLogout = document.getElementById('authGateLogoutBtn');
   const workspace = document.getElementById('adminWorkspace');
@@ -2281,13 +2438,14 @@ async function applyAdminAccessState(user, isFirebaseAdm){
 
   if(hasFullAdmin){
     if(gate) gate.style.display = 'none';
+    if(gatePhoneBox) gatePhoneBox.style.display = 'none';
     if(workspace) workspace.style.display = 'block';
     if(storeLink) storeLink.style.display = 'inline-flex';
     if(topBtn) topBtn.style.display = (currentAdminTab === 'usuarios') ? 'none' : 'inline-flex';
-    if(hdrWa) hdrWa.textContent = 'WHATSAPP ADMIN: +51 924 536 653 · SINCRONIZADO EN VIVO';
+    if(hdrWa) hdrWa.textContent = 'WHATSAPP ADMIN: +51 924 536 653 · SESIÓN INDEPENDIENTE ACTIVA';
     bar.classList.add('connected');
     title.textContent = `● Nube Firebase Conectada en Tiempo Real (${user.email})`;
-    sub.textContent = 'Todos los pedidos desde cualquier celular y cambios de stock/precio se sincronizan al instante.';
+    sub.textContent = 'Sesión independiente del catálogo de clientes. Cambios de inventario, pedidos y usuarios en vivo.';
     loginBtn.style.display = 'none';
     logoutBtn.style.display = 'inline-flex';
     if(badge) badge.innerHTML = '<i></i>Firebase Cloud En Vivo';
@@ -2304,6 +2462,13 @@ async function applyAdminAccessState(user, isFirebaseAdm){
         ORDER_STATUSES = map || {};
         renderSalesList();
       }, err => console.warn('Cloud order_status listener:', err?.message || err));
+    }
+
+    if(!unsubCloudCustomers && typeof window.GBCloud.subscribeCustomers === 'function'){
+      unsubCloudCustomers = window.GBCloud.subscribeCustomers((list)=>{
+        CUSTOMERS = list || [];
+        renderUsersList();
+      }, err => console.warn('Cloud customers listener:', err?.message || err));
     }
 
     if(!unsubCloudSales){
@@ -2334,28 +2499,36 @@ async function applyAdminAccessState(user, isFirebaseAdm){
     bar.classList.remove('connected');
     if(unsubCloudSales){ unsubCloudSales(); unsubCloudSales = null; }
     if(unsubCloudOrderStatuses){ unsubCloudOrderStatuses(); unsubCloudOrderStatuses = null; }
+    if(unsubCloudCustomers){ unsubCloudCustomers(); unsubCloudCustomers = null; }
     ORDER_STATUSES = {};
+    CUSTOMERS = [];
     SALES = [];
     renderSalesList();
 
     if(lastIsFirebaseAdm && !waOk){
-      const waSess = getStoredWaSession();
       if(gateErr){
-        gateErr.textContent = waSess
-          ? `⚠ Acceso denegado: la sesión activa (+51 ${fmtPe(waSess.phone)}) pertenece a un cliente. Solo el número administrador (+51 924 536 653) puede acceder al panel.`
-          : '⚠ Acceso restringido: inicia sesión en la tienda con el número administrador (+51 924 536 653) para acceder al panel.';
+        gateErr.textContent = `✓ Google Admin (${user.email}) verificado. Confirma tu N° de Administrador para desbloquear el panel.`;
+        gateErr.style.background = 'rgba(52,211,153,.12)';
+        gateErr.style.borderColor = 'rgba(52,211,153,.35)';
+        gateErr.style.color = '#86EFAC';
         gateErr.style.display = 'block';
       }
+      if(gatePhoneBox) gatePhoneBox.style.display = 'block';
       if(gateLogin) gateLogin.style.display = 'none';
       if(gateLogout) gateLogout.style.display = 'inline-flex';
     } else if(user){
+      if(gatePhoneBox) gatePhoneBox.style.display = 'none';
       if(gateErr){
+        gateErr.style.background = '';
+        gateErr.style.borderColor = '';
+        gateErr.style.color = '';
         gateErr.textContent = `⚠ Cuenta sin permisos de administrador: ${user.email}`;
         gateErr.style.display = 'block';
       }
       if(gateLogin) gateLogin.style.display = 'inline-flex';
       if(gateLogout) gateLogout.style.display = 'inline-flex';
     } else {
+      if(gatePhoneBox) gatePhoneBox.style.display = 'none';
       if(gateErr) gateErr.style.display = 'none';
       if(gateLogin) gateLogin.style.display = 'inline-flex';
       if(gateLogout) gateLogout.style.display = 'none';

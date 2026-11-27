@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="assets/qrcode.min.js"></script>
 <script src="assets/jsQR.min.js"></script>
-<script type="module" src="assets/firebase-sync.js?v=15"></script>
+<script type="module" src="assets/firebase-sync.js?v=16"></script>
 <style>
 :root{
   --asfalto:#090A0D;
@@ -715,7 +715,42 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
   color:var(--texto);font-size:12.5px;outline:none;
 }
 .login-in:focus{border-color:var(--oro)}
+.login-in.locked,.cust-in.locked{
+  opacity:.82;background:#11151d;border-color:rgba(245,183,0,.35);
+  color:#E2E8F0;cursor:not-allowed;
+}
 select.login-in{-webkit-appearance:none;appearance:none}
+.wa-existing-pill{
+  padding:8px 11px;border-radius:11px;margin-bottom:9px;font-size:11.5px;font-weight:700;
+  background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.38);color:#86EFAC;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.pin-rec-banner{
+  padding:11px 12px;border-radius:13px;margin-bottom:11px;font-size:12px;line-height:1.42;
+  background:linear-gradient(135deg,rgba(245,183,0,.15),rgba(19,22,28,.95));
+  border:1px solid rgba(245,183,0,.42);color:#FDE68A;
+}
+.pin-field-lbl{
+  display:block;font-size:11px;font-weight:700;color:var(--texto-2);
+  text-transform:uppercase;letter-spacing:.4px;margin:8px 0 5px;
+}
+.pin-input{
+  width:100%;height:48px;padding:0 14px;border-radius:12px;
+  background:var(--asfalto);border:1.5px solid rgba(245,183,0,.42);
+  color:#fff;font-family:var(--mono);font-size:22px;font-weight:800;
+  letter-spacing:10px;text-align:center;outline:none;
+}
+.pin-input:focus{border-color:var(--oro);box-shadow:0 0 0 3px rgba(245,183,0,.16)}
+.pin-reset-box{
+  margin-top:11px;padding:12px;border-radius:13px;
+  background:rgba(225,29,46,.12);border:1px solid rgba(225,29,46,.42);
+  color:#FECACA;font-size:12px;line-height:1.42;
+}
+.pin-reset-sent{
+  margin-top:10px;padding:10px 12px;border-radius:11px;
+  background:rgba(34,197,94,.14);border:1px solid rgba(34,197,94,.4);
+  color:#86EFAC;font-size:11.5px;line-height:1.4;font-weight:600;
+}
 
 .wa-otp-banner{
   padding:10px 12px;border-radius:13px;margin-bottom:11px;
@@ -1677,21 +1712,27 @@ select.login-in{-webkit-appearance:none;appearance:none}
     </div>
 
     <!-- Tarjeta de sesión activa (si ya inició sesión) -->
-    <div class="login-active-card" id="loginActiveCard" style="display:none">
-      <div class="la-left">
-        <div class="login-avatar" id="loginAvatar">GB</div>
-        <div style="min-width:0">
-          <b id="loginActiveName"></b>
-          <small id="loginActivePhone"></small>
+    <div class="login-active-card" id="loginActiveCard" style="display:none;flex-direction:column;align-items:stretch;gap:9px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div class="la-left">
+          <div class="login-avatar" id="loginAvatar">GB</div>
+          <div style="min-width:0">
+            <b id="loginActiveName"></b>
+            <small id="loginActivePhone"></small>
+          </div>
         </div>
+        <button class="login-logout-btn" type="button" onclick="logoutWaSession()">Salir</button>
       </div>
-      <button class="login-logout-btn" type="button" onclick="logoutWaSession()">Salir</button>
+      <div id="loginPinReminderRow" style="display:none;justify-content:space-between;align-items:center;gap:8px;padding-top:8px;border-top:1px dashed rgba(245,183,0,.35)">
+        <small style="color:var(--oro-claro);font-family:var(--sans);font-size:11px">🔐 Aún no tienes PIN de seguridad para tus próximos ingresos.</small>
+        <button class="btn gold" type="button" style="height:30px;padding:0 10px;font-size:11px;flex:none" onclick="openCreatePinForCurrentUser()">Crear PIN</button>
+      </div>
     </div>
 
-    <!-- PASO 1: INGRESAR NÚMERO DE WHATSAPP Y MOTO -->
+    <!-- PASO 1: NÚMERO DE WHATSAPP (+51) + REGISTRO OBLIGATORIO -->
     <div id="loginStep1">
       <p style="font-size:12px;color:var(--texto-2);margin-bottom:9px">
-        Ingresa tu <b style="color:#fff">número de WhatsApp</b> para vincular tu moto, filtrar repuestos compatibles y autocompletar tus pedidos y citas:
+        Ingresa tu <b style="color:#fff">número de WhatsApp</b> para iniciar sesión o crear tu cuenta. Tu nombre quedará enlazado permanentemente a tu número:
       </p>
 
       <div class="wa-phone-box">
@@ -1699,8 +1740,10 @@ select.login-in{-webkit-appearance:none;appearance:none}
         <input class="wa-phone-in" id="waLoginPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="987 654 321" value="" oninput="onWaLoginPhoneInput(this)">
       </div>
 
+      <div class="wa-existing-pill" id="waExistingNotice" style="display:none"></div>
+
       <div style="margin-bottom:9px">
-        <input class="login-in" id="waLoginName" type="text" placeholder="Tu nombre y apellido" value="">
+        <input class="login-in" id="waLoginName" type="text" placeholder="Nombre y apellido * (obligatorio)" value="" oninput="document.getElementById('waLoginErr').style.display='none'">
       </div>
 
       <div class="login-grid-2">
@@ -1720,38 +1763,60 @@ select.login-in{-webkit-appearance:none;appearance:none}
 
       <div class="sheet-actions" style="margin-top:10px">
         <button class="btn ghost" id="loginGuestBtn" type="button" onclick="enterAsGuest()">Ojear catálogo</button>
-        <button class="btn wa" type="button" onclick="sendWaOtpCode()">
-          <i data-i="wa"></i>Recibir código WA
+        <button class="btn wa" id="loginStep1SubmitBtn" type="button" onclick="continueWaLogin()">
+          <i data-i="wa"></i>Continuar
         </button>
       </div>
     </div>
 
-    <!-- PASO 2: VERIFICACIÓN DE CÓDIGO OTP DE 4 DÍGITOS VÍA WHATSAPP -->
-    <div id="loginStep2" style="display:none">
-      <div class="wa-otp-banner" onclick="autofillWaOtp()" title="Toca para autocompletar el código recibido por WhatsApp">
-        <div>
-          <b>💬 WhatsApp · Taller GB Oficial</b>
-          <small>Tu código de acceso es <b style="color:#86EFAC" id="waOtpBannerCode">4829</b> · Toca para autocompletar</small>
-        </div>
-        <span class="wa-otp-code-pill" id="waOtpPillCode">4829</span>
+    <!-- PASO 2A: CREAR PIN DE 4 DÍGITOS (CON DOBLE CONFIRMACIÓN) -->
+    <div id="loginStepCreatePin" style="display:none">
+      <div class="pin-rec-banner" id="pinRecBanner">
+        <b>🔐 ¡Bienvenido! Te recomendamos crear un PIN de 4 dígitos</b><br>
+        A partir de tu próximo ingreso necesitarás tu número y este PIN de 4 dígitos para proteger tu cuenta.
+      </div>
+      <div style="font-size:12px;color:var(--texto-2);margin-bottom:4px">
+        Cuenta: <b style="color:#fff" id="pinCreateUserLabel">Cliente GB</b> · <span style="font-family:var(--mono);color:#86EFAC" id="pinCreatePhoneLabel">+51</span>
       </div>
 
-      <p style="font-size:12px;color:var(--texto-2);text-align:center">
-        Ingresa el código de 4 dígitos enviado al WhatsApp <b style="color:#fff;font-family:var(--mono)" id="otpTargetPhone">+51 987 654 321</b>:
-      </p>
+      <label class="pin-field-lbl" for="pinCreate1">1. Crea tu PIN (4 dígitos)</label>
+      <input class="pin-input" id="pinCreate1" type="password" inputmode="numeric" maxlength="4" placeholder="••••" oninput="onPinInputClean(this);document.getElementById('pinCreateErr').style.display='none'">
 
-      <div class="otp-boxes">
-        <input class="otp-digit" id="otp1" type="text" inputmode="numeric" maxlength="1" oninput="onOtpDigit(1,this)">
-        <input class="otp-digit" id="otp2" type="text" inputmode="numeric" maxlength="1" oninput="onOtpDigit(2,this)">
-        <input class="otp-digit" id="otp3" type="text" inputmode="numeric" maxlength="1" oninput="onOtpDigit(3,this)">
-        <input class="otp-digit" id="otp4" type="text" inputmode="numeric" maxlength="1" oninput="onOtpDigit(4,this)">
+      <label class="pin-field-lbl" for="pinCreate2">2. Confirma tu PIN (ingrésalo otra vez)</label>
+      <input class="pin-input" id="pinCreate2" type="password" inputmode="numeric" maxlength="4" placeholder="••••" oninput="onPinInputClean(this);document.getElementById('pinCreateErr').style.display='none'">
+
+      <div id="pinCreateErr" style="display:none;font-size:11.5px;color:#FCA5A5;margin-top:8px;font-weight:600"></div>
+
+      <div class="sheet-actions" style="margin-top:12px">
+        <button class="btn ghost" id="pinSkipLaterBtn" type="button" onclick="skipPinCreationForNow()">Más tarde</button>
+        <button class="btn primary" id="pinSaveBtn" type="button" onclick="saveNewCustomerPin()">✓ Guardar mi PIN</button>
+      </div>
+    </div>
+
+    <!-- PASO 2B: INGRESAR CON PIN DE 4 DÍGITOS (USUARIOS EXISTENTES) -->
+    <div id="loginStepPin" style="display:none">
+      <div class="wa-existing-pill" style="margin-bottom:10px">
+        <span>✓ Cuenta reconocida: <b id="pinLoginUserLabel" style="color:#fff">Cliente</b></span>
+        <span style="font-family:var(--mono)" id="pinLoginPhoneLabel">+51</span>
       </div>
 
-      <div class="sheet-actions" style="margin-top:8px">
+      <label class="pin-field-lbl" for="pinLoginInput">Ingresa tu PIN de 4 dígitos para acceder</label>
+      <input class="pin-input" id="pinLoginInput" type="password" inputmode="numeric" maxlength="4" placeholder="••••" oninput="onPinInputClean(this);document.getElementById('pinLoginErr').style.display='none'" onkeydown="if(event.key==='Enter')verifyCustomerPinLogin()">
+
+      <div id="pinLoginErr" style="display:none;font-size:11.5px;color:#FCA5A5;margin-top:8px;font-weight:600"></div>
+
+      <div class="pin-reset-box" id="pinResetRequestBox" style="display:none">
+        <b>⚠ Demasiados intentos fallidos</b>
+        <div style="margin-top:4px">Si olvidaste tu PIN, solicita el restablecimiento de tu cuenta. El administrador se comunicará contigo por WhatsApp para verificar tu identidad.</div>
+        <button class="btn gold" id="pinRequestResetBtn" type="button" style="width:100%;height:38px;margin-top:9px;font-size:12px" onclick="requestAccountPinReset()">🔄 Solicitar restablecimiento de cuenta</button>
+      </div>
+      <div class="pin-reset-sent" id="pinResetSentMsg" style="display:none">
+        ✓ Solicitud enviada al administrador. Te contactaremos por WhatsApp para verificar tu identidad y restablecer tu PIN.
+      </div>
+
+      <div class="sheet-actions" style="margin-top:12px">
         <button class="btn ghost" type="button" onclick="backToLoginStep1()">← Cambiar N°</button>
-        <button class="btn wa" type="button" onclick="verifyWaOtpCode()">
-          <i data-i="wa"></i>Verificar y entrar
-        </button>
+        <button class="btn wa" id="pinLoginSubmitBtn" type="button" onclick="verifyCustomerPinLogin()">✓ Ingresar</button>
       </div>
     </div>
   </div>
@@ -3851,14 +3916,26 @@ function applyUserSessionToUi(){
     const loginMt = document.getElementById('waLoginMoto');
     const loginPl = document.getElementById('waLoginPlate');
     if(loginPh) loginPh.value = fmtPhone;
-    if(loginNm) loginNm.value = currentUser.name;
+    if(loginNm){
+      loginNm.value = currentUser.name;
+      loginNm.readOnly = true;
+      loginNm.classList.add('locked');
+    }
     if(loginMt && currentUser.motoKey !== 'all') loginMt.value = currentUser.motoKey;
     if(loginPl) loginPl.value = currentUser.plate || '';
+
+    const remRow = document.getElementById('loginPinReminderRow');
+    if(remRow) remRow.style.display = currentUser.pinSet ? 'none' : 'flex';
 
     const custNameEl = document.getElementById('custName');
     const custPhoneEl = document.getElementById('custPhone');
     const ccNameEl = document.getElementById('ccName');
-    if(custNameEl) custNameEl.value = currentUser.name;
+    if(custNameEl){
+      custNameEl.value = currentUser.name;
+      custNameEl.readOnly = true;
+      custNameEl.classList.add('locked');
+      custNameEl.title = 'Nombre enlazado a tu número telefónico (no editable)';
+    }
     if(custPhoneEl) custPhoneEl.value = fmtPhone;
     if(ccNameEl){
       ccNameEl.value = currentUser.name;
@@ -3876,14 +3953,26 @@ function applyUserSessionToUi(){
     if(hdrPill){ hdrPill.classList.add('guest'); hdrPill.classList.remove('admin'); }
     if(deskPill){ deskPill.classList.add('guest'); deskPill.classList.remove('admin'); }
     if(activeCard) activeCard.style.display = 'none';
+    const remRow = document.getElementById('loginPinReminderRow');
+    if(remRow) remRow.style.display = 'none';
     if(statusBadge){
       statusBadge.textContent = 'Invitado';
       statusBadge.style.color = 'var(--oro-claro)';
     }
+    const loginNm = document.getElementById('waLoginName');
+    if(loginNm){
+      loginNm.readOnly = false;
+      loginNm.classList.remove('locked');
+    }
     const custNameEl = document.getElementById('custName');
     const custPhoneEl = document.getElementById('custPhone');
     const ccNameEl = document.getElementById('ccName');
-    if(custNameEl) custNameEl.value = '';
+    if(custNameEl){
+      custNameEl.value = '';
+      custNameEl.readOnly = false;
+      custNameEl.classList.remove('locked');
+      custNameEl.title = '';
+    }
     if(custPhoneEl) custPhoneEl.value = '';
     if(ccNameEl){
       ccNameEl.value = '';
@@ -3899,10 +3988,67 @@ function applyUserSessionToUi(){
   updateAdminSwitchVisibility();
 }
 
+const CUSTOMERS_CACHE_KEY = 'gb_customers_cache_v1';
+let lookedUpCustomer = null;
+let pendingPinUser = null;
+let canSkipPinSetup = true;
+let phoneLookupSeq = 0;
+
+function readCustomersCache(){
+  try{
+    const raw = localStorage.getItem(CUSTOMERS_CACHE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(parsed && typeof parsed === 'object') return parsed;
+    }
+  }catch(_){}
+  return {};
+}
+
+function writeCustomerCache(custObj){
+  if(!custObj || !custObj.phone) return;
+  try{
+    const cache = readCustomersCache();
+    cache[custObj.phone] = { ...(cache[custObj.phone] || {}), ...custObj };
+    localStorage.setItem(CUSTOMERS_CACHE_KEY, JSON.stringify(cache));
+  }catch(_){}
+}
+
+async function fetchCustomerProfile(phone9){
+  const clean = String(phone9 || '').replace(/\D/g, '').slice(-9);
+  if(!/^9\d{8}$/.test(clean)) return null;
+  const cached = readCustomersCache()[clean] || null;
+  const cloud = await waitForCloudReady(1800);
+  if(cloud && typeof cloud.getCustomerByPhone === 'function'){
+    try{
+      const remote = await cloud.getCustomerByPhone(clean);
+      if(remote){
+        writeCustomerCache(remote);
+        return remote;
+      }
+      return null;
+    }catch(err){
+      console.warn('getCustomerByPhone:', err?.message || err);
+    }
+  }
+  return cached;
+}
+
+function showLoginStep(step){
+  ['loginStep1','loginStepCreatePin','loginStepPin'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.style.display = (id === step) ? 'block' : 'none';
+  });
+}
+
 function openLoginModal(){
   backToLoginStep1();
   const gBtn = document.getElementById('loginGuestBtn');
   if(gBtn) gBtn.textContent = currentUser ? 'Cerrar' : 'Ojear catálogo';
+  const rawDigits = (document.getElementById('waLoginPhone')?.value || '').replace(/\D/g, '');
+  if(rawDigits.length === 9 && rawDigits.startsWith('9')){
+    triggerPhoneRecognitionLookup(rawDigits);
+  }
   document.getElementById('loginModal').classList.add('open');
 }
 
@@ -3917,10 +4063,61 @@ function enterAsGuest(){
   closeLoginModal();
 }
 
+function applyRecognizedCustomerToStep1(cust){
+  lookedUpCustomer = cust || null;
+  const notice = document.getElementById('waExistingNotice');
+  const nameEl = document.getElementById('waLoginName');
+  const motoEl = document.getElementById('waLoginMoto');
+  const plateEl = document.getElementById('waLoginPlate');
+  const btn = document.getElementById('loginStep1SubmitBtn');
+
+  if(cust){
+    if(notice){
+      notice.innerHTML = `<span>✓ Cuenta existente: <b style="color:#fff">${cust.name}</b></span><span>${cust.pinSet ? '🔐 PIN activo' : '🔓 Crear PIN'}</span>`;
+      notice.style.display = 'flex';
+    }
+    if(nameEl){
+      nameEl.value = cust.name;
+      nameEl.readOnly = true;
+      nameEl.classList.add('locked');
+      nameEl.title = 'Nombre enlazado a este número (no editable)';
+    }
+    if(motoEl && cust.motoKey && MOTOS[cust.motoKey] && cust.motoKey !== 'all') motoEl.value = cust.motoKey;
+    if(plateEl && cust.plate) plateEl.value = cust.plate;
+    if(btn) btn.innerHTML = cust.pinSet ? '<i data-i="wa"></i>Ingresar con mi PIN →' : '<i data-i="wa"></i>Continuar →';
+  } else {
+    if(notice) notice.style.display = 'none';
+    if(nameEl){
+      if(nameEl.readOnly) nameEl.value = '';
+      nameEl.readOnly = false;
+      nameEl.classList.remove('locked');
+      nameEl.title = '';
+    }
+    if(btn) btn.innerHTML = '<i data-i="wa"></i>Crear cuenta y continuar →';
+  }
+  if(btn) hydrateIcons(btn);
+}
+
+function triggerPhoneRecognitionLookup(digits9){
+  const seq = ++phoneLookupSeq;
+  fetchCustomerProfile(digits9).then(cust => {
+    if(seq !== phoneLookupSeq) return;
+    const nowDigits = (document.getElementById('waLoginPhone')?.value || '').replace(/\D/g, '');
+    if(nowDigits !== digits9) return;
+    applyRecognizedCustomerToStep1(cust);
+  });
+}
+
 function onWaLoginPhoneInput(el){
   const digits = el.value.replace(/\D/g, '').slice(0, 9);
   el.value = formatPePhone(digits);
   document.getElementById('waLoginErr').style.display = 'none';
+  if(digits.length === 9 && digits.startsWith('9')){
+    triggerPhoneRecognitionLookup(digits);
+  } else {
+    phoneLookupSeq++;
+    applyRecognizedCustomerToStep1(null);
+  }
 }
 
 function onCheckoutPhoneInput(el){
@@ -3932,69 +4129,326 @@ function onCheckoutPhoneInput(el){
   renderCart();
 }
 
-function sendWaOtpCode(){
+function onPinInputClean(el){
+  el.value = el.value.replace(/\D/g, '').slice(0, 4);
+}
+
+function openCreatePinStep(cust, isFirstTime){
+  pendingPinUser = cust;
+  canSkipPinSetup = Boolean(isFirstTime);
+  const recEl = document.getElementById('pinRecBanner');
+  if(recEl){
+    recEl.innerHTML = isFirstTime
+      ? '<b>🔐 ¡Cuenta creada! Te recomendamos crear un PIN de 4 dígitos</b><br>A partir de tu próximo ingreso deberás colocar tu número y este PIN de 4 dígitos.'
+      : '<b>🔐 Configura tu nuevo PIN de 4 dígitos</b><br>Ingresa el PIN 2 veces para confirmar tu contraseña de acceso.';
+  }
+  const uLbl = document.getElementById('pinCreateUserLabel');
+  const pLbl = document.getElementById('pinCreatePhoneLabel');
+  if(uLbl) uLbl.textContent = cust.name;
+  if(pLbl) pLbl.textContent = `+51 ${formatPePhone(cust.phone)}`;
+  const p1 = document.getElementById('pinCreate1');
+  const p2 = document.getElementById('pinCreate2');
+  if(p1) p1.value = '';
+  if(p2) p2.value = '';
+  const err = document.getElementById('pinCreateErr');
+  if(err) err.style.display = 'none';
+  const skipBtn = document.getElementById('pinSkipLaterBtn');
+  if(skipBtn) skipBtn.style.display = canSkipPinSetup ? 'inline-flex' : 'none';
+  showLoginStep('loginStepCreatePin');
+  setTimeout(()=>p1?.focus(), 80);
+}
+
+function openCreatePinForCurrentUser(){
+  if(!currentUser) return;
+  openCreatePinStep({
+    phone: currentUser.phone,
+    name: currentUser.name,
+    motoKey: currentUser.motoKey || 'msx',
+    plate: currentUser.plate || '',
+    pinSet: false
+  }, false);
+}
+
+function openPinLoginStep(cust){
+  pendingPinUser = cust;
+  const uLbl = document.getElementById('pinLoginUserLabel');
+  const pLbl = document.getElementById('pinLoginPhoneLabel');
+  if(uLbl) uLbl.textContent = cust.name;
+  if(pLbl) pLbl.textContent = `+51 ${formatPePhone(cust.phone)}`;
+  const pinIn = document.getElementById('pinLoginInput');
+  if(pinIn) pinIn.value = '';
+  const errEl = document.getElementById('pinLoginErr');
+  if(errEl) errEl.style.display = 'none';
+
+  const fails = Number(cust.failedAttempts || 0);
+  const resetBox = document.getElementById('pinResetRequestBox');
+  const sentBox = document.getElementById('pinResetSentMsg');
+  if(resetBox) resetBox.style.display = (fails > 4 && !cust.resetRequested) ? 'block' : 'none';
+  if(sentBox) sentBox.style.display = cust.resetRequested ? 'block' : 'none';
+
+  showLoginStep('loginStepPin');
+  setTimeout(()=>pinIn?.focus(), 80);
+}
+
+async function continueWaLogin(){
   const rawPhone = (document.getElementById('waLoginPhone').value || '').replace(/\D/g, '');
   const errEl = document.getElementById('waLoginErr');
+  const btn = document.getElementById('loginStep1SubmitBtn');
   if(rawPhone.length !== 9 || !rawPhone.startsWith('9')){
+    errEl.textContent = 'Ingresa un número celular de WhatsApp válido de 9 dígitos (empieza con 9).';
     errEl.style.display = 'block';
     return;
   }
-  errEl.style.display = 'none';
-  const name = (document.getElementById('waLoginName').value || 'Cliente GB').trim();
-  const motoKey = document.getElementById('waLoginMoto').value || 'msx';
-  const plate = (document.getElementById('waLoginPlate').value || '').trim().toUpperCase();
 
-  pendingWaUser = {
-    name,
-    phone: rawPhone,
-    motoKey,
-    plate,
-    role: 'client'
-  };
+  const prevHtml = btn ? btn.innerHTML : '';
+  if(btn){ btn.disabled = true; btn.textContent = '⏳ Verificando...'; }
 
-  generatedWaOtp = String(4000 + (parseInt(rawPhone.slice(-3), 10) % 900)).slice(0, 4);
-  document.getElementById('waOtpBannerCode').textContent = generatedWaOtp;
-  document.getElementById('waOtpPillCode').textContent = generatedWaOtp;
-  document.getElementById('otpTargetPhone').textContent = `+51 ${formatPePhone(rawPhone)}`;
+  try{
+    let existing = lookedUpCustomer && lookedUpCustomer.phone === rawPhone ? lookedUpCustomer : null;
+    if(!existing){
+      existing = await fetchCustomerProfile(rawPhone);
+      if(existing) applyRecognizedCustomerToStep1(existing);
+    }
 
-  ['otp1','otp2','otp3','otp4'].forEach((id, idx)=>{
-    document.getElementById(id).value = generatedWaOtp[idx] || '';
-  });
+    if(existing){
+      errEl.style.display = 'none';
+      const chosenMoto = document.getElementById('waLoginMoto')?.value || existing.motoKey || 'msx';
+      const chosenPlate = (document.getElementById('waLoginPlate')?.value || existing.plate || '').trim().toUpperCase();
+      const mergedProfile = { ...existing, motoKey: existing.motoKey || chosenMoto, plate: chosenPlate || existing.plate || '' };
 
-  document.getElementById('loginStep1').style.display = 'none';
-  document.getElementById('loginStep2').style.display = 'block';
+      if(mergedProfile.pinSet){
+        openPinLoginStep(mergedProfile);
+      } else {
+        const sessionUser = {
+          name: mergedProfile.name,
+          phone: mergedProfile.phone,
+          motoKey: mergedProfile.motoKey,
+          plate: mergedProfile.plate,
+          pinSet: false,
+          role: 'client'
+        };
+        const isBrandNew = !localStorage.getItem(cartKeyForPhone(mergedProfile.phone));
+        saveWaSession(sessionUser, isBrandNew);
+        openCreatePinStep(mergedProfile, false);
+      }
+      return;
+    }
+
+    // Nuevo usuario: nombre y apellido OBLIGATORIO
+    const rawName = (document.getElementById('waLoginName')?.value || '').trim().replace(/\s+/g, ' ');
+    if(rawName.length < 3 || !/[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(rawName)){
+      errEl.textContent = 'El campo "Nombre y apellido" es obligatorio para crear tu cuenta.';
+      errEl.style.display = 'block';
+      document.getElementById('waLoginName')?.focus();
+      return;
+    }
+    errEl.style.display = 'none';
+
+    const motoKey = document.getElementById('waLoginMoto')?.value || 'msx';
+    const plate = (document.getElementById('waLoginPlate')?.value || '').trim().toUpperCase();
+
+    let newCustomer = {
+      phone: rawPhone,
+      name: rawName,
+      motoKey,
+      plate,
+      pin: '',
+      pinSet: false,
+      failedAttempts: 0,
+      resetRequested: false,
+      resetRequestedAt: null,
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    };
+
+    const cloud = await waitForCloudReady(2000);
+    if(cloud && typeof cloud.registerCustomer === 'function'){
+      try{
+        newCustomer = await cloud.registerCustomer(newCustomer);
+      }catch(regErr){
+        console.warn('registerCustomer:', regErr?.message || regErr);
+      }
+    }
+    writeCustomerCache(newCustomer);
+
+    const sessionUser = {
+      name: newCustomer.name,
+      phone: newCustomer.phone,
+      motoKey: newCustomer.motoKey,
+      plate: newCustomer.plate,
+      pinSet: false,
+      role: 'client'
+    };
+    const isBrandNew = !localStorage.getItem(cartKeyForPhone(newCustomer.phone));
+    saveWaSession(sessionUser, isBrandNew);
+    showCustomToast('✓ CUENTA CREADA', `Bienvenido ${newCustomer.name} · Crea tu PIN de seguridad`);
+    openCreatePinStep(newCustomer, true);
+  } finally {
+    if(btn){ btn.disabled = false; if(prevHtml){ btn.innerHTML = prevHtml; hydrateIcons(btn); } }
+  }
+}
+
+async function saveNewCustomerPin(){
+  if(!pendingPinUser) return;
+  const p1 = (document.getElementById('pinCreate1')?.value || '').replace(/\D/g, '');
+  const p2 = (document.getElementById('pinCreate2')?.value || '').replace(/\D/g, '');
+  const err = document.getElementById('pinCreateErr');
+
+  if(p1.length !== 4 || p2.length !== 4){
+    err.textContent = 'Ingresa exactamente 4 dígitos numéricos en ambos campos.';
+    err.style.display = 'block';
+    return;
+  }
+  if(p1 !== p2){
+    err.textContent = 'Los 2 PINs ingresados no coinciden. Vuelve a confirmarlo.';
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+
+  const saveBtn = document.getElementById('pinSaveBtn');
+  if(saveBtn){ saveBtn.disabled = true; saveBtn.textContent = '⏳ Guardando PIN...'; }
+
+  try{
+    const cloud = await waitForCloudReady(2000);
+    if(cloud && typeof cloud.setCustomerPin === 'function'){
+      await cloud.setCustomerPin(pendingPinUser.phone, p1);
+    }
+    const updated = {
+      ...pendingPinUser,
+      pin: p1,
+      pinSet: true,
+      failedAttempts: 0,
+      resetRequested: false,
+      resetRequestedAt: null,
+      updatedAt: Date.now()
+    };
+    writeCustomerCache(updated);
+    const sessionUser = {
+      name: updated.name,
+      phone: updated.phone,
+      motoKey: updated.motoKey || 'msx',
+      plate: updated.plate || '',
+      pinSet: true,
+      role: 'client'
+    };
+    saveWaSession(sessionUser, false);
+    closeLoginModal();
+    showCustomToast('✓ PIN DE 4 DÍGITOS GUARDADO', `${updated.name} · Sesión protegida`);
+  }catch(e){
+    err.textContent = '⚠ Error al guardar tu PIN en Firebase: ' + (e?.message || e);
+    err.style.display = 'block';
+  }finally{
+    if(saveBtn){ saveBtn.disabled = false; saveBtn.textContent = '✓ Guardar mi PIN'; }
+  }
+}
+
+function skipPinCreationForNow(){
+  if(!canSkipPinSetup) return;
+  closeLoginModal();
+  if(currentUser){
+    showCustomToast('✓ SESIÓN INICIADA', `${currentUser.name} · Recuerda configurar tu PIN pronto`);
+  }
+}
+
+async function verifyCustomerPinLogin(){
+  if(!pendingPinUser) return;
+  const entered = (document.getElementById('pinLoginInput')?.value || '').replace(/\D/g, '');
+  const errEl = document.getElementById('pinLoginErr');
+  if(entered.length !== 4){
+    errEl.textContent = 'Ingresa tu PIN de 4 dígitos.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const latest = (await fetchCustomerProfile(pendingPinUser.phone)) || pendingPinUser;
+  pendingPinUser = latest;
+
+  if(!latest.pinSet){
+    const sessionUser = {
+      name: latest.name,
+      phone: latest.phone,
+      motoKey: latest.motoKey || 'msx',
+      plate: latest.plate || '',
+      pinSet: false,
+      role: 'client'
+    };
+    saveWaSession(sessionUser, false);
+    openCreatePinStep(latest, false);
+    return;
+  }
+
+  if(entered === String(latest.pin || '')){
+    errEl.style.display = 'none';
+    const cloud = await waitForCloudReady(1500);
+    if(cloud && typeof cloud.clearCustomerPinFailures === 'function'){
+      cloud.clearCustomerPinFailures(latest.phone).catch(()=>{});
+    }
+    writeCustomerCache({ ...latest, failedAttempts: 0 });
+    const sessionUser = {
+      name: latest.name,
+      phone: latest.phone,
+      motoKey: latest.motoKey || 'msx',
+      plate: latest.plate || '',
+      pinSet: true,
+      role: 'client'
+    };
+    const isBrandNew = !localStorage.getItem(cartKeyForPhone(latest.phone));
+    saveWaSession(sessionUser, isBrandNew);
+    closeLoginModal();
+    showCustomToast('✓ SESIÓN INICIADA', `Bienvenido de nuevo, ${latest.name}`);
+    return;
+  }
+
+  const nextFails = (Number(latest.failedAttempts || 0) + 1);
+  latest.failedAttempts = nextFails;
+  writeCustomerCache(latest);
+  const cloud = await waitForCloudReady(1500);
+  if(cloud && typeof cloud.recordCustomerPinFailure === 'function'){
+    cloud.recordCustomerPinFailure(latest.phone, nextFails).catch(()=>{});
+  }
+
+  errEl.textContent = `PIN incorrecto (Intento ${nextFails}). Verifica los 4 dígitos.`;
+  errEl.style.display = 'block';
+  const pinIn = document.getElementById('pinLoginInput');
+  if(pinIn){ pinIn.value = ''; pinIn.focus(); }
+
+  if(nextFails > 4){
+    const resetBox = document.getElementById('pinResetRequestBox');
+    if(resetBox && !latest.resetRequested) resetBox.style.display = 'block';
+  }
+}
+
+async function requestAccountPinReset(){
+  if(!pendingPinUser) return;
+  const btn = document.getElementById('pinRequestResetBtn');
+  if(btn){ btn.disabled = true; btn.textContent = '⏳ Enviando solicitud...'; }
+  try{
+    const cloud = await waitForCloudReady(2000);
+    if(cloud && typeof cloud.requestCustomerPinReset === 'function'){
+      await cloud.requestCustomerPinReset(pendingPinUser.phone);
+    }
+    pendingPinUser.resetRequested = true;
+    pendingPinUser.resetRequestedAt = Date.now();
+    writeCustomerCache(pendingPinUser);
+    const resetBox = document.getElementById('pinResetRequestBox');
+    const sentBox = document.getElementById('pinResetSentMsg');
+    if(resetBox) resetBox.style.display = 'none';
+    if(sentBox) sentBox.style.display = 'block';
+    showCustomToast('🔔 SOLICITUD ENVIADA AL ADMIN', 'El administrador te contactará por WhatsApp para validar tu identidad');
+  }catch(e){
+    const errEl = document.getElementById('pinLoginErr');
+    if(errEl){
+      errEl.textContent = '⚠ No se pudo enviar la solicitud: ' + (e?.message || e);
+      errEl.style.display = 'block';
+    }
+  }finally{
+    if(btn){ btn.disabled = false; btn.textContent = '🔄 Solicitar restablecimiento de cuenta'; }
+  }
 }
 
 function backToLoginStep1(){
-  document.getElementById('loginStep1').style.display = 'block';
-  document.getElementById('loginStep2').style.display = 'none';
-}
-
-function autofillWaOtp(){
-  ['otp1','otp2','otp3','otp4'].forEach((id, idx)=>{
-    document.getElementById(id).value = generatedWaOtp[idx] || '';
-  });
-  verifyWaOtpCode();
-}
-
-function onOtpDigit(idx, el){
-  el.value = el.value.replace(/\D/g, '').slice(0, 1);
-  if(el.value && idx < 4){
-    document.getElementById('otp' + (idx + 1)).focus();
-  }
-}
-
-function verifyWaOtpCode(){
-  const code = ['otp1','otp2','otp3','otp4'].map(id => document.getElementById(id).value).join('');
-  if(code.length < 4){
-    autofillWaOtp();
-    return;
-  }
-  if(!pendingWaUser) return;
-  const isBrandNewNumber = !localStorage.getItem(cartKeyForPhone(pendingWaUser.phone));
-  saveWaSession(pendingWaUser, isBrandNewNumber);
-  closeLoginModal();
-  showCustomToast('✓ SESIÓN INICIADA CON WHATSAPP', `${pendingWaUser.name} · +51 ${formatPePhone(pendingWaUser.phone)}`);
+  showLoginStep('loginStep1');
 }
 
 function logoutWaSession(){
@@ -4006,6 +4460,9 @@ function logoutWaSession(){
   renderMyOrders();
   renderSessionOrderBanner();
   saveWaSession(null, true);
+  lookedUpCustomer = null;
+  pendingPinUser = null;
+  applyRecognizedCustomerToStep1(null);
   backToLoginStep1();
   document.getElementById('waLoginPhone').value = '';
   document.getElementById('waLoginName').value = '';
@@ -4023,7 +4480,7 @@ function checkHashTab(){
   if(h==='yape'){ switchTab('pedido'); openYapeModal(); }
   if(h==='tarjeta'){ switchTab('pedido'); setPayMethod('Tarjeta'); }
   if(h==='login'){ switchTab('inicio'); openLoginModal(); }
-  if(h==='otp'){ switchTab('inicio'); openLoginModal(); sendWaOtpCode(); }
+  if(h==='otp'){ switchTab('inicio'); openLoginModal(); }
 }
 checkHashTab();
 window.addEventListener('hashchange', checkHashTab);
