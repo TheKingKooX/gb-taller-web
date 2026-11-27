@@ -331,6 +331,33 @@ const GBCloud = {
     batch.delete(doc(db, "sales", id));
     batch.delete(doc(db, "order_status", id));
     await batch.commit();
+  },
+
+  async restoreSaleOrder(saleObj) {
+    if (!isAdminUser(currentAuthUser)) throw new Error("Admin auth required");
+    if (!saleObj) throw new Error("Missing sale to restore");
+    const clean = sanitizeSaleForCreate(saleObj);
+    const createdMs = toMillis(saleObj.createdAt) || Date.now();
+    clean.createdAt = createdMs;
+    clean.status = "Pendiente";
+    clean.stockDeducted = false;
+    const docId = (saleObj._docId && !String(saleObj._docId).startsWith("local_"))
+      ? String(saleObj._docId)
+      : makeSecureDocId();
+    const nowMs = Date.now();
+    const batch = writeBatch(db);
+    batch.set(doc(db, "sales", docId), clean);
+    batch.set(doc(db, "order_status", docId), {
+      orderId: clean.id,
+      status: "Pendiente",
+      total: clean.total,
+      payMethod: clean.payMethod,
+      verifiedAt: null,
+      receiptCode: "",
+      updatedAt: nowMs
+    });
+    await batch.commit();
+    return { ...clean, _docId: docId };
   }
 };
 
