@@ -320,9 +320,47 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .search input{flex:1;min-width:0;color:var(--texto);outline:none;font-size:13.5px}
 .search input::placeholder{color:var(--texto-3)}
 
-.cats{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
-.cats button{flex:none;height:31px;padding:0 11px;border-radius:999px;font-size:11.5px;font-weight:600;background:var(--pista);border:1px solid var(--linea);color:var(--texto-2);transition:all .15s}
-.cats button.on{background:var(--texto);color:var(--asfalto);border-color:var(--texto);font-weight:700}
+.cats-wrap{display:flex;align-items:center;gap:6px;margin:8px 0 12px}
+.cats-scroll{
+  flex:1;min-width:0;display:flex;flex-wrap:nowrap;gap:6px;
+  overflow-x:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.16) transparent;
+  padding-bottom:4px;-webkit-overflow-scrolling:touch;
+}
+.cats-scroll::-webkit-scrollbar{height:3px}
+.cats-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:3px}
+.cats-wrap button{
+  flex:none;height:32px;padding:0 12px;border-radius:999px;font-size:11.5px;font-weight:600;
+  background:var(--pista);border:1px solid var(--linea);color:var(--texto-2);
+  white-space:nowrap;transition:all .15s;
+}
+.cats-wrap button.on{background:var(--texto);color:var(--asfalto);border-color:var(--texto);font-weight:700}
+
+/* Buscador predictivo con sinónimos y tolerancia ortográfica */
+.search-wrap{position:relative}
+.search-suggest{
+  display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:45;
+  background:#161A22;border:1px solid rgba(255,255,255,.14);border-radius:14px;
+  box-shadow:0 18px 44px rgba(0,0,0,.78);overflow:hidden;max-height:290px;overflow-y:auto;
+}
+.search-suggest.open{display:block}
+.sug-item{
+  width:100%;display:flex;align-items:center;gap:10px;padding:9px 12px;text-align:left;
+  border-bottom:1px solid var(--linea);transition:background .12s;
+}
+.sug-item:last-child{border-bottom:0}
+.sug-item:hover{background:rgba(255,255,255,.06)}
+.sug-item img{width:38px;height:38px;border-radius:9px;object-fit:cover;background:#0d1016;flex:none}
+.sug-item div{flex:1;min-width:0}
+.sug-item b{display:block;font-size:12.5px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sug-item small{display:block;font-size:10.5px;color:var(--texto-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sug-item span{font-family:var(--display);font-size:16px;font-weight:800;color:var(--oro-claro);flex:none}
+.pay-login-gate{
+  margin-top:12px;padding:20px 16px;border-radius:16px;text-align:center;
+  background:linear-gradient(155deg,rgba(34,197,94,.08),var(--pista) 70%);
+  border:1px solid rgba(34,197,94,.32);
+}
+.pay-login-gate b{display:block;font-size:14.5px;color:#fff;margin-bottom:5px}
+.pay-login-gate p{font-size:12px;color:var(--texto-2);line-height:1.45;margin-bottom:14px}
 
 /* ==========================================================================
    PANTALLA 3: CHECKOUT + PASARELA DE PAGO YAPE QR DINÁMICO REAL ISO/IEC 18004
@@ -902,7 +940,6 @@ select.login-in{-webkit-appearance:none;appearance:none}
         <span class="p-chip" style="border-color:rgba(169,75,192,.45);color:#e4b5f2">Lemon Cash QR</span>
         <span class="p-chip" style="border-color:rgba(245,183,0,.35);color:var(--oro-claro)">Tarjeta Visa/MC</span>
         <span class="p-chip">Plin</span>
-        <span class="p-chip">Efectivo</span>
       </div>
     </div>
   </section>
@@ -916,10 +953,13 @@ select.login-in{-webkit-appearance:none;appearance:none}
       <button class="ib" onclick="switchTab('pedido')" aria-label="Carrito"><i data-i="cart"></i><b class="cnt cart-count">3</b></button>
     </header>
 
-    <label class="search">
-      <i data-i="search"></i>
-      <input id="qInput" type="text" placeholder="Buscar faja CVT, bujías, escape, llanta, SKU..." oninput="renderCatalog()">
-    </label>
+    <div class="search-wrap">
+      <label class="search">
+        <i data-i="search"></i>
+        <input id="qInput" type="text" autocomplete="off" placeholder="Buscar llanta, neumático, faja, bujías, escape..." oninput="onSearchInput()" onfocus="onSearchInput()">
+      </label>
+      <div class="search-suggest" id="searchSuggest" role="listbox" aria-label="Sugerencias de repuestos"></div>
+    </div>
 
     <!-- BARRA VISUAL DE SELECCIÓN DE MOTOCICLETA EN ESPECÍFICO -->
     <div class="moto-filter-strip" id="motoFilterStrip">
@@ -949,14 +989,16 @@ select.login-in{-webkit-appearance:none;appearance:none}
       </button>
     </div>
 
-    <div class="cats" id="catBar">
-      <button class="on" onclick="setCat('Todo',this)">Todo</button>
-      <button onclick="setCat('Transmisión',this)">Transmisión / CVT</button>
-      <button onclick="setCat('Motor',this)">Motor / Refrigeración</button>
-      <button onclick="setCat('Frenos',this)">Frenos</button>
-      <button onclick="setCat('Eléctrico',this)">Eléctrico / Luces</button>
-      <button onclick="setCat('Suspensión',this)">Suspensión y Llantas</button>
-      <button onclick="setCat('Accesorios',this)">Escapes y Accesorios</button>
+    <div class="cats-wrap" id="catBar">
+      <button class="on" id="catTodoBtn" onclick="setCat('Todo',this)">Todo</button>
+      <div class="cats-scroll" id="catBarScroll">
+        <button onclick="setCat('Transmisión',this)">Transmisión / CVT</button>
+        <button onclick="setCat('Motor',this)">Motor / Refrigeración</button>
+        <button onclick="setCat('Frenos',this)">Frenos</button>
+        <button onclick="setCat('Eléctrico',this)">Eléctrico / Luces</button>
+        <button onclick="setCat('Suspensión',this)">Suspensión y Llantas</button>
+        <button onclick="setCat('Accesorios',this)">Escapes y Accesorios</button>
+      </div>
     </div>
 
     <div class="grid-2" id="catalogGrid"></div>
@@ -1013,11 +1055,20 @@ select.login-in{-webkit-appearance:none;appearance:none}
         <span>Deseo <b>instalar estos repuestos</b> en el taller</span>
       </button>
 
-      <div class="pay-methods">
-        <button class="pay-m yape-m on" id="pmYape" onclick="setPayMethod('Yape QR')">● QR Dinámico Lemon Cash</button>
-        <button class="pay-m card-m" id="pmCard" onclick="setPayMethod('Tarjeta')">● Tarjeta Crédito / Débito</button>
+      <!-- BLOQUEO DE PAGO HASTA INICIAR SESIÓN CON WHATSAPP -->
+      <div class="pay-login-gate" id="payLoginGate" style="display:none">
+        <b>🔐 Inicia sesión con tu WhatsApp para pagar</b>
+        <p>Vincula tu número de WhatsApp (+51) para ver las opciones de pago (QR Lemon Cash, Tarjeta, Plin) y enviar tu pedido al taller.</p>
+        <button class="btn wa" style="width:100%" type="button" onclick="openLoginModal()">
+          <i data-i="wa"></i>Iniciar sesión con WhatsApp
+        </button>
+      </div>
+
+      <div id="paymentLockedSection">
+      <div class="pay-methods" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+        <button class="pay-m yape-m on" id="pmYape" onclick="setPayMethod('Yape QR')">● Lemon Cash QR</button>
+        <button class="pay-m card-m" id="pmCard" onclick="setPayMethod('Tarjeta')">● Tarjeta</button>
         <button class="pay-m plin-m" id="pmPlin" onclick="setPayMethod('Plin')">● Plin</button>
-        <button class="pay-m cash-m" id="pmCash" onclick="setPayMethod('Efectivo en taller')">Efectivo en taller</button>
       </div>
 
       <!-- PASARELA DE PAGO CON TARJETA DE CRÉDITO / DÉBITO -->
@@ -1139,6 +1190,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
           <i data-i="wa"></i><span id="waSendBtnTxt">Confirmar pago y enviar pedido por WhatsApp</span>
         </a>
       </div>
+      </div><!-- /#paymentLockedSection -->
       </div><!-- /#checkoutBody -->
     </section>
 
@@ -1877,7 +1929,14 @@ function changeMoto(val){
 function setCat(c, btn){
   currentCat = c;
   document.querySelectorAll('#catBar button').forEach(b=>b.classList.remove('on'));
-  if(btn) btn.classList.add('on');
+  if(btn){
+    btn.classList.add('on');
+    const scrollBox = document.getElementById('catBarScroll');
+    if(c !== 'Todo' && scrollBox && btn.parentElement === scrollBox){
+      scrollBox.prepend(btn);
+      scrollBox.scrollTo({ left: 0, behavior: 'smooth' });
+    }
+  }
   renderCatalog();
 }
 
@@ -1945,13 +2004,148 @@ function productCardHtml(p){
   `;
 }
 
+/* ==========================================================================
+   BUSCADOR PREDICTIVO CON SINÓNIMOS Y TOLERANCIA ORTOGRÁFICA (FUZZY)
+   ========================================================================== */
+const SEARCH_SYNONYMS = {
+  llanta: ['neumatico','caucho','rueda','goma','cubierta','cocada','pirelli','enduro','trocha','aro'],
+  disco: ['freno','rotor','wave','delantero','frenado'],
+  pastillas: ['balatas','zapatas','freno','frenos','brembo','ferodo','pastilla','pastiyas'],
+  kit: ['arrastre','cadena','catalina','pinon','corona','transmision','did','oro'],
+  faja: ['correa','banda','cvt','scooter','transmision','yamaha'],
+  rodillos: ['polines','variador','pesas','roller','cvt','rodillo','polin'],
+  aceite: ['lubricante','motul','sintetico','10w40','4t','motor','aceites'],
+  bujia: ['chispa','iridio','ngk','encendido','bujias','vujia'],
+  bujias3: ['chispa','iridio','triple','dtsi','encendido','bujia','bujias','pulsar'],
+  radiador: ['enfriador','ventilador','electroventilador','refrigeracion','agua','coolant'],
+  escape: ['tubo','silenciador','exosto','mofle','resonador','akrapovic','carbono','escapes'],
+  faro: ['luz','luces','foco','led','linterna','proyector','ojo','angel','farol'],
+  shock: ['amortiguador','monoshock','suspension','resorte','yss','amortiguadores'],
+  bateria: ['pila','acumulador','12v','agm','yuasa','arranque','baterias'],
+  casco: ['proteccion','cabeza','integral','visor','shaft','cascos'],
+  guantes: ['manoplas','nudillos','proteccion','manos','carbono','guante']
+};
+
+function normSearch(str){
+  return String(str || '')
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/h/g, '')
+    .replace(/qu/g, 'k').replace(/c(?=[eiy])/g, 's').replace(/c/g, 'k')
+    .replace(/z/g, 's').replace(/v/g, 'b').replace(/ll/g, 'y')
+    .replace(/g(?=[ei])/g, 'j')
+    .replace(/(.)\1+/g, '$1')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+}
+
+function editDist(a, b){
+  const m = a.length, n = b.length;
+  if(Math.abs(m - n) > 2) return 9;
+  const dp = Array.from({length: m + 1}, (_, i) => [i]);
+  for(let j = 1; j <= n; j++) dp[0][j] = j;
+  for(let i = 1; i <= m; i++){
+    for(let j = 1; j <= n; j++){
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
+    }
+  }
+  return dp[m][n];
+}
+
+function getProductSearchTokens(p){
+  const syns = (SEARCH_SYNONYMS[p.id] || []).join(' ');
+  const raw = `${p.name} ${p.brand} ${p.sku} ${p.cat} ${p.fitText || ''} ${p.spec || ''} ${syns}`;
+  return normSearch(raw).split(' ').filter(Boolean);
+}
+
+function matchProductSearch(p, rawQuery){
+  const qNorm = normSearch(rawQuery);
+  if(!qNorm) return { ok: true, score: 0 };
+  const qWords = qNorm.split(' ').filter(Boolean);
+  const pTokens = getProductSearchTokens(p);
+  const fullText = pTokens.join(' ');
+  let score = 0;
+
+  for(const qw of qWords){
+    if(fullText.includes(qw)){
+      score += 10;
+      continue;
+    }
+    let best = 9;
+    for(const pt of pTokens){
+      if(pt.startsWith(qw) || qw.startsWith(pt)){ best = 0; break; }
+      const d = editDist(qw, pt);
+      if(d < best) best = d;
+    }
+    const maxAllowed = qw.length >= 7 ? 2 : (qw.length >= 4 ? 1 : 0);
+    if(best <= maxAllowed){
+      score += (best === 0 ? 8 : (6 - best * 2));
+    } else {
+      return { ok: false, score: 0 };
+    }
+  }
+  return { ok: true, score };
+}
+
+function onSearchInput(){
+  renderCatalog();
+  const input = document.getElementById('qInput');
+  const box = document.getElementById('searchSuggest');
+  if(!input || !box) return;
+  const rawQ = input.value.trim();
+  if(rawQ.length < 2){
+    box.classList.remove('open');
+    box.innerHTML = '';
+    return;
+  }
+  const matches = INVENTORY
+    .map(p => ({ p, m: matchProductSearch(p, rawQ) }))
+    .filter(x => x.m.ok)
+    .sort((a, b) => b.m.score - a.m.score)
+    .slice(0, 5);
+
+  if(!matches.length){
+    box.classList.remove('open');
+    box.innerHTML = '';
+    return;
+  }
+  box.innerHTML = matches.map(({p}) => `
+    <button type="button" class="sug-item" onmousedown="pickSearchSuggestion('${p.id}')">
+      <img src="${p.img}" alt="${p.name}">
+      <div>
+        <b>${p.name}</b>
+        <small>${p.brand} · ${p.fitText || p.cat}</small>
+      </div>
+      <span>${fmt(p.price)}</span>
+    </button>
+  `).join('');
+  box.classList.add('open');
+}
+
+function pickSearchSuggestion(id){
+  const p = INVENTORY.find(x => x.id === id);
+  const box = document.getElementById('searchSuggest');
+  if(box) box.classList.remove('open');
+  if(p){
+    document.getElementById('qInput').value = p.name;
+    renderCatalog();
+    openSheet(p.id);
+  }
+}
+
+document.addEventListener('click', e => {
+  const sw = document.querySelector('.search-wrap');
+  const box = document.getElementById('searchSuggest');
+  if(box && sw && !sw.contains(e.target)) box.classList.remove('open');
+});
+
 function renderCatalog(){
   const rawQ = (document.getElementById('qInput').value || '').trim();
-  const q = rawQ.toLowerCase();
   const list = INVENTORY.filter(p=>{
     if(currentCat !== 'Todo' && !cMatches(p.cat, currentCat)) return false;
-    if(!isCompatible(p, currentMotoKey)) return false;
-    if(q && !(p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q) || p.fitText.toLowerCase().includes(q))) return false;
+    if(!rawQ && !isCompatible(p, currentMotoKey)) return false;
+    if(rawQ && !matchProductSearch(p, rawQ).ok) return false;
     return true;
   });
 
@@ -2126,10 +2320,9 @@ function setPayMethod(m){
   document.getElementById('pmYape').classList.toggle('on', m==='Yape QR');
   document.getElementById('pmCard').classList.toggle('on', m==='Tarjeta');
   document.getElementById('pmPlin').classList.toggle('on', m==='Plin');
-  document.getElementById('pmCash').classList.toggle('on', m.includes('Efectivo'));
   document.getElementById('yapeGatewayBox').style.display = (m==='Yape QR') ? 'block' : 'none';
   document.getElementById('cardGatewayBox').style.display = (m==='Tarjeta') ? 'block' : 'none';
-  document.getElementById('totPayLabel').textContent = `Total a pagar (${m})`;
+  document.getElementById('totPayLabel').textContent = `Total a pagar (${m === 'Yape QR' ? 'Lemon Cash QR' : m})`;
   if(m === 'Yape QR'){
     document.getElementById('waSendBtnTxt').textContent = 'Confirmar pago y enviar pedido por WhatsApp';
   } else if(m === 'Tarjeta'){
@@ -2166,9 +2359,16 @@ function renderCart(){
 
   const emptyBox = document.getElementById('cartEmptyBox');
   const checkoutBody = document.getElementById('checkoutBody');
+  const payGate = document.getElementById('payLoginGate');
+  const paySec = document.getElementById('paymentLockedSection');
   if(emptyBox && checkoutBody){
     emptyBox.style.display = entries.length === 0 ? 'block' : 'none';
     checkoutBody.style.display = entries.length === 0 ? 'none' : 'block';
+  }
+  if(payGate && paySec){
+    const logged = Boolean(currentUser && currentUser.phone);
+    payGate.style.display = logged ? 'none' : 'block';
+    paySec.style.display = logged ? 'block' : 'none';
   }
   if(entries.length === 0){
     const cl = document.getElementById('cartList');
@@ -2608,16 +2808,18 @@ function checkHashTab(){
 checkHashTab();
 window.addEventListener('hashchange', checkHashTab);
 
-// Permitir scroll horizontal con rueda del ratón en la barra de motos
-const motoStripEl = document.getElementById('motoFilterStrip');
-if(motoStripEl){
-  motoStripEl.addEventListener('wheel', e => {
-    if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){
-      e.preventDefault();
-      motoStripEl.scrollLeft += e.deltaY;
-    }
-  }, { passive: false });
-}
+// Permitir scroll horizontal con rueda del ratón en la barra de motos y categorías
+['motoFilterStrip', 'catBarScroll'].forEach(id => {
+  const el = document.getElementById(id);
+  if(el){
+    el.addEventListener('wheel', e => {
+      if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){
+        e.preventDefault();
+        el.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
+  }
+});
 
 // Al entrar por primera vez sin sesión de WhatsApp, pedir login con opción "Ojear catálogo"
 const initHash = (location.hash || '').replace('#','');
