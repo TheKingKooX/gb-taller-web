@@ -2126,16 +2126,80 @@ async function submitCitaOrder(ev, anchorEl){
 }
 
 const ADMIN_WA_PHONE = '924536653';
+const ADMIN_SESSION_KEY = 'gb_admin_session_v1';
+const ADMIN_PREVIEW_KEY = 'gb_store_admin_preview';
 let isFirebaseAdmin = false;
+let storeLoginDeferred = false;
+
+(function captureAdminPreviewParam(){
+  try{
+    const url = new URL(location.href);
+    if(url.searchParams.get('modo') === 'admin'){
+      sessionStorage.setItem(ADMIN_PREVIEW_KEY, '1');
+      url.searchParams.delete('modo');
+      history.replaceState(null, '', url.pathname + url.search + url.hash);
+    }
+  }catch(_){}
+})();
+
 function isAdminWaPhone(phone){
   return String(phone || '').replace(/\D/g, '').slice(-9) === ADMIN_WA_PHONE;
 }
+function hasAdminPhoneSession(){
+  try{
+    const s = JSON.parse(localStorage.getItem(ADMIN_SESSION_KEY) || 'null');
+    return Boolean(s && isAdminWaPhone(s.phone));
+  }catch(_){ return false; }
+}
+function hasAdminPreviewFlag(){
+  try{ return sessionStorage.getItem(ADMIN_PREVIEW_KEY) === '1'; }catch(_){ return false; }
+}
+function isAdminPreviewActive(){
+  return Boolean(!currentUser && isFirebaseAdmin && hasAdminPhoneSession() && hasAdminPreviewFlag());
+}
+
+function applyAdminPreviewUi(preview){
+  if(currentUser) return; // la sesión de cliente controla el encabezado
+  const hdrPill = document.getElementById('hdrUserPill');
+  const hdrTxt = document.getElementById('hdrUserTxt');
+  const deskPill = document.getElementById('deskUserPill');
+  const deskTxt = document.getElementById('deskUserTxt');
+  const statusBadge = document.getElementById('loginStatusBadge');
+  if(preview){
+    if(hdrTxt) hdrTxt.textContent = '👑 Admin · Vista tienda';
+    if(deskTxt) deskTxt.textContent = '👑 Administrador · Vista de tienda';
+    [hdrPill, deskPill].forEach(p => { if(p){ p.classList.remove('guest'); p.classList.add('admin'); } });
+    if(statusBadge){ statusBadge.textContent = 'Modo Administrador'; statusBadge.style.color = 'var(--oro-claro)'; }
+  } else {
+    if(hdrTxt) hdrTxt.textContent = 'Entrar con WhatsApp';
+    if(deskTxt) deskTxt.textContent = 'Iniciar sesión con WhatsApp';
+    [hdrPill, deskPill].forEach(p => { if(p){ p.classList.add('guest'); p.classList.remove('admin'); } });
+    if(statusBadge){ statusBadge.textContent = 'Invitado'; statusBadge.style.color = 'var(--oro-claro)'; }
+  }
+}
+
 function updateAdminSwitchVisibility(){
-  const show = Boolean(isFirebaseAdmin && currentUser && isAdminWaPhone(currentUser.phone));
+  const preview = isAdminPreviewActive();
+  const adminCustomer = Boolean(isFirebaseAdmin && currentUser && isAdminWaPhone(currentUser.phone));
+  const show = preview || adminCustomer;
   const deskBtn = document.getElementById('deskAdminSwitchBtn');
   const mobBtn = document.getElementById('mobAdminSwitchBtn');
   if(deskBtn) deskBtn.style.display = show ? 'inline-flex' : 'none';
   if(mobBtn) mobBtn.style.display = show ? 'grid' : 'none';
+  applyAdminPreviewUi(preview);
+}
+
+function resolveDeferredStoreLogin(){
+  if(!storeLoginDeferred) return;
+  storeLoginDeferred = false;
+  if(isAdminPreviewActive()){
+    closeLoginModal();
+    showCustomToast('👑 MODO ADMINISTRADOR', 'Viendo la tienda sin iniciar sesión de cliente');
+    return;
+  }
+  try{ sessionStorage.removeItem(ADMIN_PREVIEW_KEY); }catch(_){}
+  updateAdminSwitchVisibility();
+  if(!currentUser && !sessionStorage.getItem('gb_guest_browsing')) openLoginModal();
 }
 
 let storeCloudInitialized = false;
@@ -2156,6 +2220,7 @@ function initStoreCloudSync(){
     window.GBCloud.onAuthChange((user, isAdm)=>{
       isFirebaseAdmin = Boolean(isAdm);
       updateAdminSwitchVisibility();
+      resolveDeferredStoreLogin();
     });
   }
 }
@@ -4500,7 +4565,11 @@ window.addEventListener('hashchange', checkHashTab);
 
 // Al entrar por primera vez sin sesión de WhatsApp, pedir login con opción "Ojear catálogo"
 const initHash = (location.hash || '').replace('#','');
-if(!currentUser && !sessionStorage.getItem('gb_guest_browsing') && !['tienda','pedido','compras','taller','nmax','pulsar','yape','tarjeta'].includes(initHash)){
+if(!currentUser && hasAdminPreviewFlag() && hasAdminPhoneSession()){
+  // Viene del Panel Admin: esperar la verificación de Firebase antes de pedir login
+  storeLoginDeferred = true;
+  setTimeout(resolveDeferredStoreLogin, 6000);
+} else if(!currentUser && !sessionStorage.getItem('gb_guest_browsing') && !['tienda','pedido','compras','taller','nmax','pulsar','yape','tarjeta'].includes(initHash)){
   openLoginModal();
 }
 </script>
