@@ -519,7 +519,7 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
       </div>
     </div>
     <div class="top-acts">
-      <a class="btn ghost" href="index.html">← Ver Tienda</a>
+      <a class="btn ghost" id="topStoreLink" href="index.html" style="display:none">← Ver Tienda</a>
       <button class="btn gold" id="topPrimaryBtn" style="display:none" onclick="onTopPrimaryAction()">+ Nuevo Repuesto</button>
     </div>
   </div>
@@ -2259,6 +2259,7 @@ function initAdminCloudSync(){
     const gateLogout = document.getElementById('authGateLogoutBtn');
     const workspace = document.getElementById('adminWorkspace');
     const topBtn = document.getElementById('topPrimaryBtn');
+    const storeLink = document.getElementById('topStoreLink');
     const bar = document.getElementById('cloudBar');
     const title = document.getElementById('cloudBarTitle');
     const sub = document.getElementById('cloudBarSub');
@@ -2269,7 +2270,8 @@ function initAdminCloudSync(){
     if(isAdm){
       if(gate) gate.style.display = 'none';
       if(workspace) workspace.style.display = 'block';
-      if(topBtn) topBtn.style.display = 'inline-flex';
+      if(storeLink) storeLink.style.display = 'inline-flex';
+      if(topBtn) topBtn.style.display = (currentAdminTab === 'usuarios') ? 'none' : 'inline-flex';
       bar.classList.add('connected');
       title.textContent = `● Nube Firebase Conectada en Tiempo Real (${user.email})`;
       sub.textContent = 'Todos los pedidos desde cualquier celular y cambios de stock/precio se sincronizan al instante.';
@@ -2313,6 +2315,7 @@ function initAdminCloudSync(){
     } else {
       if(gate) gate.style.display = 'block';
       if(workspace) workspace.style.display = 'none';
+      if(storeLink) storeLink.style.display = 'none';
       if(topBtn) topBtn.style.display = 'none';
       bar.classList.remove('connected');
       if(unsubCloudSales){ unsubCloudSales(); unsubCloudSales = null; }

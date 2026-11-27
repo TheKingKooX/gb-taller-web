@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="assets/qrcode.min.js"></script>
 <script src="assets/jsQR.min.js"></script>
-<script type="module" src="assets/firebase-sync.js?v=14"></script>
+<script type="module" src="assets/firebase-sync.js?v=15"></script>
 <style>
 :root{
   --asfalto:#090A0D;
@@ -1107,6 +1107,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
       <button id="dnav-taller" type="button" onclick="switchTab('taller')">Agendar Cita</button>
     </nav>
     <div class="hdr-a">
+      <a class="btn ghost" id="deskAdminSwitchBtn" href="admin.html" style="display:none;height:38px;padding:0 12px;font-size:12px;border-color:rgba(245,183,0,.45);color:var(--oro-claro)" title="Ir al Panel Administrador">⚙ Panel Admin</a>
       <button class="wa-user-pill guest" id="deskUserPill" onclick="openLoginModal()" style="height:38px;padding:0 13px;font-size:12px;max-width:260px" title="Cambiar cuenta o iniciar sesión con WhatsApp">
         <i class="wa-dot"></i>
         <span id="deskUserTxt">Iniciar sesión con WhatsApp</span>
@@ -1137,6 +1138,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
         </div>
       </div>
       <div class="hdr-a">
+        <a class="ib" id="mobAdminSwitchBtn" href="admin.html" style="display:none;border-color:rgba(245,183,0,.45);color:var(--oro-claro)" aria-label="Panel Administrador" title="Ir al Panel Administrador"><i data-i="gear"></i></a>
         <button class="ib" onclick="switchTab('pedido')" aria-label="Carrito"><i data-i="cart"></i><b class="cnt cart-count" style="display:none">0</b></button>
       </div>
     </header>
@@ -2058,8 +2060,10 @@ async function submitCitaOrder(ev, anchorEl){
   return false;
 }
 
+let storeCloudInitialized = false;
 function initStoreCloudSync(){
-  if(!window.GBCloud) return;
+  if(!window.GBCloud || storeCloudInitialized) return;
+  storeCloudInitialized = true;
   window.GBCloud.subscribeInventory((cloudItems)=>{
     if(Array.isArray(cloudItems) && cloudItems.length > 0){
       INVENTORY = sortByDefaultOrder(cloudItems);
@@ -2070,6 +2074,14 @@ function initStoreCloudSync(){
   }, (err)=>{
     console.warn('Firestore inventory listener:', err?.message || err);
   });
+  if(typeof window.GBCloud.onAuthChange === 'function'){
+    window.GBCloud.onAuthChange((user, isAdm)=>{
+      const deskBtn = document.getElementById('deskAdminSwitchBtn');
+      const mobBtn = document.getElementById('mobAdminSwitchBtn');
+      if(deskBtn) deskBtn.style.display = isAdm ? 'inline-flex' : 'none';
+      if(mobBtn) mobBtn.style.display = isAdm ? 'grid' : 'none';
+    });
+  }
 }
 if(window.GBCloud) initStoreCloudSync();
 window.addEventListener('gb-cloud-ready', initStoreCloudSync);
