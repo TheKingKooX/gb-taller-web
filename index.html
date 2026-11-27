@@ -806,6 +806,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
 .app-screen.active{display:block;animation:fadeIn .2s ease}
 @keyframes fadeIn{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
 
+.home-hero-row{display:block}
 @media (min-width:961px){
   .app-tabbar{display:none}
   .app-hdr{display:none}
@@ -814,35 +815,75 @@ select.login-in{-webkit-appearance:none;appearance:none}
   .sheet{border-radius:24px;border:1px solid rgba(255,255,255,.12)}
   .desk-topbar{
     display:block;position:sticky;top:0;z-index:60;
-    background:rgba(9,10,13,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--linea);
+    background:rgba(9,10,13,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--linea);
   }
   .desk-topbar-in{
-    max-width:1440px;margin:0 auto;padding:14px 32px;
-    display:flex;align-items:center;justify-content:space-between;gap:20px;
+    max-width:1240px;margin:0 auto;padding:12px 28px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
   }
-  .desk-nav{display:flex;gap:6px;background:var(--pista);padding:4px;border-radius:12px;border:1px solid var(--linea)}
-  .desk-nav a{padding:8px 15px;border-radius:9px;font-size:13px;font-weight:600;color:var(--texto-2)}
-  .desk-nav a:hover,.desk-nav a.on{background:var(--pista-2);color:var(--texto)}
+  .desk-nav{
+    display:flex;align-items:center;gap:4px;
+    background:var(--pista);padding:4px;border-radius:13px;border:1px solid var(--linea);
+  }
+  .desk-nav button{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:8px 14px;border-radius:9px;font-size:13px;font-weight:600;
+    color:var(--texto-2);white-space:nowrap;transition:background .15s,color .15s;
+  }
+  .desk-nav button:hover,.desk-nav button.on{background:var(--pista-2);color:var(--texto)}
+  .desk-nav button.on{box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+  .desk-nav .d-badge{
+    min-width:18px;height:18px;padding:0 5px;border-radius:9px;
+    background:var(--rojo);color:#fff;font-size:10px;font-weight:800;place-items:center;
+  }
 
   .app-shell{
-    max-width:1440px;padding:28px 32px 64px;
-    display:grid;
-    grid-template-columns:355px minmax(0,1fr) 370px;
-    gap:22px;
-    align-items:start;
+    max-width:1200px;margin:0 auto;padding:28px 28px 64px;display:block;
   }
-  .app-screen{display:block !important;background:transparent}
-  #scr-inicio,#scr-tienda,#scr-pedido,#scr-taller{
-    background:var(--pista);border:1px solid var(--linea);
-    border-radius:24px;padding:20px;
+  .desk-right-col{display:contents}
+  .app-screen.active{display:block;background:transparent}
+
+  .home-hero-row{
+    display:grid;grid-template-columns:1.15fr 1fr;gap:16px;align-items:stretch;margin-bottom:8px;
   }
-  #scr-inicio .moto-bar,#scr-inicio .track,#scr-inicio .pc,#scr-inicio .trust-card{background:var(--asfalto)}
-  #scr-tienda .pc,#scr-tienda .search,#scr-tienda .mf-btn:not(.on),#scr-tienda .cats button:not(.on){background:var(--asfalto)}
-  #scr-tienda .grid-2{grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
-  #scr-tienda .pc .photo{height:136px}
+  .home-hero-row .book{margin-top:0;height:100%}
+  #scr-inicio .grid-2{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+  #scr-inicio .pc .photo{height:170px}
+  #scr-inicio .trust-card{
+    margin-top:24px;padding:18px 20px;
+    display:flex;align-items:center;justify-content:space-between;gap:20px;
+  }
+  #scr-inicio .trust-card .pay-badges{margin-top:0;padding-top:0;border-top:0}
+
+  #scr-tienda .hdr3{margin-bottom:14px}
+  #scr-tienda .hdr3 .ib{display:none}
+  #scr-tienda .hdr3 h3{font-size:22px}
+  #scr-tienda .grid-2{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  #scr-tienda .pc .photo{height:170px}
+  #scr-tienda .pc{padding:12px 12px 14px}
+  #scr-tienda .pc h4{font-size:13.5px}
+
+  #scr-pedido{
+    max-width:760px;margin:0 auto;background:var(--pista);
+    border:1px solid var(--linea);border-radius:24px;padding:26px 28px;
+  }
+  #scr-pedido .hdr3{justify-content:space-between}
+  #scr-pedido .hdr3 .ib{display:none}
+  #scr-pedido .hdr3 h3{font-size:22px}
+  #scr-pedido #cartEmptyBox{max-width:440px;margin:18px auto 8px;background:var(--asfalto)}
   #scr-pedido .c-item,#scr-pedido .deliv button:not(.on),#scr-pedido .install-chk,#scr-pedido .wa-details,#scr-pedido .cta-wa-box,#scr-pedido .cust-in,#scr-pedido .pay-m:not(.on){background:var(--asfalto)}
-  #scr-taller .sum,#scr-taller .quote,#scr-taller .svc-card:not(.on),#scr-taller .days button:not(.on),#scr-taller .slots button:not(.on){background:var(--asfalto)}
-  .desk-right-col{display:flex;flex-direction:column;gap:22px}
+
+  #scr-taller{
+    max-width:720px;margin:0 auto;background:var(--pista);
+    border:1px solid var(--linea);border-radius:24px;padding:26px 28px;
+  }
+  #scr-taller .hdr3{justify-content:space-between}
+  #scr-taller .hdr3 .ib{display:none}
+  #scr-taller .hdr3 h3{font-size:22px}
+  #scr-taller .sum,#scr-taller .quote,#scr-taller .svc-card:not(.on),#scr-taller .days button:not(.on),#scr-taller .slots button:not(.on),#scr-taller .cta-wa-box{background:var(--asfalto)}
+}
+@media (min-width:1140px){
+  #scr-tienda .grid-2{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 </style>
 </head>
@@ -851,17 +892,18 @@ select.login-in{-webkit-appearance:none;appearance:none}
 <!-- BARRA SUPERIOR SOLO PARA ESCRITORIO (>960px) -->
 <header class="desk-topbar">
   <div class="desk-topbar-in">
-    <div class="gb-wrap">
+    <div class="gb-wrap" onclick="switchTab('inicio')" style="cursor:pointer">
       <div class="gb" role="img" aria-label="Logo GB"></div>
       <div class="gb-txt">
-        <b style="font-size:22px">TALLER Y VENTA DE REPUESTOS</b>
-        <small>16 REPUESTOS POR MOTO · PASARELA QR LEMON CASH VERIFICADA</small>
+        <b style="font-size:20px">TALLER Y VENTA DE REPUESTOS</b>
+        <small>REPUESTOS POR MOTO · PAGO QR LEMON CASH</small>
       </div>
     </div>
-    <nav class="desk-nav">
-      <a class="on" href="#scr-tienda">Catálogo (16)</a>
-      <a href="#scr-pedido">Checkout QR Lemon Cash</a>
-      <a href="#scr-taller">Agendar Cita</a>
+    <nav class="desk-nav" aria-label="Navegación principal">
+      <button class="on" id="dnav-inicio" type="button" onclick="switchTab('inicio')">Inicio</button>
+      <button id="dnav-tienda" type="button" onclick="switchTab('tienda')">Catálogo</button>
+      <button id="dnav-pedido" type="button" onclick="switchTab('pedido')">Mi Pedido <b class="d-badge cart-count" style="display:none">0</b></button>
+      <button id="dnav-taller" type="button" onclick="switchTab('taller')">Agendar Cita</button>
     </nav>
     <div class="hdr-a">
       <button class="wa-user-pill guest" id="deskUserPill" onclick="openLoginModal()" style="height:38px;padding:0 13px;font-size:12px;max-width:260px" title="Cambiar cuenta o iniciar sesión con WhatsApp">
@@ -898,31 +940,33 @@ select.login-in{-webkit-appearance:none;appearance:none}
     </header>
 
     <!-- Selector de Moto con 5 Modelos Específicos + Todas -->
-    <div class="moto-bar">
-      <img class="moto-thumb" id="motoThumb" src="assets/motos/msx-125.jpg" alt="Mi Moto">
-      <div class="moto-bar-info">
-        <span class="moto-name" id="motoDisplayName">Honda MSX 125 (Grom)</span>
-        <div class="moto-meta">
-          <span class="plate-pe" id="motoPlate">ABC-123</span>
-          <span class="oil-tag" id="motoKm">18.400 km · 9 piezas compatibles</span>
+    <div class="home-hero-row">
+      <div class="moto-bar">
+        <img class="moto-thumb" id="motoThumb" src="assets/motos/msx-125.jpg" alt="Mi Moto">
+        <div class="moto-bar-info">
+          <span class="moto-name" id="motoDisplayName">Honda MSX 125 (Grom)</span>
+          <div class="moto-meta">
+            <span class="plate-pe" id="motoPlate">ABC-123</span>
+            <span class="oil-tag" id="motoKm">18.400 km · 9 piezas compatibles</span>
+          </div>
         </div>
+        <i data-i="down"></i>
+        <select id="motoSelect" aria-label="Seleccionar motocicleta" onchange="changeMoto(this.value)">
+          <option value="msx">Honda MSX 125 (Grom)</option>
+          <option value="nmax">Yamaha NMAX 155 (Scooter CVT)</option>
+          <option value="pulsar">Bajaj Pulsar NS 200 FI (DTS-i)</option>
+          <option value="xr">Honda XR 190L / Tornado (Enduro)</option>
+          <option value="duke">KTM Duke 200 / 250 NG</option>
+          <option value="all">Todas las motos (16 repuestos)</option>
+        </select>
       </div>
-      <i data-i="down"></i>
-      <select id="motoSelect" aria-label="Seleccionar motocicleta" onchange="changeMoto(this.value)">
-        <option value="msx">Honda MSX 125 (Grom)</option>
-        <option value="nmax">Yamaha NMAX 155 (Scooter CVT)</option>
-        <option value="pulsar">Bajaj Pulsar NS 200 FI (DTS-i)</option>
-        <option value="xr">Honda XR 190L / Tornado (Enduro)</option>
-        <option value="duke">KTM Duke 200 / 250 NG</option>
-        <option value="all">Todas las motos (16 repuestos)</option>
-      </select>
-    </div>
 
-    <button class="book" onclick="switchTab('taller')">
-      <span class="book-ic"><i data-i="cal"></i></span>
-      <div><b>Agendar servicio en taller</b><small>Mantenimiento, frenos o instalación · Mañana 9:00 am</small></div>
-      <i data-i="right"></i>
-    </button>
+      <button class="book" onclick="switchTab('taller')">
+        <span class="book-ic"><i data-i="cal"></i></span>
+        <div><b>Agendar servicio en taller</b><small>Mantenimiento, frenos o instalación · Mañana 9:00 am</small></div>
+        <i data-i="right"></i>
+      </button>
+    </div>
 
     <div class="sec"><h3 id="homeFeatTitle">Compatibles con tu MSX 125</h3><button onclick="switchTab('tienda')">Ver catálogo (16) →</button></div>
     <div class="grid-2" id="homeFeaturedGrid"></div>
@@ -1887,6 +1931,8 @@ function switchTab(tab){
     document.getElementById('scr-'+t).classList.toggle('active', t===tab);
     const btn = document.getElementById('nav-'+t);
     if(btn) btn.classList.toggle('on', t===tab);
+    const dbtn = document.getElementById('dnav-'+t);
+    if(dbtn) dbtn.classList.toggle('on', t===tab);
   });
   window.scrollTo({top:0, behavior:'smooth'});
 }
