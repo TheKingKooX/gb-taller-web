@@ -906,6 +906,54 @@ select.login-in{-webkit-appearance:none;appearance:none}
 .sh-nav-counter{font-size:11px;font-weight:700;color:var(--texto-2);letter-spacing:.2px;text-align:center}
 .sh-swipe-body{touch-action:pan-y;transition:transform .2s ease,opacity .2s ease;will-change:transform}
 
+.orders-badge{
+  background:var(--oro) !important;color:#111 !important;
+  box-shadow:0 0 10px rgba(245,183,0,.45);
+}
+.mc-section-lbl{
+  display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.6px;margin:0 0 10px;
+}
+.mc-section-lbl.pend{color:var(--oro-claro)}
+.mc-section-lbl.paid{color:#86EFAC}
+.mc-card{
+  background:var(--pista);border:1px solid var(--linea);border-radius:18px;
+  padding:14px 15px;margin-bottom:12px;border-left:3.5px solid var(--oro);
+}
+.mc-card.paid,.mc-card.deliv{border-left-color:var(--verde)}
+.mc-card.canc{border-left-color:var(--rojo)}
+.mc-card-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+.mc-id-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.mc-id-row b{font-family:var(--mono);font-size:14px;color:#fff}
+.mc-st-pill{
+  padding:3px 9px;border-radius:99px;font-size:10.5px;font-weight:800;
+  background:rgba(245,183,0,.14);border:1px solid rgba(245,183,0,.38);color:var(--oro-claro);
+}
+.mc-st-pill.paid,.mc-st-pill.deliv{
+  background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.4);color:#86EFAC;
+}
+.mc-st-pill.canc{
+  background:rgba(225,29,46,.14);border-color:rgba(225,29,46,.38);color:#FCA5A5;
+}
+.mc-code{
+  font-family:var(--mono);font-size:10.5px;font-weight:700;color:#A7F3D0;
+  background:rgba(34,197,94,.08);padding:2px 7px;border-radius:7px;
+  border:1px solid rgba(34,197,94,.24);
+}
+.mc-meta{font-size:11.5px;color:var(--texto-2);line-height:1.45;margin-bottom:9px}
+.mc-items{
+  border-top:1px dashed var(--linea);border-bottom:1px dashed var(--linea);
+  padding:8px 0;margin-bottom:10px;display:flex;flex-direction:column;gap:5px;
+}
+.mc-item-r{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--texto)}
+.mc-item-r span{min-width:0;flex:1}
+.mc-item-r b{font-family:var(--mono);white-space:nowrap}
+.mc-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.mc-tot small{display:block;font-size:10px;color:var(--texto-3);text-transform:uppercase;font-weight:700}
+.mc-tot b{font-size:16px;font-weight:900;color:var(--oro-claro);font-family:var(--mono)}
+.mc-acts{display:flex;gap:7px;flex-wrap:wrap}
+.mc-acts .btn,.mc-acts a{height:35px;padding:0 12px;font-size:11.5px;border-radius:10px}
+
 /* ==========================================================================
    NOTIFICACIÓN TOAST MINIMALISTA
    ========================================================================== */
@@ -1017,6 +1065,15 @@ select.login-in{-webkit-appearance:none;appearance:none}
   #scr-pedido #cartEmptyBox{max-width:440px;margin:18px auto 8px;background:var(--asfalto)}
   #scr-pedido .c-item,#scr-pedido .deliv button:not(.on),#scr-pedido .install-chk,#scr-pedido .wa-details,#scr-pedido .cta-wa-box,#scr-pedido .cust-in,#scr-pedido .pay-m:not(.on){background:var(--asfalto)}
 
+  #scr-compras{
+    max-width:820px;margin:0 auto;background:var(--pista);
+    border:1px solid var(--linea);border-radius:24px;padding:26px 28px;
+  }
+  #scr-compras .hdr3{justify-content:space-between}
+  #scr-compras .hdr3 .ib{display:none}
+  #scr-compras .hdr3 h3{font-size:22px}
+  #scr-compras .mc-card,#scr-compras #myOrdersEmptyBox{background:var(--asfalto)}
+
   #scr-taller{
     max-width:720px;margin:0 auto;background:var(--pista);
     border:1px solid var(--linea);border-radius:24px;padding:26px 28px;
@@ -1046,6 +1103,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
     <nav class="desk-nav" aria-label="Navegación principal">
       <button class="on" id="dnav-inicio" type="button" onclick="switchTab('inicio')">Tienda</button>
       <button id="dnav-pedido" type="button" onclick="switchTab('pedido')">Mi Pedido <b class="d-badge cart-count" style="display:none">0</b></button>
+      <button id="dnav-compras" type="button" onclick="switchTab('compras')">Mis Compras <b class="d-badge orders-badge" style="display:none">0</b></button>
       <button id="dnav-taller" type="button" onclick="switchTab('taller')">Agendar Cita</button>
     </nav>
     <div class="hdr-a">
@@ -1369,6 +1427,36 @@ select.login-in{-webkit-appearance:none;appearance:none}
     </section>
 
     <!-- ==================================================================
+         PANTALLA 3B · MIS COMPRAS Y REGISTRO DE VALIDACIÓN EN VIVO
+         ================================================================== -->
+    <section class="app-screen" id="scr-compras">
+      <header class="hdr3">
+        <button class="ib" onclick="switchTab('inicio')" aria-label="Volver"><i data-i="back"></i></button>
+        <h3>Mis Compras</h3>
+        <span class="pill" id="myOrdersCountPill">0 compras</span>
+      </header>
+
+      <div id="myOrdersEmptyBox" style="padding:28px 18px;border-radius:18px;background:var(--pista);border:1px solid var(--linea);text-align:center">
+        <div style="font-size:34px;margin-bottom:8px">🧾</div>
+        <b style="display:block;font-size:15px;color:#fff">Aún no tienes compras registradas</b>
+        <p style="font-size:12.5px;color:var(--texto-2);margin:6px auto 16px;max-width:300px;line-height:1.45">
+          Aquí verás las notificaciones de pago en espera de validación y el registro permanente de todas tus compras aprobadas con su comprobante.
+        </p>
+        <button class="btn primary" style="width:100%;max-width:260px" onclick="switchTab('inicio')">Explorar tienda</button>
+      </div>
+
+      <div id="myOrdersPendingSection" style="display:none;margin-bottom:18px">
+        <div class="mc-section-lbl pend">⏳ En espera de validación de pago</div>
+        <div id="myOrdersPendingList"></div>
+      </div>
+
+      <div id="myOrdersHistorySection" style="display:none">
+        <div class="mc-section-lbl paid">✓ Registro de compras</div>
+        <div id="myOrdersHistoryList"></div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
          PANTALLA 4 · AGENDAR CITA EN TALLER GB
          ================================================================== -->
     <section class="app-screen" id="scr-taller">
@@ -1677,7 +1765,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
   <button onclick="switchTab('pedido')">Ver QR / Pedido</button>
 </div>
 
-<!-- BARRA INFERIOR FIJA DE 3 PESTAÑAS -->
+<!-- BARRA INFERIOR FIJA DE 4 PESTAÑAS -->
 <nav class="app-tabbar" aria-label="Navegación principal">
   <button class="on" id="nav-inicio" onclick="switchTab('inicio')">
     <i data-i="store"></i><span>Tienda</span>
@@ -1685,6 +1773,10 @@ select.login-in{-webkit-appearance:none;appearance:none}
   <button id="nav-pedido" onclick="switchTab('pedido')">
     <i data-i="wa"></i><span>Pedido QR</span>
     <b class="t-badge cart-count" style="display:none">0</b>
+  </button>
+  <button id="nav-compras" onclick="switchTab('compras')">
+    <i data-i="receipt"></i><span>Compras</span>
+    <b class="t-badge orders-badge" style="display:none">0</b>
   </button>
   <button id="nav-taller" onclick="switchTab('taller')">
     <i data-i="cal"></i><span>Citas</span>
@@ -1711,6 +1803,7 @@ const P={
  plus:'<path d="M12 5v14M5 12h14"/>',
  wrench:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.1L3 17.7 6.3 21l6.3-6.3a4 4 0 0 0 5.1-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>',
  user:'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+ receipt:'<path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h4"/>',
  wa:'<path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/>'
 };
 
@@ -1795,11 +1888,15 @@ async function submitCheckoutOrder(ev, anchorEl){
     receiptCode: '',
     cartCleared: false
   };
-  saveActiveSessionOrder(orderSessionObj);
-  renderPaymentVerifyModal();
+  upsertSessionOrder(orderSessionObj);
+  activeSessionOrder = orderSessionObj;
+  bannerDismissedDocId = null;
+  renderMyOrders();
   renderSessionOrderBanner();
-  openPaymentVerifyModal();
-  startOrderVerificationWatch(orderSessionObj);
+  switchTab('compras');
+  renderPaymentVerifyModal();
+  openPaymentVerifyModal(orderSessionObj._docId);
+  syncAllOrderWatchers();
   return false;
 }
 
@@ -1988,7 +2085,7 @@ window.addEventListener('storage', e => {
 if(SYNC_CH){
   SYNC_CH.onmessage = e => {
     if(e.data?.type === 'inventory_updated') reloadInventoryFromStorage();
-    if(e.data?.type === 'order_verified' && activeSessionOrder && (e.data.docId === activeSessionOrder._docId || e.data.orderId === activeSessionOrder.id)){
+    if(e.data?.type === 'order_verified'){
       handleOrderStatusSnapshot(e.data);
     }
   };
@@ -1996,58 +2093,113 @@ if(SYNC_CH){
 window.addEventListener('focus', reloadInventoryFromStorage);
 
 /* ==========================================================================
-   MOTOR DE ESPERA EN TIEMPO REAL Y COMPROBANTE DESCARGABLE
+   REGISTRO PERSISTENTE "MIS COMPRAS", ESPERA EN VIVO Y COMPROBANTE
    ========================================================================== */
+let sessionOrders = [];
 let activeSessionOrder = null;
-let orderStatusUnsub = null;
+let bannerDismissedDocId = null;
+const orderStatusUnsubs = new Map();
 
-function activeOrderStorageKey(phone){
+function orderHistoryStorageKey(phone){
+  return phone ? ('gb_order_history_v1_' + String(phone).replace(/\D/g, '')) : 'gb_order_history_v1_guest';
+}
+
+function legacyActiveOrderKey(phone){
   return phone ? ('gb_active_order_v1_' + String(phone).replace(/\D/g, '')) : 'gb_active_order_v1_guest';
 }
 
-function loadActiveSessionOrder(){
+function loadSessionOrders(){
+  const phone = currentUser?.phone;
+  let list = [];
   try{
-    const raw = localStorage.getItem(activeOrderStorageKey(currentUser?.phone));
+    const raw = localStorage.getItem(orderHistoryStorageKey(phone));
     if(raw){
       const parsed = JSON.parse(raw);
-      if(parsed && parsed.id) return parsed;
+      if(Array.isArray(parsed)) list = parsed.filter(o => o && o.id);
     }
   }catch(_){}
-  return null;
+  // Migrar orden única previa si existía
+  try{
+    const legRaw = localStorage.getItem(legacyActiveOrderKey(phone));
+    if(legRaw){
+      const leg = JSON.parse(legRaw);
+      if(leg && leg.id){
+        const exists = list.some(x => (leg._docId && x._docId === leg._docId) || x.id === leg.id);
+        if(!exists){
+          list.unshift(leg);
+          localStorage.setItem(orderHistoryStorageKey(phone), JSON.stringify(list));
+        }
+      }
+      localStorage.removeItem(legacyActiveOrderKey(phone));
+    }
+  }catch(_){}
+  return list;
 }
 
-function saveActiveSessionOrder(orderObj){
-  activeSessionOrder = orderObj;
+function persistSessionOrders(){
   try{
-    const key = activeOrderStorageKey(currentUser?.phone);
-    if(orderObj) localStorage.setItem(key, JSON.stringify(orderObj));
-    else localStorage.removeItem(key);
+    localStorage.setItem(orderHistoryStorageKey(currentUser?.phone), JSON.stringify(sessionOrders));
   }catch(_){}
 }
 
-function stopOrderVerificationWatch(){
-  if(typeof orderStatusUnsub === 'function'){
-    try{ orderStatusUnsub(); }catch(_){}
+function upsertSessionOrder(orderObj){
+  if(!orderObj || !orderObj.id) return;
+  const idx = sessionOrders.findIndex(x =>
+    (orderObj._docId && x._docId === orderObj._docId) || x.id === orderObj.id
+  );
+  if(idx >= 0){
+    sessionOrders[idx] = { ...sessionOrders[idx], ...orderObj };
+  } else {
+    sessionOrders.unshift(orderObj);
   }
-  orderStatusUnsub = null;
+  persistSessionOrders();
 }
 
-function startOrderVerificationWatch(orderObj){
-  stopOrderVerificationWatch();
-  if(!orderObj || !orderObj._docId || String(orderObj._docId).startsWith('local_')) return;
-  const attach = (cloud) => {
+function findSessionOrder(docOrId){
+  if(!docOrId) return activeSessionOrder || sessionOrders[0] || null;
+  return sessionOrders.find(x => x._docId === docOrId || x.id === docOrId) || activeSessionOrder || null;
+}
+
+function stopAllOrderWatchers(){
+  orderStatusUnsubs.forEach(unsub => {
+    try{ if(typeof unsub === 'function') unsub(); }catch(_){}
+  });
+  orderStatusUnsubs.clear();
+}
+
+function syncAllOrderWatchers(){
+  const pendingDocs = sessionOrders.filter(o =>
+    o && o.status === 'Pendiente' && o._docId && !String(o._docId).startsWith('local_')
+  );
+  const keepIds = new Set(pendingDocs.map(o => o._docId));
+
+  // Cancelar listeners que ya no están pendientes
+  for(const [docId, unsub] of orderStatusUnsubs.entries()){
+    if(!keepIds.has(docId)){
+      try{ if(typeof unsub === 'function') unsub(); }catch(_){}
+      orderStatusUnsubs.delete(docId);
+    }
+  }
+
+  if(!pendingDocs.length) return;
+
+  const attachAll = (cloud) => {
     if(!cloud || typeof cloud.subscribeOrderStatus !== 'function') return;
-    stopOrderVerificationWatch();
-    orderStatusUnsub = cloud.subscribeOrderStatus(orderObj._docId, (snapData) => {
-      handleOrderStatusSnapshot(snapData);
-    }, (err) => {
-      console.warn('Order status listener:', err?.message || err);
-    });
+    for(const o of pendingDocs){
+      if(orderStatusUnsubs.has(o._docId)) continue;
+      const unsub = cloud.subscribeOrderStatus(o._docId, (snapData) => {
+        handleOrderStatusSnapshot(snapData);
+      }, (err) => {
+        console.warn('Order status listener:', err?.message || err);
+      });
+      orderStatusUnsubs.set(o._docId, unsub);
+    }
   };
+
   if(window.GBCloud){
-    attach(window.GBCloud);
+    attachAll(window.GBCloud);
   } else {
-    waitForCloudReady(4000).then(attach);
+    waitForCloudReady(4000).then(attachAll);
   }
 }
 
@@ -2060,54 +2212,91 @@ function toMsSafe(v){
 }
 
 function handleOrderStatusSnapshot(data){
-  if(!activeSessionOrder || !data) return;
-  const nextStatus = data.status || activeSessionOrder.status;
-  const nextCode = data.receiptCode || activeSessionOrder.receiptCode || '';
-  const nextVerifiedAt = toMsSafe(data.verifiedAt) || activeSessionOrder.verifiedAt || null;
-  const prevStatus = activeSessionOrder.status;
+  if(!data) return;
+  const target = sessionOrders.find(o =>
+    (data._docId && o._docId === data._docId) ||
+    (data.docId && o._docId === data.docId) ||
+    (data.orderId && o.id === data.orderId)
+  );
+  if(!target) return;
 
-  activeSessionOrder.status = nextStatus;
-  if(nextCode) activeSessionOrder.receiptCode = nextCode;
-  if(nextVerifiedAt) activeSessionOrder.verifiedAt = nextVerifiedAt;
+  const prevStatus = target.status;
+  const nextStatus = data.status || target.status;
+  const nextCode = data.receiptCode || target.receiptCode || '';
+  const nextVerifiedAt = toMsSafe(data.verifiedAt) || target.verifiedAt || null;
+
+  target.status = nextStatus;
+  if(nextCode) target.receiptCode = nextCode;
+  if(nextVerifiedAt) target.verifiedAt = nextVerifiedAt;
 
   const isNowVerified = (nextStatus === 'Pagado' || nextStatus === 'Entregado');
-  if(isNowVerified && !activeSessionOrder.cartCleared){
+  if(isNowVerified && !target.cartCleared){
     cart = {};
     persistCurrentCart();
     renderCart();
-    activeSessionOrder.cartCleared = true;
+    target.cartCleared = true;
   }
-  saveActiveSessionOrder(activeSessionOrder);
-  renderSessionOrderBanner();
-  renderPaymentVerifyModal();
+
+  persistSessionOrders();
+
+  if(isNowVerified || nextStatus === 'Cancelado'){
+    const unsub = orderStatusUnsubs.get(target._docId);
+    if(typeof unsub === 'function'){
+      try{ unsub(); }catch(_){}
+    }
+    orderStatusUnsubs.delete(target._docId);
+  }
 
   if(isNowVerified && prevStatus !== 'Pagado' && prevStatus !== 'Entregado'){
-    openPaymentVerifyModal();
-    showCustomToast('✓ ¡PAGO VERIFICADO!', 'Tu comprobante ya está disponible para descargar');
+    activeSessionOrder = target;
+    bannerDismissedDocId = null;
+    renderMyOrders();
+    renderSessionOrderBanner();
+    renderPaymentVerifyModal();
+    openPaymentVerifyModal(target._docId);
+    showCustomToast('✓ ¡PAGO VERIFICADO!', 'Guardado en Mis Compras con tu comprobante listo');
   } else if(nextStatus === 'Cancelado' && prevStatus !== 'Cancelado'){
-    openPaymentVerifyModal();
+    activeSessionOrder = target;
+    bannerDismissedDocId = null;
+    renderMyOrders();
+    renderSessionOrderBanner();
+    renderPaymentVerifyModal();
+    openPaymentVerifyModal(target._docId);
+  } else {
+    if(activeSessionOrder && activeSessionOrder._docId === target._docId){
+      activeSessionOrder = target;
+      renderPaymentVerifyModal();
+    }
+    renderMyOrders();
+    renderSessionOrderBanner();
   }
 }
 
 function restoreActiveSessionOrder(){
-  activeSessionOrder = loadActiveSessionOrder();
+  stopAllOrderWatchers();
+  bannerDismissedDocId = null;
+  sessionOrders = loadSessionOrders();
+  activeSessionOrder = sessionOrders.find(o => o.status === 'Pendiente') || sessionOrders[0] || null;
+  renderMyOrders();
   renderSessionOrderBanner();
   if(activeSessionOrder){
     renderPaymentVerifyModal();
-    startOrderVerificationWatch(activeSessionOrder);
-  } else {
-    stopOrderVerificationWatch();
   }
+  syncAllOrderWatchers();
 }
 
-function dismissActiveSessionOrder(){
-  stopOrderVerificationWatch();
-  saveActiveSessionOrder(null);
-  closePaymentVerifyModal();
+function dismissOrderBanner(){
+  const topOrder = sessionOrders.find(o => o.status === 'Pendiente') || sessionOrders[0];
+  bannerDismissedDocId = topOrder ? (topOrder._docId || topOrder.id) : '__none__';
   renderSessionOrderBanner();
 }
 
-function openPaymentVerifyModal(){
+function openPaymentVerifyModal(docId){
+  if(docId){
+    const found = findSessionOrder(docId);
+    if(found) activeSessionOrder = found;
+  }
+  if(!activeSessionOrder) activeSessionOrder = sessionOrders[0] || null;
   if(!activeSessionOrder) return;
   renderPaymentVerifyModal();
   document.getElementById('paymentVerifyModal')?.classList.add('open');
@@ -2117,30 +2306,125 @@ function closePaymentVerifyModal(){
   document.getElementById('paymentVerifyModal')?.classList.remove('open');
 }
 
+function renderMyOrders(){
+  const emptyBox = document.getElementById('myOrdersEmptyBox');
+  const pendSec = document.getElementById('myOrdersPendingSection');
+  const pendList = document.getElementById('myOrdersPendingList');
+  const histSec = document.getElementById('myOrdersHistorySection');
+  const histList = document.getElementById('myOrdersHistoryList');
+  const countPill = document.getElementById('myOrdersCountPill');
+
+  const pending = sessionOrders.filter(o => o.status === 'Pendiente');
+  const history = sessionOrders.filter(o => o.status !== 'Pendiente');
+
+  document.querySelectorAll('.orders-badge').forEach(el => {
+    el.textContent = pending.length;
+    el.style.display = pending.length > 0 ? 'grid' : 'none';
+  });
+
+  if(countPill){
+    countPill.textContent = `${sessionOrders.length} compra${sessionOrders.length === 1 ? '' : 's'}`;
+  }
+  if(!emptyBox || !pendSec || !pendList || !histSec || !histList) return;
+
+  if(sessionOrders.length === 0){
+    emptyBox.style.display = 'block';
+    pendSec.style.display = 'none';
+    histSec.style.display = 'none';
+    pendList.innerHTML = '';
+    histList.innerHTML = '';
+    return;
+  }
+  emptyBox.style.display = 'none';
+
+  const cardHtml = (o) => {
+    const st = o.status || 'Pendiente';
+    const isVer = (st === 'Pagado' || st === 'Entregado');
+    const isCanc = (st === 'Cancelado');
+    const stCls = isVer ? (st === 'Entregado' ? 'deliv' : 'paid') : (isCanc ? 'canc' : '');
+    const stLabel = st === 'Entregado' ? '📦 Entregado' : (st === 'Pagado' ? '✓ Pago Verificado' : (isCanc ? '✕ Cancelado' : '⏳ Esperando validación'));
+    const safeKey = String(o._docId || o.id).replace(/'/g, '');
+    const dateTxt = isVer ? formatReceiptDate(o.verifiedAt || o.createdAt) : (o.date || formatReceiptDate(o.createdAt));
+    const itemsHtml = (o.items || []).map(it => `
+      <div class="mc-item-r">
+        <span><b>${it.qty}x</b> ${it.name} <small style="color:var(--texto-3)">[${it.sku}]</small></span>
+        <b>${fmtDec(Number(it.qty) * Number(it.price))}</b>
+      </div>
+    `).join('');
+
+    const actionsHtml = isVer
+      ? `<button class="btn ghost" type="button" onclick="openPaymentVerifyModal('${safeKey}')">Ver comprobante</button>
+         <button class="btn primary" type="button" onclick="downloadVerifiedReceiptPng('${safeKey}')">⬇ Descargar PNG</button>`
+      : (isCanc
+          ? `<a class="btn wa" href="https://wa.me/${WHATSAPP_NUMBER}" target="_blank" rel="noopener">Consultar WA</a>`
+          : `<button class="btn ghost" type="button" onclick="openPaymentVerifyModal('${safeKey}')">Ver espera</button>
+             <a class="btn wa" href="${o.waHref || `https://wa.me/${WHATSAPP_NUMBER}`}" target="_blank" rel="noopener">Enviar constancia</a>`);
+
+    return `
+      <article class="mc-card ${stCls}">
+        <div class="mc-card-h">
+          <div class="mc-id-row">
+            <b>${o.id}</b>
+            <span class="mc-st-pill ${stCls}">${stLabel}</span>
+            ${o.receiptCode ? `<span class="mc-code">${o.receiptCode}</span>` : ''}
+          </div>
+          <small style="font-size:11px;color:var(--texto-3);white-space:nowrap">${dateTxt}</small>
+        </div>
+        <div class="mc-meta">
+          <b>${o.moto || 'Motocicleta'}</b> · ${o.payMethod || 'Lemon Cash QR'} · ${o.delivery || 'Taller GB'}${o.install ? ' · Con instalación' : ''}
+        </div>
+        <div class="mc-items">${itemsHtml}</div>
+        <div class="mc-foot">
+          <div class="mc-tot">
+            <small>${isVer ? 'Total pagado' : 'Total del pedido'}</small>
+            <b>${fmtDec(o.total)}</b>
+          </div>
+          <div class="mc-acts">${actionsHtml}</div>
+        </div>
+      </article>
+    `;
+  };
+
+  pendSec.style.display = pending.length > 0 ? 'block' : 'none';
+  pendList.innerHTML = pending.map(cardHtml).join('');
+
+  histSec.style.display = history.length > 0 ? 'block' : 'none';
+  histList.innerHTML = history.map(cardHtml).join('');
+}
+
 function renderSessionOrderBanner(){
   const bar = document.getElementById('sessionOrderBanner');
   if(!bar) return;
-  if(!activeSessionOrder){
+  const topOrder = sessionOrders.find(o => o.status === 'Pendiente') || sessionOrders[0] || null;
+  if(!topOrder){
     bar.style.display = 'none';
     bar.innerHTML = '';
     return;
   }
-  const st = activeSessionOrder.status || 'Pendiente';
+  const topKey = topOrder._docId || topOrder.id;
+  if(bannerDismissedDocId && bannerDismissedDocId === topKey && topOrder.status !== 'Pendiente'){
+    bar.style.display = 'none';
+    bar.innerHTML = '';
+    return;
+  }
+  const st = topOrder.status || 'Pendiente';
   const isVer = (st === 'Pagado' || st === 'Entregado');
   const isCanc = (st === 'Cancelado');
+  const pendCount = sessionOrders.filter(o => o.status === 'Pendiente').length;
   bar.className = 'session-order-banner' + (isVer ? ' verified' : (isCanc ? ' cancelled' : ''));
   bar.style.display = 'flex';
 
+  const safeKey = String(topKey).replace(/'/g, '');
   const title = isVer
-    ? `Pago verificado · ${activeSessionOrder.id} (${activeSessionOrder.receiptCode || 'Comprobante listo'})`
+    ? `Compra verificada · ${topOrder.id} (${topOrder.receiptCode || 'Comprobante listo'})`
     : (isCanc
-        ? `Pedido cancelado · ${activeSessionOrder.id}`
-        : `Verificando depósito · ${activeSessionOrder.id} (${fmtDec(activeSessionOrder.total)})`);
+        ? `Pedido cancelado · ${topOrder.id}`
+        : `Pago en espera de validación · ${topOrder.id} (${fmtDec(topOrder.total)})`);
   const sub = isVer
-    ? 'Validado en Taller GB · Tu comprobante electrónico está listo para descargar'
+    ? 'Guardada en tu registro de Mis Compras · Comprobante listo para descargar'
     : (isCanc
-        ? 'Contáctanos por WhatsApp si necesitas asistencia'
-        : 'Esperando validación del administrador en tiempo real');
+        ? 'Revisa los detalles en Mis Compras o contáctanos por WhatsApp'
+        : `${pendCount > 1 ? pendCount + ' compras esperando validación · ' : ''}Puedes seguir en Mis Compras mientras el taller verifica`);
 
   bar.innerHTML = `
     <div class="sob-left">
@@ -2151,8 +2435,9 @@ function renderSessionOrderBanner(){
       </div>
     </div>
     <div class="sob-acts">
-      <button class="sob-btn" type="button" onclick="openPaymentVerifyModal()">${isVer ? '⬇ Comprobante' : 'Ver espera'}</button>
-      ${(isVer || isCanc) ? `<button class="sob-close" type="button" onclick="dismissActiveSessionOrder()" title="Ocultar aviso">✕</button>` : ''}
+      <button class="sob-btn" type="button" onclick="openPaymentVerifyModal('${safeKey}')">${isVer ? '⬇ Comprobante' : 'Ver espera'}</button>
+      <button class="sob-btn" type="button" style="background:rgba(255,255,255,.1);color:#fff" onclick="switchTab('compras')">Mis Compras</button>
+      ${(isVer || isCanc) ? `<button class="sob-close" type="button" onclick="dismissOrderBanner()" title="Ocultar aviso">✕</button>` : ''}
     </div>
   `;
 }
@@ -2199,7 +2484,7 @@ function renderPaymentVerifyModal(){
     const code = o.receiptCode || ('COMP-' + String(o.id).replace(/[^A-Z0-9-]/gi, '') + '-OK');
     const verTimeTxt = formatReceiptDate(o.verifiedAt || o.createdAt);
     const vSub = document.getElementById('pvVerifiedSub');
-    if(vSub) vSub.textContent = `Código ${code} · Validado el ${verTimeTxt}`;
+    if(vSub) vSub.textContent = `Código ${code} · Guardado en Mis Compras (${verTimeTxt})`;
 
     const card = document.getElementById('receiptPreviewCard');
     if(card){
@@ -2270,9 +2555,9 @@ function wrapCanvasText(ctx, text, maxWidth){
   return lines.slice(0, 2);
 }
 
-async function downloadVerifiedReceiptPng(){
-  if(!activeSessionOrder) return;
-  const o = activeSessionOrder;
+async function downloadVerifiedReceiptPng(docId){
+  const o = docId ? findSessionOrder(docId) : activeSessionOrder;
+  if(!o) return;
   const code = o.receiptCode || ('COMP-' + String(o.id).replace(/[^A-Z0-9-]/gi, '') + '-OK');
   const verDate = formatReceiptDate(o.verifiedAt || o.createdAt);
   const items = Array.isArray(o.items) ? o.items : [];
@@ -2620,7 +2905,7 @@ function copyAndOpenYape(){
 
 function switchTab(tab){
   const target = (tab === 'tienda') ? 'inicio' : tab;
-  ['inicio','pedido','taller'].forEach(t=>{
+  ['inicio','pedido','compras','taller'].forEach(t=>{
     const scr = document.getElementById('scr-'+t);
     if(scr) scr.classList.toggle('active', t===target);
     const btn = document.getElementById('nav-'+t);
@@ -3689,7 +3974,13 @@ function verifyWaOtpCode(){
 }
 
 function logoutWaSession(){
-  dismissActiveSessionOrder();
+  stopAllOrderWatchers();
+  sessionOrders = [];
+  activeSessionOrder = null;
+  bannerDismissedDocId = null;
+  closePaymentVerifyModal();
+  renderMyOrders();
+  renderSessionOrderBanner();
   saveWaSession(null, true);
   backToLoginStep1();
   document.getElementById('waLoginPhone').value = '';
@@ -3702,7 +3993,7 @@ hydrateIcons();
 applyUserSessionToUi();
 function checkHashTab(){
   const h = (location.hash || '').replace('#','');
-  if(['inicio','tienda','pedido','taller'].includes(h)) switchTab(h);
+  if(['inicio','tienda','pedido','compras','taller'].includes(h)) switchTab(h);
   if(h==='nmax'){ switchTab('tienda'); changeMoto('nmax'); }
   if(h==='pulsar'){ switchTab('tienda'); changeMoto('pulsar'); }
   if(h==='yape'){ switchTab('pedido'); openYapeModal(); }
@@ -3728,7 +4019,7 @@ window.addEventListener('hashchange', checkHashTab);
 
 // Al entrar por primera vez sin sesión de WhatsApp, pedir login con opción "Ojear catálogo"
 const initHash = (location.hash || '').replace('#','');
-if(!currentUser && !sessionStorage.getItem('gb_guest_browsing') && !['tienda','pedido','taller','nmax','pulsar','yape','tarjeta'].includes(initHash)){
+if(!currentUser && !sessionStorage.getItem('gb_guest_browsing') && !['tienda','pedido','compras','taller','nmax','pulsar','yape','tarjeta'].includes(initHash)){
   openLoginModal();
 }
 </script>
