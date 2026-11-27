@@ -54,6 +54,24 @@ rules_version = '2';
 //   - items: list<map> (required, immutable, 1..30 items; validated {id, sku, name, qty, price})
 //   - updatedAt: number | timestamp (optional, Admin update only)
 //
+// Collection: order_status
+// Document ID: {saleId} (matches /sales/{saleId}; unguessable random ID)
+// Access: Public single-doc get (zero-PII live order tracking via onSnapshot);
+//         NEVER public list (blocks collection enumeration);
+//         Admin-only list, update, and delete;
+//         Public create (status == 'Pendiente', verifiedAt == null, receiptCode == '')
+//         or Admin create (supports merge-set on legacy sales without order_status doc).
+// Fields:
+//   - orderId: string (required, immutable, 3..24 chars, e.g., '#GB-1043')
+//   - status: string (required, enum: 'Pendiente' | 'Pagado' | 'Entregado' | 'Cancelado';
+//                     MUST be 'Pendiente' on non-admin create)
+//   - total: number (required, immutable, > 0 && <= 50000)
+//   - payMethod: string (required, immutable, 1..80 chars)
+//   - verifiedAt: null | number | timestamp (required; MUST be null on non-admin create;
+//                 if number, 0..9999999999999)
+//   - receiptCode: string (required, 0..40 chars; MUST be '' on non-admin create)
+//   - updatedAt: number | timestamp (optional, non-negative number or timestamp)
+//
 // ===============================================================
 
 service cloud.firestore {
@@ -232,6 +250,43 @@ service cloud.firestore {
     }
 
     // ===============================================================
+    // Domain Validators — Order Status (Zero-PII Public Tracker)
+    // ===============================================================
+
+    // Validate verifiedAt as null, timestamp, or non-negative epoch millis
+    function isValidVerifiedAt(val) {
+      return val == null ||
+             val is timestamp ||
+             (val is number && val >= 0 && val <= 9999999999999);
+    }
+
+    // Full order_status document validator (enforced on both create and update)
+    function isValidOrderStatusDoc(data) {
+      return data.keys().hasOnly([
+               'orderId', 'status', 'total', 'payMethod',
+               'verifiedAt', 'receiptCode', 'updatedAt'
+             ]) &&
+             data.keys().hasAll([
+               'orderId', 'status', 'total', 'payMethod',
+               'verifiedAt', 'receiptCode'
+             ]) &&
+             validStr(data.orderId, 3, 24) &&
+             data.status in ['Pendiente', 'Pagado', 'Entregado', 'Cancelado'] &&
+             data.total is number && data.total > 0 && data.total <= 50000 &&
+             validStr(data.payMethod, 1, 80) &&
+             isValidVerifiedAt(data.verifiedAt) &&
+             data.receiptCode is string && data.receiptCode.size() <= 40 &&
+             optTimeOrNum(data, 'updatedAt');
+    }
+
+    // Enforce immutable order metadata on Admin updates
+    function isOrderStatusImmutableUnchanged(prev, next) {
+      return next.orderId == prev.orderId &&
+             next.total == prev.total &&
+             next.payMethod == prev.payMethod;
+    }
+
+    // ===============================================================
     // Collection Rules
     // ===============================================================
 
@@ -265,6 +320,27 @@ service cloud.firestore {
                        );
       allow update: if isAdmin() &&
                        isValidSaleStatusUpdate(resource.data, request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    // Zero-PII public order status tracker (matched by unguessable saleId).
+    // Public single-document get allows live onSnapshot tracking without exposing PII
+    // or allowing collection enumeration. Public create is locked to initial 'Pendiente' state.
+    match /order_status/{saleId} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create: if isValidOrderStatusDoc(request.resource.data) &&
+                       (
+                         (
+                           request.resource.data.status == 'Pendiente' &&
+                           request.resource.data.verifiedAt == null &&
+                           request.resource.data.receiptCode == ''
+                         ) ||
+                         isAdmin()
+                       );
+      allow update: if isAdmin() &&
+                       isValidOrderStatusDoc(request.resource.data) &&
+                       isOrderStatusImmutableUnchanged(resource.data, request.resource.data);
       allow delete: if isAdmin();
     }
 

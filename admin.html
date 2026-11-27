@@ -1228,7 +1228,12 @@ function confirmSaleAndDeductStock(saleId){
   const sale = SALES.find(s=>s.id===saleId);
   if(!sale || !sale._docId) return;
   window.GBCloud.confirmSaleAndDeductStock(sale, INVENTORY)
-    .then(()=>showAdmToast(`✓ ${sale.id} confirmado en la nube y stock descontado`))
+    .then(res=>{
+      if(res?.receiptCode) sale.receiptCode = res.receiptCode;
+      if(res?.verifiedAt) sale.verifiedAt = res.verifiedAt;
+      if(SYNC_CH) SYNC_CH.postMessage({ type:'order_verified', docId:sale._docId, orderId:sale.id, status:'Pagado', verifiedAt:res?.verifiedAt || Date.now(), receiptCode:res?.receiptCode || '' });
+      showAdmToast(`✓ ${sale.id} validado · Comprobante emitido al cliente y stock descontado`);
+    })
     .catch(err=>showAdmToast('⚠ Error al confirmar en nube: ' + (err?.message || err)));
 }
 
@@ -1237,14 +1242,21 @@ function setSaleStatus(saleId, newStatus){
   const sale = SALES.find(s=>s.id===saleId);
   if(!sale || !sale._docId) return;
   if((newStatus === 'Pagado' || newStatus === 'Entregado') && !sale.stockDeducted){
-    window.GBCloud.confirmSaleAndDeductStock(sale, INVENTORY).then(()=>{
-      if(newStatus === 'Entregado') return window.GBCloud.updateSaleStatus(sale._docId, 'Entregado');
-    }).then(()=>showAdmToast(`✓ ${sale.id} actualizado a ${newStatus} en la nube`))
-      .catch(err=>showAdmToast('⚠ Error en nube: ' + (err?.message || err)));
+    window.GBCloud.confirmSaleAndDeductStock(sale, INVENTORY).then(res=>{
+      if(res?.receiptCode) sale.receiptCode = res.receiptCode;
+      if(newStatus === 'Entregado') return window.GBCloud.updateSaleStatus(sale._docId, 'Entregado', sale);
+      return res;
+    }).then(res=>{
+      if(SYNC_CH) SYNC_CH.postMessage({ type:'order_verified', docId:sale._docId, orderId:sale.id, status:newStatus, verifiedAt:res?.verifiedAt || Date.now(), receiptCode:res?.receiptCode || sale.receiptCode || '' });
+      showAdmToast(`✓ ${sale.id} actualizado a ${newStatus} en la nube`);
+    }).catch(err=>showAdmToast('⚠ Error en nube: ' + (err?.message || err)));
     return;
   }
-  window.GBCloud.updateSaleStatus(sale._docId, newStatus)
-    .then(()=>showAdmToast(`✓ ${sale.id} → ${newStatus} en la nube`))
+  window.GBCloud.updateSaleStatus(sale._docId, newStatus, sale)
+    .then(res=>{
+      if(SYNC_CH) SYNC_CH.postMessage({ type:'order_verified', docId:sale._docId, orderId:sale.id, status:newStatus, verifiedAt:res?.verifiedAt || null, receiptCode:res?.receiptCode || '' });
+      showAdmToast(`✓ ${sale.id} → ${newStatus} en la nube`);
+    })
     .catch(err=>showAdmToast('⚠ Error en nube: ' + (err?.message || err)));
 }
 
@@ -1352,7 +1364,7 @@ function renderSalesList(){
 
         <div class="ord-acts">
           ${s.status === 'Pendiente'
-            ? `<button class="btn gold act-sm" style="flex:1" onclick="confirmSaleAndDeductStock('${s.id}')">✓ Confirmar Pago y Descontar Stock</button>`
+            ? `<button class="btn gold act-sm" style="flex:1" onclick="confirmSaleAndDeductStock('${s.id}')">✓ Validar Pago y Emitir Comprobante</button>`
             : (s.status === 'Pagado'
                 ? `<button class="btn ghost act-sm" style="flex:1;color:#93C5FD;border-color:rgba(96,165,250,.4)" onclick="setSaleStatus('${s.id}','Entregado')">📦 Marcar Entregado</button>`
                 : '')

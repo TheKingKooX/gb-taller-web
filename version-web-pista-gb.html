@@ -757,6 +757,136 @@ select.login-in{-webkit-appearance:none;appearance:none}
 .demo-u-btn small{display:block;font-size:10px;color:var(--texto-2);font-family:var(--mono);margin-top:1px}
 
 /* ==========================================================================
+   VENTANA DE ESPERA Y COMPROBANTE DESCARGABLE DE PAGO VERIFICADO
+   ========================================================================== */
+.session-order-banner{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:11px 14px;margin:6px 0 14px;border-radius:15px;
+  background:rgba(245,183,0,.1);border:1px solid rgba(245,183,0,.38);
+}
+.session-order-banner.verified{
+  background:rgba(34,197,94,.11);border-color:rgba(34,197,94,.42);
+}
+.session-order-banner.cancelled{
+  background:rgba(225,29,46,.1);border-color:rgba(225,29,46,.38);
+}
+.sob-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.sob-dot{
+  width:10px;height:10px;border-radius:50%;flex:none;
+  background:var(--oro);box-shadow:0 0 0 0 rgba(245,183,0,.6);
+  animation:sobPulse 1.6s infinite;
+}
+.session-order-banner.verified .sob-dot{background:var(--verde);box-shadow:0 0 10px var(--verde);animation:none}
+.session-order-banner.cancelled .sob-dot{background:var(--rojo);box-shadow:none;animation:none}
+@keyframes sobPulse{
+  0%{box-shadow:0 0 0 0 rgba(245,183,0,.65)}
+  70%{box-shadow:0 0 0 9px rgba(245,183,0,0)}
+  100%{box-shadow:0 0 0 0 rgba(245,183,0,0)}
+}
+.sob-txt{min-width:0}
+.sob-txt b{display:block;font-size:12.5px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sob-txt small{display:block;font-size:11px;color:var(--texto-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sob-acts{display:flex;align-items:center;gap:6px;flex:none}
+.sob-btn{
+  padding:7px 12px;border-radius:10px;background:var(--oro);color:#111;
+  font-size:11.5px;font-weight:800;white-space:nowrap;
+}
+.session-order-banner.verified .sob-btn{background:var(--verde);color:#052e16}
+.sob-close{
+  width:28px;height:28px;border-radius:9px;background:rgba(255,255,255,.07);
+  border:1px solid var(--linea);color:var(--texto-2);font-size:12px;display:grid;place-items:center;
+}
+
+.pv-sheet{max-width:520px;max-height:92vh;overflow-y:auto}
+.pv-hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.pv-status-pill{
+  display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;
+  font-size:11px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;
+  background:rgba(245,183,0,.14);border:1px solid rgba(245,183,0,.4);color:var(--oro-claro);
+}
+.pv-status-pill.verified{
+  background:rgba(34,197,94,.16);border-color:rgba(34,197,94,.45);color:#86EFAC;
+}
+.pv-status-pill.cancelled{
+  background:rgba(225,29,46,.15);border-color:rgba(225,29,46,.4);color:#FCA5A5;
+}
+.pv-wait-box{
+  text-align:center;padding:18px 14px;border-radius:18px;
+  background:var(--asfalto);border:1px solid var(--linea);margin-bottom:12px;
+}
+.pv-spinner-wrap{
+  width:68px;height:68px;margin:0 auto 12px;position:relative;display:grid;place-items:center;
+}
+.pv-spinner-ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:3px solid rgba(245,183,0,.16);border-top-color:var(--oro);
+  animation:pvSpin 1s linear infinite;
+}
+.pv-spinner-core{
+  width:46px;height:46px;border-radius:50%;background:rgba(245,183,0,.14);
+  display:grid;place-items:center;font-size:20px;color:var(--oro-claro);
+}
+@keyframes pvSpin{to{transform:rotate(360deg)}}
+.pv-wait-box h4{font-size:17px;font-weight:800;color:#fff;margin-bottom:6px}
+.pv-wait-box p{font-size:12.5px;color:var(--texto-2);line-height:1.48;max-width:380px;margin:0 auto}
+.pv-meta-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;text-align:left;
+}
+.pv-meta-cell{
+  padding:9px 11px;border-radius:12px;background:var(--pista);border:1px solid var(--linea);
+}
+.pv-meta-cell small{display:block;font-size:10px;color:var(--texto-3);text-transform:uppercase;letter-spacing:.4px}
+.pv-meta-cell b{display:block;font-size:12.5px;color:#fff;margin-top:2px;word-break:break-word}
+.pv-live-note{
+  margin-top:12px;padding:9px 12px;border-radius:11px;
+  background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.24);
+  color:#A7F3D0;font-size:11.5px;line-height:1.4;text-align:left;
+}
+
+.pv-verified-banner{
+  display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:16px;
+  background:linear-gradient(120deg,rgba(34,197,94,.18),rgba(16,185,129,.08));
+  border:1px solid rgba(34,197,94,.42);margin-bottom:12px;
+}
+.pv-verified-ic{
+  width:40px;height:40px;border-radius:12px;background:var(--verde);color:#052e16;
+  font-size:20px;font-weight:900;display:grid;place-items:center;flex:none;
+}
+.pv-verified-banner b{display:block;font-size:14.5px;color:#fff}
+.pv-verified-banner small{display:block;font-size:11.5px;color:#A7F3D0;margin-top:2px}
+
+.receipt-card{
+  background:#fff;color:#111827;border-radius:16px;padding:18px 16px;
+  border:1px solid rgba(255,255,255,.18);box-shadow:0 12px 32px rgba(0,0,0,.45);
+  margin-bottom:12px;font-size:12px;
+}
+.rc-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding-bottom:12px;border-bottom:2px dashed #CBD5E1;margin-bottom:12px;
+}
+.rc-brand{display:flex;align-items:center;gap:9px}
+.rc-brand img{width:34px;height:34px;border-radius:8px;object-fit:contain;background:#111827;padding:3px}
+.rc-brand b{display:block;font-size:13px;font-weight:900;color:#0F172A;letter-spacing:.2px}
+.rc-brand small{display:block;font-size:10px;color:#64748B;font-weight:600}
+.rc-stamp{
+  padding:4px 9px;border-radius:8px;background:#DCFCE7;border:1px solid #86EFAC;
+  color:#166534;font-family:var(--mono);font-size:10px;font-weight:800;text-align:right;
+}
+.rc-rows{display:grid;grid-template-columns:1fr 1fr;gap:7px 12px;margin-bottom:12px}
+.rc-rows div small{display:block;font-size:9.5px;color:#64748B;text-transform:uppercase;font-weight:700}
+.rc-rows div b{display:block;font-size:11.5px;color:#0F172A;word-break:break-word}
+.rc-items{
+  border-top:1px solid #E2E8F0;border-bottom:2px dashed #CBD5E1;
+  padding:9px 0;margin-bottom:10px;display:flex;flex-direction:column;gap:6px;
+}
+.rc-item{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;color:#1E293B}
+.rc-item span{min-width:0;flex:1}
+.rc-item b{font-family:var(--mono);white-space:nowrap}
+.rc-total{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;font-weight:900;color:#0F172A}
+.rc-total span{font-size:11.5px;color:#475569;font-weight:700;text-transform:uppercase}
+.rc-foot{margin-top:8px;font-size:10px;color:#64748B;text-align:center}
+
+/* ==========================================================================
    NOTIFICACIÓN TOAST MINIMALISTA
    ========================================================================== */
 .toast{
@@ -918,6 +1048,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
 </header>
 
 <main class="app-shell">
+  <div class="session-order-banner" id="sessionOrderBanner" style="display:none"></div>
 
   <!-- ====================================================================
        PANTALLA 1 · INICIO
@@ -1350,6 +1481,91 @@ select.login-in{-webkit-appearance:none;appearance:none}
   </div>
 </div>
 
+<!-- VENTANA DE ESPERA DE VERIFICACIÓN DE PAGO Y COMPROBANTE DESCARGABLE -->
+<div class="sheet-backdrop" id="paymentVerifyModal" onclick="if(event.target===this)closePaymentVerifyModal()">
+  <div class="sheet pv-sheet" role="dialog" aria-modal="true" aria-label="Verificación de pago en tiempo real">
+    <div class="sheet-handle"></div>
+    <div class="pv-hdr">
+      <span class="pill" id="pvOrderIdPill" style="font-family:var(--mono)">#GB-0000</span>
+      <span class="pv-status-pill" id="pvStatusBadge">⏳ Esperando verificación</span>
+    </div>
+
+    <!-- ESTADO 1: ESPERA EN VIVO HASTA QUE EL ADMINISTRADOR VERIFIQUE EL DEPÓSITO -->
+    <div id="pvWaitingPane">
+      <div class="pv-wait-box">
+        <div class="pv-spinner-wrap">
+          <div class="pv-spinner-ring"></div>
+          <div class="pv-spinner-core">⏳</div>
+        </div>
+        <h4>Esperando verificación del depósito</h4>
+        <p>
+          Tu pedido fue enviado al Taller GB. Esta ventana se actualizará <b>automáticamente en vivo</b> apenas el administrador confirme tu pago y se generará tu comprobante descargable.
+        </p>
+
+        <div class="pv-meta-grid">
+          <div class="pv-meta-cell">
+            <small>Monto a verificar</small>
+            <b id="pvWaitTotal" style="color:var(--oro-claro);font-family:var(--mono)">S/ 0.00</b>
+          </div>
+          <div class="pv-meta-cell">
+            <small>Medio de pago</small>
+            <b id="pvWaitMethod">Lemon Cash QR</b>
+          </div>
+          <div class="pv-meta-cell">
+            <small>Cliente</small>
+            <b id="pvWaitClient">—</b>
+          </div>
+          <div class="pv-meta-cell">
+            <small>Motocicleta</small>
+            <b id="pvWaitMoto">—</b>
+          </div>
+        </div>
+
+        <div class="pv-live-note">
+          ● Conectado en tiempo real con la sesión del administrador. Si aún no enviaste la captura de tu depósito, envíala por WhatsApp sin cerrar esta ventana.
+        </div>
+      </div>
+
+      <div class="sheet-actions">
+        <button class="btn ghost" type="button" onclick="closePaymentVerifyModal()">Minimizar</button>
+        <a class="btn wa" id="pvWaBtn" href="#" target="_blank" rel="noopener"><i data-i="wa"></i>Enviar constancia WA</a>
+      </div>
+    </div>
+
+    <!-- ESTADO 2: PAGO VALIDADO POR EL ADMINISTRADOR + COMPROBANTE DESCARGABLE -->
+    <div id="pvVerifiedPane" style="display:none">
+      <div class="pv-verified-banner">
+        <div class="pv-verified-ic">✓</div>
+        <div>
+          <b>¡Pago verificado y aprobado!</b>
+          <small id="pvVerifiedSub">Validado por Taller GB · Comprobante emitido en tu sesión</small>
+        </div>
+      </div>
+
+      <div class="receipt-card" id="receiptPreviewCard"></div>
+
+      <div class="sheet-actions" style="flex-wrap:wrap">
+        <button class="btn primary" type="button" onclick="downloadVerifiedReceiptPng()" style="flex:1 1 200px">⬇ Descargar Comprobante (PNG)</button>
+        <button class="btn ghost" type="button" onclick="printVerifiedReceipt()" style="flex:0 0 auto">🖨 Imprimir / PDF</button>
+        <button class="btn ghost" type="button" onclick="closePaymentVerifyModal()" style="flex:0 0 auto">Cerrar</button>
+      </div>
+    </div>
+
+    <!-- ESTADO 3: PEDIDO CANCELADO -->
+    <div id="pvCancelledPane" style="display:none">
+      <div class="pv-wait-box" style="border-color:rgba(225,29,46,.35)">
+        <div style="font-size:34px;margin-bottom:8px">⚠</div>
+        <h4>Pedido marcado como cancelado</h4>
+        <p>El administrador marcó este pedido como cancelado. Si ya realizaste el depósito, contáctanos por WhatsApp con tu constancia.</p>
+      </div>
+      <div class="sheet-actions">
+        <button class="btn ghost" type="button" onclick="closePaymentVerifyModal()">Cerrar</button>
+        <a class="btn wa" id="pvCancelWaBtn" href="https://wa.me/51960628745" target="_blank" rel="noopener"><i data-i="wa"></i>Consultar por WA</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL DE LOGIN CON NÚMERO DE WHATSAPP (+51 PERÚ) Y VERIFICACIÓN OTP -->
 <div class="sheet-backdrop" id="loginModal" onclick="if(event.target===this)enterAsGuest()">
   <div class="sheet login-sheet" role="dialog" aria-modal="true" aria-label="Iniciar sesión con número de WhatsApp">
@@ -1546,10 +1762,11 @@ async function submitCheckoutOrder(ev, anchorEl){
   const prevTxt = btnTxtEl ? btnTxtEl.textContent : '';
 
   isSubmittingOrder = true;
-  if(btnTxtEl) btnTxtEl.textContent = '⏳ Guardando pedido en Taller GB...';
+  if(btnTxtEl) btnTxtEl.textContent = '⏳ Registrando pedido para verificación...';
 
+  let createdOrder = null;
   try{
-    await recordCheckoutOrderToAdmin();
+    createdOrder = await recordCheckoutOrderToAdmin();
   }catch(err){
     console.warn('Error registrando pedido:', err);
   }finally{
@@ -1557,14 +1774,24 @@ async function submitCheckoutOrder(ev, anchorEl){
     if(btnTxtEl && prevTxt) btnTxtEl.textContent = prevTxt;
   }
 
-  if(waHref && waHref.startsWith('https://wa.me/')){
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if(isMobile){
-      window.location.href = waHref;
-    } else {
-      window.open(waHref, '_blank', 'noopener');
-    }
-  }
+  if(!createdOrder) return false;
+
+  if(typeof closeYapeModal === 'function') closeYapeModal();
+
+  const orderSessionObj = {
+    ...createdOrder,
+    _docId: createdOrder._docId || ('local_' + createdOrder.id),
+    waHref: (waHref && waHref.startsWith('https://wa.me/')) ? waHref : `https://wa.me/${WHATSAPP_NUMBER}`,
+    status: createdOrder.status || 'Pendiente',
+    verifiedAt: null,
+    receiptCode: '',
+    cartCleared: false
+  };
+  saveActiveSessionOrder(orderSessionObj);
+  renderPaymentVerifyModal();
+  renderSessionOrderBanner();
+  openPaymentVerifyModal();
+  startOrderVerificationWatch(orderSessionObj);
   return false;
 }
 
@@ -1575,8 +1802,8 @@ async function recordCheckoutOrderToAdmin(){
   }).filter(Boolean);
   if(!entries.length) return null;
   const totalPrice = entries.reduce((s,x)=>s + x.qty * x.price, 0);
-  const cName = (document.getElementById('custName')?.value || 'Cliente GB').trim();
-  const cPhone = (document.getElementById('custPhone')?.value || '987654321').replace(/\D/g, '').slice(0, 9);
+  const cName = (document.getElementById('custName')?.value || currentUser?.name || 'Cliente GB').trim();
+  const cPhone = (document.getElementById('custPhone')?.value || currentUser?.phone || '987654321').replace(/\D/g, '').slice(0, 9);
   const cAddr = (document.getElementById('custAddress')?.value || '').trim();
 
   let sales = [];
@@ -1610,21 +1837,23 @@ async function recordCheckoutOrderToAdmin(){
   }catch(_){}
 
   const cloud = await waitForCloudReady(2500);
+  let resultSale = { ...newSale, _docId: null };
   if(cloud){
     try{
-      await Promise.race([
+      const cloudRes = await Promise.race([
         cloud.createSaleOrder(newSale),
         new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000))
       ]);
-      showCustomToast(`✓ PEDIDO ${newSale.id} EN LA NUBE`, 'Recibido al instante en el Panel Admin');
+      if(cloudRes && cloudRes._docId) resultSale = cloudRes;
+      showCustomToast(`⏳ PEDIDO ${newSale.id} EN ESPERA`, 'Esperando verificación de pago del administrador');
     }catch(err){
       console.warn('Firestore createSaleOrder:', err);
       showCustomToast(`⚠ GUARDADO LOCAL (${newSale.id})`, 'Nube: ' + (err?.code || err?.message || 'reintentando'));
     }
   } else {
-    showCustomToast(`✓ PEDIDO ${newSale.id} REGISTRADO`, 'Enviado al Panel Administrador y WhatsApp');
+    showCustomToast(`⏳ PEDIDO ${newSale.id} REGISTRADO`, 'Ventana de espera de verificación activa');
   }
-  return newSale;
+  return resultSale;
 }
 
 function sortByDefaultOrder(cloudItems){
@@ -1749,9 +1978,462 @@ window.addEventListener('storage', e => {
 if(SYNC_CH){
   SYNC_CH.onmessage = e => {
     if(e.data?.type === 'inventory_updated') reloadInventoryFromStorage();
+    if(e.data?.type === 'order_verified' && activeSessionOrder && (e.data.docId === activeSessionOrder._docId || e.data.orderId === activeSessionOrder.id)){
+      handleOrderStatusSnapshot(e.data);
+    }
   };
 }
 window.addEventListener('focus', reloadInventoryFromStorage);
+
+/* ==========================================================================
+   MOTOR DE ESPERA EN TIEMPO REAL Y COMPROBANTE DESCARGABLE
+   ========================================================================== */
+let activeSessionOrder = null;
+let orderStatusUnsub = null;
+
+function activeOrderStorageKey(phone){
+  return phone ? ('gb_active_order_v1_' + String(phone).replace(/\D/g, '')) : 'gb_active_order_v1_guest';
+}
+
+function loadActiveSessionOrder(){
+  try{
+    const raw = localStorage.getItem(activeOrderStorageKey(currentUser?.phone));
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(parsed && parsed.id) return parsed;
+    }
+  }catch(_){}
+  return null;
+}
+
+function saveActiveSessionOrder(orderObj){
+  activeSessionOrder = orderObj;
+  try{
+    const key = activeOrderStorageKey(currentUser?.phone);
+    if(orderObj) localStorage.setItem(key, JSON.stringify(orderObj));
+    else localStorage.removeItem(key);
+  }catch(_){}
+}
+
+function stopOrderVerificationWatch(){
+  if(typeof orderStatusUnsub === 'function'){
+    try{ orderStatusUnsub(); }catch(_){}
+  }
+  orderStatusUnsub = null;
+}
+
+function startOrderVerificationWatch(orderObj){
+  stopOrderVerificationWatch();
+  if(!orderObj || !orderObj._docId || String(orderObj._docId).startsWith('local_')) return;
+  const attach = (cloud) => {
+    if(!cloud || typeof cloud.subscribeOrderStatus !== 'function') return;
+    stopOrderVerificationWatch();
+    orderStatusUnsub = cloud.subscribeOrderStatus(orderObj._docId, (snapData) => {
+      handleOrderStatusSnapshot(snapData);
+    }, (err) => {
+      console.warn('Order status listener:', err?.message || err);
+    });
+  };
+  if(window.GBCloud){
+    attach(window.GBCloud);
+  } else {
+    waitForCloudReady(4000).then(attach);
+  }
+}
+
+function toMsSafe(v){
+  if(!v) return null;
+  if(typeof v === 'number') return v;
+  if(typeof v.toMillis === 'function') return v.toMillis();
+  if(typeof v.seconds === 'number') return v.seconds * 1000;
+  return null;
+}
+
+function handleOrderStatusSnapshot(data){
+  if(!activeSessionOrder || !data) return;
+  const nextStatus = data.status || activeSessionOrder.status;
+  const nextCode = data.receiptCode || activeSessionOrder.receiptCode || '';
+  const nextVerifiedAt = toMsSafe(data.verifiedAt) || activeSessionOrder.verifiedAt || null;
+  const prevStatus = activeSessionOrder.status;
+
+  activeSessionOrder.status = nextStatus;
+  if(nextCode) activeSessionOrder.receiptCode = nextCode;
+  if(nextVerifiedAt) activeSessionOrder.verifiedAt = nextVerifiedAt;
+
+  const isNowVerified = (nextStatus === 'Pagado' || nextStatus === 'Entregado');
+  if(isNowVerified && !activeSessionOrder.cartCleared){
+    cart = {};
+    persistCurrentCart();
+    renderCart();
+    activeSessionOrder.cartCleared = true;
+  }
+  saveActiveSessionOrder(activeSessionOrder);
+  renderSessionOrderBanner();
+  renderPaymentVerifyModal();
+
+  if(isNowVerified && prevStatus !== 'Pagado' && prevStatus !== 'Entregado'){
+    openPaymentVerifyModal();
+    showCustomToast('✓ ¡PAGO VERIFICADO!', 'Tu comprobante ya está disponible para descargar');
+  } else if(nextStatus === 'Cancelado' && prevStatus !== 'Cancelado'){
+    openPaymentVerifyModal();
+  }
+}
+
+function restoreActiveSessionOrder(){
+  activeSessionOrder = loadActiveSessionOrder();
+  renderSessionOrderBanner();
+  if(activeSessionOrder){
+    renderPaymentVerifyModal();
+    startOrderVerificationWatch(activeSessionOrder);
+  } else {
+    stopOrderVerificationWatch();
+  }
+}
+
+function dismissActiveSessionOrder(){
+  stopOrderVerificationWatch();
+  saveActiveSessionOrder(null);
+  closePaymentVerifyModal();
+  renderSessionOrderBanner();
+}
+
+function openPaymentVerifyModal(){
+  if(!activeSessionOrder) return;
+  renderPaymentVerifyModal();
+  document.getElementById('paymentVerifyModal')?.classList.add('open');
+}
+
+function closePaymentVerifyModal(){
+  document.getElementById('paymentVerifyModal')?.classList.remove('open');
+}
+
+function renderSessionOrderBanner(){
+  const bar = document.getElementById('sessionOrderBanner');
+  if(!bar) return;
+  if(!activeSessionOrder){
+    bar.style.display = 'none';
+    bar.innerHTML = '';
+    return;
+  }
+  const st = activeSessionOrder.status || 'Pendiente';
+  const isVer = (st === 'Pagado' || st === 'Entregado');
+  const isCanc = (st === 'Cancelado');
+  bar.className = 'session-order-banner' + (isVer ? ' verified' : (isCanc ? ' cancelled' : ''));
+  bar.style.display = 'flex';
+
+  const title = isVer
+    ? `Pago verificado · ${activeSessionOrder.id} (${activeSessionOrder.receiptCode || 'Comprobante listo'})`
+    : (isCanc
+        ? `Pedido cancelado · ${activeSessionOrder.id}`
+        : `Verificando depósito · ${activeSessionOrder.id} (${fmtDec(activeSessionOrder.total)})`);
+  const sub = isVer
+    ? 'Validado en Taller GB · Tu comprobante electrónico está listo para descargar'
+    : (isCanc
+        ? 'Contáctanos por WhatsApp si necesitas asistencia'
+        : 'Esperando validación del administrador en tiempo real');
+
+  bar.innerHTML = `
+    <div class="sob-left">
+      <i class="sob-dot"></i>
+      <div class="sob-txt">
+        <b>${title}</b>
+        <small>${sub}</small>
+      </div>
+    </div>
+    <div class="sob-acts">
+      <button class="sob-btn" type="button" onclick="openPaymentVerifyModal()">${isVer ? '⬇ Comprobante' : 'Ver espera'}</button>
+      ${(isVer || isCanc) ? `<button class="sob-close" type="button" onclick="dismissActiveSessionOrder()" title="Ocultar aviso">✕</button>` : ''}
+    </div>
+  `;
+}
+
+function formatReceiptDate(ms){
+  const d = ms ? new Date(ms) : new Date();
+  return d.toLocaleString('es-PE', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+
+function renderPaymentVerifyModal(){
+  if(!activeSessionOrder) return;
+  const o = activeSessionOrder;
+  const st = o.status || 'Pendiente';
+  const isVer = (st === 'Pagado' || st === 'Entregado');
+  const isCanc = (st === 'Cancelado');
+
+  const idPill = document.getElementById('pvOrderIdPill');
+  const badge = document.getElementById('pvStatusBadge');
+  const waitPane = document.getElementById('pvWaitingPane');
+  const verPane = document.getElementById('pvVerifiedPane');
+  const cancPane = document.getElementById('pvCancelledPane');
+
+  if(idPill) idPill.textContent = o.id;
+  if(badge){
+    badge.className = 'pv-status-pill' + (isVer ? ' verified' : (isCanc ? ' cancelled' : ''));
+    badge.textContent = isVer ? '✓ Pago Verificado' : (isCanc ? '✕ Cancelado' : '⏳ Esperando verificación');
+  }
+  if(waitPane) waitPane.style.display = (!isVer && !isCanc) ? 'block' : 'none';
+  if(verPane) verPane.style.display = isVer ? 'block' : 'none';
+  if(cancPane) cancPane.style.display = isCanc ? 'block' : 'none';
+
+  const wTotal = document.getElementById('pvWaitTotal');
+  const wMethod = document.getElementById('pvWaitMethod');
+  const wClient = document.getElementById('pvWaitClient');
+  const wMoto = document.getElementById('pvWaitMoto');
+  const waBtn = document.getElementById('pvWaBtn');
+  if(wTotal) wTotal.textContent = fmtDec(o.total);
+  if(wMethod) wMethod.textContent = o.payMethod || 'Lemon Cash QR';
+  if(wClient) wClient.textContent = `${o.client || 'Cliente GB'} (+51 ${formatPePhone(o.phone)})`;
+  if(wMoto) wMoto.textContent = o.moto || 'Por confirmar';
+  if(waBtn) waBtn.href = o.waHref || `https://wa.me/${WHATSAPP_NUMBER}`;
+
+  if(isVer){
+    const code = o.receiptCode || ('COMP-' + String(o.id).replace(/[^A-Z0-9-]/gi, '') + '-OK');
+    const verTimeTxt = formatReceiptDate(o.verifiedAt || o.createdAt);
+    const vSub = document.getElementById('pvVerifiedSub');
+    if(vSub) vSub.textContent = `Código ${code} · Validado el ${verTimeTxt}`;
+
+    const card = document.getElementById('receiptPreviewCard');
+    if(card){
+      const itemsHtml = (o.items || []).map(it => `
+        <div class="rc-item">
+          <span><b>${it.qty}x</b> ${it.name} <small style="color:#64748B">[${it.sku}]</small></span>
+          <b>${fmtDec(Number(it.qty) * Number(it.price))}</b>
+        </div>
+      `).join('');
+      card.innerHTML = `
+        <div class="rc-head">
+          <div class="rc-brand">
+            <img src="assets/logo-gb-marca.png" alt="GB">
+            <div>
+              <b>GB TALLER Y REPUESTOS</b>
+              <small>Comprobante Electrónico · Lima, Perú</small>
+            </div>
+          </div>
+          <div class="rc-stamp">✓ PAGO VERIFICADO<br>${code}</div>
+        </div>
+        <div class="rc-rows">
+          <div><small>N° Pedido</small><b>${o.id}</b></div>
+          <div><small>Fecha de validación</small><b>${verTimeTxt}</b></div>
+          <div><small>Cliente</small><b>${o.client || 'Cliente GB'}</b></div>
+          <div><small>WhatsApp</small><b>+51 ${formatPePhone(o.phone)}</b></div>
+          <div><small>Motocicleta</small><b>${o.moto || '—'}</b></div>
+          <div><small>Pago / Entrega</small><b>${o.payMethod || 'Lemon Cash QR'} · ${o.delivery || 'Taller GB'}</b></div>
+        </div>
+        <div class="rc-items">${itemsHtml}</div>
+        <div class="rc-total">
+          <span>Total pagado</span>
+          <b>${fmtDec(o.total)}</b>
+        </div>
+        <div class="rc-foot">Comprobante válido emitido tras la verificación del depósito en Taller GB.${o.install ? ' Incluye instalación en taller.' : ''}</div>
+      `;
+    }
+  }
+}
+
+function drawRoundedRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function wrapCanvasText(ctx, text, maxWidth){
+  const words = String(text || '').split(/\s+/);
+  const lines = [];
+  let line = '';
+  for(const w of words){
+    const test = line ? `${line} ${w}` : w;
+    if(ctx.measureText(test).width > maxWidth && line){
+      lines.push(line);
+      line = w;
+    } else {
+      line = test;
+    }
+  }
+  if(line) lines.push(line);
+  return lines.slice(0, 2);
+}
+
+async function downloadVerifiedReceiptPng(){
+  if(!activeSessionOrder) return;
+  const o = activeSessionOrder;
+  const code = o.receiptCode || ('COMP-' + String(o.id).replace(/[^A-Z0-9-]/gi, '') + '-OK');
+  const verDate = formatReceiptDate(o.verifiedAt || o.createdAt);
+  const items = Array.isArray(o.items) ? o.items : [];
+
+  const extraH = Math.max(0, items.length - 4) * 76;
+  const W = 1080, H = 1480 + extraH;
+  const canvas = document.createElement('canvas');
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // Fondo limpio papel electrónico con borde oscuro superior
+  ctx.fillStyle = '#090A0D';
+  ctx.fillRect(0, 0, W, H);
+
+  drawRoundedRect(ctx, 48, 48, W - 96, H - 96, 36);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fill();
+
+  // Encabezado oscuro Taller GB
+  ctx.save();
+  drawRoundedRect(ctx, 48, 48, W - 96, 230, 36);
+  ctx.clip();
+  ctx.fillStyle = '#0F1117';
+  ctx.fillRect(48, 48, W - 96, 230);
+  ctx.fillStyle = '#F5B700';
+  ctx.fillRect(48, 270, W - 96, 8);
+  ctx.restore();
+
+  // Cargar logo GB con fallback seguro
+  await new Promise(resolve => {
+    const img = new Image();
+    let done = false;
+    const finish = () => { if(!done){ done = true; resolve(); } };
+    const timer = setTimeout(finish, 900);
+    img.onload = () => {
+      clearTimeout(timer);
+      try{ ctx.drawImage(img, 96, 98, 120, 120); }catch(_){}
+      finish();
+    };
+    img.onerror = () => { clearTimeout(timer); finish(); };
+    img.src = 'assets/logo-gb-marca.png';
+  });
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 40px system-ui, -apple-system, Segoe UI, sans-serif';
+  ctx.fillText('GB TALLER Y REPUESTOS', 240, 146);
+  ctx.fillStyle = '#CBD5E1';
+  ctx.font = '600 24px system-ui, -apple-system, Segoe UI, sans-serif';
+  ctx.fillText('COMPROBANTE ELECTRÓNICO DE PAGO VERIFICADO', 240, 192);
+  ctx.fillStyle = '#F5B700';
+  ctx.font = 'bold 22px monospace';
+  ctx.fillText(`CÓDIGO: ${code}`, 240, 232);
+
+  // Badge verde de verificación
+  drawRoundedRect(ctx, 92, 316, 420, 56, 16);
+  ctx.fillStyle = '#DCFCE7';
+  ctx.fill();
+  ctx.strokeStyle = '#86EFAC';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = '#166534';
+  ctx.font = 'bold 24px system-ui, sans-serif';
+  ctx.fillText('✓ PAGO VERIFICADO EN TALLER GB', 116, 353);
+
+  ctx.fillStyle = '#0F172A';
+  ctx.textAlign = 'right';
+  ctx.font = 'bold 34px monospace';
+  ctx.fillText(String(o.id || '#GB'), W - 92, 355);
+  ctx.textAlign = 'left';
+
+  // Metadatos del pedido
+  const metaY = 408;
+  drawRoundedRect(ctx, 92, metaY, W - 184, 290, 22);
+  ctx.fillStyle = '#F8FAFC';
+  ctx.fill();
+  ctx.strokeStyle = '#E2E8F0';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  const drawField = (label, val, x, y) => {
+    ctx.fillStyle = '#64748B';
+    ctx.font = 'bold 20px system-ui, sans-serif';
+    ctx.fillText(label.toUpperCase(), x, y);
+    ctx.fillStyle = '#0F172A';
+    ctx.font = 'bold 25px system-ui, sans-serif';
+    const wrapped = wrapCanvasText(ctx, val, 400);
+    wrapped.forEach((ln, idx) => ctx.fillText(ln, x, y + 32 + idx * 28));
+  };
+
+  drawField('Cliente', o.client || 'Cliente GB', 124, metaY + 46);
+  drawField('WhatsApp', `+51 ${formatPePhone(o.phone)}`, 560, metaY + 46);
+  drawField('Fecha de validación', verDate, 124, metaY + 138);
+  drawField('Medio de pago', o.payMethod || 'Lemon Cash QR', 560, metaY + 138);
+  drawField('Motocicleta', o.moto || '—', 124, metaY + 230);
+  drawField('Entrega', o.delivery || 'Taller GB', 560, metaY + 230);
+
+  // Cabecera tabla de ítems
+  let y = metaY + 344;
+  ctx.fillStyle = '#64748B';
+  ctx.font = 'bold 21px system-ui, sans-serif';
+  ctx.fillText('DETALLE DE REPUESTOS', 92, y);
+  ctx.textAlign = 'right';
+  ctx.fillText('SUBTOTAL', W - 92, y);
+  ctx.textAlign = 'left';
+
+  y += 20;
+  ctx.strokeStyle = '#CBD5E1';
+  ctx.setLineDash([8, 8]);
+  ctx.beginPath(); ctx.moveTo(92, y); ctx.lineTo(W - 92, y); ctx.stroke();
+  ctx.setLineDash([]);
+  y += 42;
+
+  for(const it of items){
+    const nameLines = wrapCanvasText(ctx, `${it.qty}x ${it.name} [${it.sku}]`, 670);
+    ctx.fillStyle = '#0F172A';
+    ctx.font = 'bold 25px system-ui, sans-serif';
+    nameLines.forEach((ln, idx) => ctx.fillText(ln, 92, y + idx * 30));
+    ctx.textAlign = 'right';
+    ctx.font = 'bold 26px monospace';
+    ctx.fillText(fmtDec(Number(it.qty) * Number(it.price)), W - 92, y);
+    ctx.textAlign = 'left';
+    y += Math.max(54, nameLines.length * 32 + 22);
+  }
+
+  // Línea separadora + Total
+  ctx.strokeStyle = '#CBD5E1';
+  ctx.setLineDash([8, 8]);
+  ctx.beginPath(); ctx.moveTo(92, y); ctx.lineTo(W - 92, y); ctx.stroke();
+  ctx.setLineDash([]);
+  y += 44;
+
+  drawRoundedRect(ctx, 92, y, W - 184, 112, 22);
+  ctx.fillStyle = '#0F1117';
+  ctx.fill();
+  ctx.fillStyle = '#CBD5E1';
+  ctx.font = 'bold 25px system-ui, sans-serif';
+  ctx.fillText('TOTAL PAGADO', 128, y + 66);
+  ctx.fillStyle = '#F5B700';
+  ctx.textAlign = 'right';
+  ctx.font = '900 46px system-ui, sans-serif';
+  ctx.fillText(fmtDec(o.total), W - 128, y + 72);
+  ctx.textAlign = 'left';
+
+  // Pie del comprobante
+  ctx.fillStyle = '#64748B';
+  ctx.font = '21px system-ui, sans-serif';
+  ctx.fillText('Comprobante oficial emitido tras validación del administrador en GB Taller y Repuestos.', 92, H - 128);
+  ctx.fillText(`WhatsApp oficial del taller: +51 960 628 745 · ${o.install ? 'Incluye instalación en taller.' : 'Solo venta de repuestos.'}`, 92, H - 94);
+
+  const cleanOrderId = String(o.id || 'GB').replace(/[^A-Z0-9-]/gi, '');
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = `Comprobante-${cleanOrderId}.png`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  showCustomToast('✓ COMPROBANTE DESCARGADO', `Archivo Comprobante-${cleanOrderId}.png`);
+}
+
+function printVerifiedReceipt(){
+  const card = document.getElementById('receiptPreviewCard');
+  if(!card || !activeSessionOrder) return;
+  const win = window.open('', '_blank', 'width=680,height=840');
+  if(!win){
+    window.print();
+    return;
+  }
+  win.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Comprobante ${activeSessionOrder.id}</title><style>body{font-family:system-ui,-apple-system,sans-serif;background:#f1f5f9;margin:0;padding:24px;display:flex;justify-content:center}.receipt-card{background:#fff;color:#111827;border-radius:14px;padding:22px;max-width:460px;width:100%;box-shadow:0 4px 18px rgba(0,0,0,.08)}.rc-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:12px;border-bottom:2px dashed #cbd5e1;margin-bottom:12px}.rc-brand{display:flex;align-items:center;gap:9px}.rc-brand img{width:34px;height:34px;border-radius:8px;background:#111827;padding:3px}.rc-brand b{display:block;font-size:13px}.rc-brand small{display:block;font-size:10px;color:#64748b}.rc-stamp{padding:4px 9px;border-radius:8px;background:#dcfce7;border:1px solid #86efac;color:#166534;font-family:monospace;font-size:10px;font-weight:800;text-align:right}.rc-rows{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin-bottom:12px}.rc-rows div small{display:block;font-size:9.5px;color:#64748b;text-transform:uppercase;font-weight:700}.rc-rows div b{display:block;font-size:11.5px}.rc-items{border-top:1px solid #e2e8f0;border-bottom:2px dashed #cbd5e1;padding:9px 0;margin-bottom:10px;display:flex;flex-direction:column;gap:6px}.rc-item{display:flex;justify-content:space-between;gap:10px;font-size:11.5px}.rc-total{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;font-weight:900}.rc-foot{margin-top:8px;font-size:10px;color:#64748b;text-align:center}@media print{body{background:#fff;padding:0}.receipt-card{box-shadow:none}}</style></head><body><div class="receipt-card">${card.innerHTML}</div><script>window.onload=()=>setTimeout(()=>window.print(),250)<\/script></body></html>`);
+  win.document.close();
+}
 
 const STAGES = {
   1:{ang:-72, fill:20, step:'Etapa 1 de 5', title:'Recibida en taller', desc:'Moto registrada en recepción con Andrés.'},
@@ -2725,6 +3407,7 @@ function applyUserSessionToUi(){
   renderCatalog();
   renderCart();
   updateCitaWa();
+  restoreActiveSessionOrder();
 }
 
 function openLoginModal(){
@@ -2826,6 +3509,7 @@ function verifyWaOtpCode(){
 }
 
 function logoutWaSession(){
+  dismissActiveSessionOrder();
   saveWaSession(null, true);
   backToLoginStep1();
   document.getElementById('waLoginPhone').value = '';

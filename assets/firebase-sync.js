@@ -36,6 +36,23 @@ function isAdminUser(u) {
   return Boolean(u && u.emailVerified && u.email && u.email.toLowerCase() === ADMIN_EMAIL);
 }
 
+function makeSecureDocId() {
+  let hex = "";
+  if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
+    const bytes = new Uint8Array(8);
+    crypto.getRandomValues(bytes);
+    hex = Array.from(bytes, b => b.toString(16).padStart(2, "0")).join("");
+  } else {
+    hex = Math.floor(1e15 + Math.random() * 8e15).toString(16);
+  }
+  return `sale_${Date.now()}_${hex}`;
+}
+
+function makeReceiptCode(orderId) {
+  const cleanId = String(orderId || "GB").replace(/[^A-Z0-9-]/gi, "") || "GB";
+  return `COMP-${cleanId}-${Math.floor(1000 + Math.random() * 9000)}`;
+}
+
 function toMillis(ts) {
   if (!ts) return 0;
   if (typeof ts === "number") return ts;
@@ -204,9 +221,33 @@ const GBCloud = {
 
   async createSaleOrder(saleObj) {
     const clean = sanitizeSaleForCreate(saleObj);
-    const docId = `sale_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}`;
-    await setDoc(doc(db, "sales", docId), clean);
-    return { ...clean, createdAt: Date.now(), _docId: docId };
+    const docId = makeSecureDocId();
+    const nowMs = Date.now();
+    const batch = writeBatch(db);
+    batch.set(doc(db, "sales", docId), clean);
+    batch.set(doc(db, "order_status", docId), {
+      orderId: clean.id,
+      status: "Pendiente",
+      total: clean.total,
+      payMethod: clean.payMethod,
+      verifiedAt: null,
+      receiptCode: "",
+      updatedAt: nowMs
+    });
+    await batch.commit();
+    return { ...clean, createdAt: nowMs, _docId: docId };
+  },
+
+  subscribeOrderStatus(docId, onData, onError) {
+    return onSnapshot(
+      doc(db, "order_status", String(docId)),
+      (snap) => {
+        if (snap.exists()) onData({ _docId: snap.id, ...snap.data() }, snap.metadata);
+      },
+      (err) => {
+        if (onError) onError(err);
+      }
+    );
   },
 
   subscribeSales(onData, onError) {
@@ -234,24 +275,52 @@ const GBCloud = {
 
   async confirmSaleAndDeductStock(sale, inventoryList) {
     if (!isAdminUser(currentAuthUser)) throw new Error("Admin auth required");
-    if (!sale || !sale._docId) return;
+    if (!sale || !sale._docId) return null;
+    const verifiedAt = Date.now();
+    const receiptCode = sale.receiptCode || makeReceiptCode(sale.id);
     const batch = writeBatch(db);
     if (!sale.stockDeducted && Array.isArray(sale.items)) {
       for (const it of sale.items) {
         const inv = inventoryList.find(p => p.id === it.id || p.sku === it.sku);
         if (inv) {
           const newStock = Math.max(0, Math.floor(Number(inv.stock) || 0) - Math.max(1, Math.floor(Number(it.qty) || 1)));
-          batch.update(doc(db, "inventory", inv.id), { stock: newStock, updatedAt: Date.now() });
+          batch.update(doc(db, "inventory", inv.id), { stock: newStock, updatedAt: verifiedAt });
         }
       }
     }
-    batch.update(doc(db, "sales", sale._docId), { status: "Pagado", stockDeducted: true });
+    batch.update(doc(db, "sales", sale._docId), { status: "Pagado", stockDeducted: true, updatedAt: verifiedAt });
+    batch.set(doc(db, "order_status", sale._docId), {
+      orderId: String(sale.id || "#GB").slice(0, 24),
+      status: "Pagado",
+      total: Math.max(1, Number(sale.total) || 1),
+      payMethod: String(sale.payMethod || "Lemon Cash QR").slice(0, 80),
+      verifiedAt,
+      receiptCode,
+      updatedAt: verifiedAt
+    }, { merge: true });
     await batch.commit();
+    return { receiptCode, verifiedAt };
   },
 
-  async updateSaleStatus(docId, newStatus) {
+  async updateSaleStatus(docId, newStatus, saleObj = null) {
     if (!isAdminUser(currentAuthUser)) throw new Error("Admin auth required");
-    await updateDoc(doc(db, "sales", String(docId)), { status: String(newStatus) });
+    const nowMs = Date.now();
+    const isVerified = (newStatus === "Pagado" || newStatus === "Entregado");
+    const verifiedAt = isVerified ? (saleObj?.verifiedAt || nowMs) : null;
+    const receiptCode = isVerified ? (saleObj?.receiptCode || makeReceiptCode(saleObj?.id)) : "";
+    const batch = writeBatch(db);
+    batch.update(doc(db, "sales", String(docId)), { status: String(newStatus), updatedAt: nowMs });
+    batch.set(doc(db, "order_status", String(docId)), {
+      orderId: String(saleObj?.id || "#GB").slice(0, 24),
+      status: String(newStatus),
+      total: Math.max(1, Number(saleObj?.total) || 1),
+      payMethod: String(saleObj?.payMethod || "Lemon Cash QR").slice(0, 80),
+      verifiedAt,
+      receiptCode,
+      updatedAt: nowMs
+    }, { merge: true });
+    await batch.commit();
+    return { receiptCode, verifiedAt };
   }
 };
 
