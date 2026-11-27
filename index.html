@@ -974,10 +974,6 @@ select.login-in{-webkit-appearance:none;appearance:none}
         <h3>Mi Pedido</h3>
         <span class="pill" id="cartItemsPill">0 ítems</span>
       </header>
-      <div id="storeCloudPill" style="display:flex;align-items:center;justify-content:space-between;padding:6px 11px;margin-bottom:10px;border-radius:10px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.28);font-size:11px;color:#A7F3D0;font-weight:700">
-        <span id="storeCloudTxt">⏳ Conectando con Nube GB...</span>
-        <span style="font-family:var(--mono);opacity:.8">v4</span>
-      </div>
 
       <div id="cartEmptyBox" style="padding:28px 18px;border-radius:18px;background:var(--pista);border:1px solid var(--linea);text-align:center">
         <div style="font-size:34px;margin-bottom:8px">🛒</div>
@@ -1639,8 +1635,6 @@ async function submitCitaOrder(ev, anchorEl){
 
 function initStoreCloudSync(){
   if(!window.GBCloud) return;
-  const ct = document.getElementById('storeCloudTxt');
-  if(ct) ct.textContent = '● Nube Firebase GB conectada en tiempo real';
   window.GBCloud.subscribeInventory((cloudItems)=>{
     if(Array.isArray(cloudItems) && cloudItems.length > 0){
       INVENTORY = sortByDefaultOrder(cloudItems);
