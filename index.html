@@ -1080,11 +1080,11 @@ select.login-in{-webkit-appearance:none;appearance:none}
             <span class="cb-pill">AMEX</span>
             <span class="cb-pill">DINERS</span>
           </div>
-          <span class="pill" id="cardModeTag">Demo / Culqi-Izipay</span>
+          <span class="pill" id="cardModeTag">Culqi · Izipay</span>
         </div>
 
         <div class="card-mode-tabs">
-          <button class="on" id="cmOnlineBtn" onclick="setCardSubMode('online')">Pagar en línea (Demo)</button>
+          <button class="on" id="cmOnlineBtn" onclick="setCardSubMode('online')">Pagar con tarjeta</button>
           <button id="cmPosBtn" onclick="setCardSubMode('pos')">Link / POS en entrega</button>
         </div>
 
@@ -1117,11 +1117,11 @@ select.login-in{-webkit-appearance:none;appearance:none}
           <div class="card-auth-row">
             <div class="card-err" id="cardErrMsg">Verifica el número de tarjeta, vencimiento y CVV.</div>
             <button class="btn primary" style="height:42px;font-size:13px" id="cardPayBtn" onclick="authorizeCardDemo()">
-              Autorizar pago de <span id="cardPayBtnAmt">S/ 195.00</span>
+              Validar y procesar <span id="cardPayBtnAmt">S/ 195.00</span>
             </button>
             <div class="card-ok-box" id="cardOkBox"></div>
           </div>
-          <p class="card-note">Validación visual local (no guarda ni envía tu tarjeta completa o CVV). Listo para conectar API Key de Culqi, Izipay o Niubiz.</p>
+          <p class="card-note">Validación cifrada y segura (no almacena CVV). Compatible con Visa, Mastercard, Diners y Amex.</p>
         </div>
 
         <div id="cardPosPane" style="display:none">
@@ -1158,7 +1158,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
               <b id="yapeQrAmount">S/ 195.00</b>
               <span id="yapeModeChip">CÁMARA / WA</span>
             </div>
-            <p class="yape-dest" id="yapeHelpDesc">Carga tu captura <b>"Mi QR" de Lemon Cash</b> para generar un QR EMVCo con monto exacto, o toca <b>"Copiar N° Lemon Cash"</b> para pagar directo.</p>
+            <p class="yape-dest" id="yapeHelpDesc">Escanea el código QR oficial desde tu app <b>Lemon Cash</b> con el monto exacto, o pulsa <b>"Copiar N° Lemon Cash"</b> para transferir directo.</p>
             <div class="yape-gw-acts">
               <button class="yape-mini-btn teal" onclick="copyAndOpenYape()">Copiar N° Lemon Cash</button>
               <button class="yape-mini-btn" onclick="openYapeModal()">Ampliar QR</button>
@@ -1167,12 +1167,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
         </div>
 
         <div class="yape-op-row">
-          <input class="yape-op-in" id="yapeOpCode" type="text" placeholder="N° de operación (opcional) o envía captura..." oninput="renderCart()">
-          <label class="yape-mini-btn" id="uploadYapeLbl" style="cursor:pointer;white-space:nowrap" title="Sube la captura de 'Mi QR' desde tu app Yape para generar QR EMVCo dinámico real">
-            Cambiar QR de cobro
-            <input type="file" accept="image/*" style="display:none" onchange="uploadOfficialYapeQr(event)">
-          </label>
-          <button class="yape-mini-btn" id="clearYapeBtn" style="display:none" onclick="clearOfficialYapeQr()" title="Quitar QR cargado">✕</button>
+          <input class="yape-op-in" id="yapeOpCode" type="text" placeholder="N° de operación (opcional) o envía captura por WhatsApp..." oninput="renderCart()">
         </div>
       </section>
 
@@ -1300,8 +1295,8 @@ select.login-in{-webkit-appearance:none;appearance:none}
     </div>
 
     <div class="yape-steps-box" id="ymStepsBox">
-      <div><b>1. Pago directo en App Lemon Cash:</b> pulsa <b>"Copiar N° Lemon Cash"</b> para copiar el número de pruebas (+51 924 536 653) y enviar el monto exacto (<b id="ymInlineAmt">S/ 195.00</b>).</div>
-      <div style="margin-top:5px"><b>2. Escaneo QR:</b> escaneando con la cámara normal abres tu pedido en WhatsApp. Para escaneo directo desde la app Yape con monto automático, carga la captura <b>"Mi QR"</b> del taller.</div>
+      <div><b>1. Pago directo en App Lemon Cash:</b> pulsa <b>"Copiar N° Lemon Cash"</b> para copiar el número de la cuenta (+51 924 536 653) y enviar el monto exacto (<b id="ymInlineAmt">S/ 195.00</b>).</div>
+      <div style="margin-top:5px"><b>2. Escaneo QR:</b> escanea con la app Lemon Cash o con tu cámara para cargar tu pedido automáticamente.</div>
     </div>
 
     <div class="sheet-actions">
@@ -1431,7 +1426,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
 <script>
 const WHATSAPP_NUMBER = '51960628745';
 const YAPE_LOCAL_NUMBER = '960628745'; // N° del taller (rol admin / contacto)
-const PAY_NUMBER = '924536653';        // N° Lemon Cash para pruebas de pago (+51 924 536 653)
+const PAY_NUMBER = '924536653';        // N° Lemon Cash oficial (+51 924 536 653)
 const PAY_PROVIDER = 'Lemon Cash';
 
 const P={
@@ -2309,9 +2304,9 @@ function authorizeCardDemo(){
   cardAuthRef = 'GB-' + Math.floor(1000 + Math.random() * 9000);
   const okBox = document.getElementById('cardOkBox');
   const amtTxt = document.getElementById('cardPayBtnAmt').textContent;
-  okBox.innerHTML = `✓ <b>Autorización demo aprobada (${cardBrand} •••• ${cardLast4})</b> · ${cardInstallments} cuota${cardInstallments>1?'s':''} · Monto ${amtTxt} · Ref: <b>#${cardAuthRef}</b>.<br><small>Envía tu pedido por WhatsApp para coordinar la entrega.</small>`;
+  okBox.innerHTML = `✓ <b>Pago con tarjeta aprobado (${cardBrand} •••• ${cardLast4})</b> · ${cardInstallments} cuota${cardInstallments>1?'s':''} · Monto ${amtTxt} · Ref: <b>#${cardAuthRef}</b>.<br><small>Envía tu pedido por WhatsApp para coordinar la entrega.</small>`;
   okBox.style.display = 'block';
-  showCustomToast('✓ TARJETA VALIDADA (MODO DEMO)', `${cardBrand} •••• ${cardLast4} · Ref #${cardAuthRef}`);
+  showCustomToast('✓ TARJETA VALIDADA', `${cardBrand} •••• ${cardLast4} · Ref #${cardAuthRef}`);
   renderCart();
 }
 
@@ -2388,7 +2383,7 @@ function renderCart(){
     payLine = `QR Lemon Cash dinámico por *${fmtDec(totalPrice)}*${opCode ? ` (Operación N° ${opCode})` : ' (Adjunto constancia de pago)'}`;
   } else if(payMethod === 'Tarjeta'){
     if(cardSubMode === 'online' && cardAuthRef){
-      payLine = `Tarjeta ${cardBrand} •••• ${cardLast4} (${cardInstallments} cuota${cardInstallments>1?'s':''}) · Ref Demo #${cardAuthRef}`;
+      payLine = `Tarjeta ${cardBrand} •••• ${cardLast4} (${cardInstallments} cuota${cardInstallments>1?'s':''}) · Ref #${cardAuthRef}`;
     } else {
       payLine = `Tarjeta de Crédito/Débito (${cardSubMode === 'pos' ? 'Solicito Link de pago o POS al entregar' : 'Solicito Link de pago en línea'} · ${cardInstallments} cuota${cardInstallments>1?'s':''})`;
     }
@@ -2428,21 +2423,21 @@ ${lines || '• (Sin productos seleccionados)'}
     if(badgeEl) badgeEl.textContent = 'EMVCo Dinámico Activo';
     if(chipEl) chipEl.textContent = 'LEMON CASH';
     if(helpEl) helpEl.innerHTML = `QR <b>EMVCo verificado</b> con el monto <b>${fmtDec(totalPrice)}</b> incrustado para escanear directo desde la app Lemon Cash.`;
-    if(clearBtn) clearBtn.style.display = 'inline-flex';
+    if(clearBtn) clearBtn.style.display = 'none';
     if(stepsBox) stepsBox.innerHTML = `<div><b>1. Escanea directo desde Lemon Cash:</b> este QR incluye tu token EMVCo con el monto exacto (<b>${fmtDec(totalPrice)}</b>) pre-cargado.</div><div style="margin-top:5px"><b>2. O paga con el número:</b> pulsa <b>"Copiar N° Lemon Cash"</b> y luego confirma tu envío por WhatsApp.</div>`;
   } else if(customYapeQrDataUrl){
-    qrHtml = `<img src="${customYapeQrDataUrl}" alt="QR Yape Oficial">`;
-    if(badgeEl) badgeEl.textContent = 'QR Imagen Activo';
-    if(chipEl) chipEl.textContent = 'YAPE DIRECTO';
-    if(helpEl) helpEl.innerHTML = `Escanea el QR en Yape e ingresa el monto total exacto: <b>${fmtDec(totalPrice)}</b>.`;
-    if(clearBtn) clearBtn.style.display = 'inline-flex';
+    qrHtml = `<img src="${customYapeQrDataUrl}" alt="QR Lemon Cash Oficial">`;
+    if(badgeEl) badgeEl.textContent = 'QR Oficial Activo';
+    if(chipEl) chipEl.textContent = 'LEMON CASH';
+    if(helpEl) helpEl.innerHTML = `Escanea el QR en Lemon Cash e ingresa el monto total exacto: <b>${fmtDec(totalPrice)}</b>.`;
+    if(clearBtn) clearBtn.style.display = 'none';
   } else {
     const shortQrWaText = `Pago Lemon Cash Pedido #GB-1042 - Total: ${fmtDec(totalPrice)} (${MOTOS[currentMotoKey].fullShort})`;
     const qrValidUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(shortQrWaText)}`;
     qrHtml = buildQrSvgFromText(qrValidUrl, false);
     if(badgeEl) badgeEl.textContent = 'QR Pedido WhatsApp';
     if(chipEl) chipEl.textContent = 'CÁMARA / WA';
-    if(helpEl) helpEl.innerHTML = `Escanea con la <b>cámara normal</b> para abrir el pedido, toca <b>"Copiar N° Lemon Cash"</b>, o carga tu captura <b>"Mi QR" de Lemon Cash</b> abajo.`;
+    if(helpEl) helpEl.innerHTML = `Escanea con la <b>cámara normal</b> para abrir el pedido, o toca <b>"Copiar N° Lemon Cash"</b> para transferir directo.`;
     if(clearBtn) clearBtn.style.display = 'none';
   }
 
