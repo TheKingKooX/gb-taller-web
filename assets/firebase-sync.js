@@ -265,6 +265,27 @@ const GBCloud = {
     );
   },
 
+  subscribeOrderStatuses(onData, onError) {
+    return onSnapshot(
+      collection(db, "order_status"),
+      (snap) => {
+        const map = {};
+        snap.forEach((d) => {
+          const data = d.data() || {};
+          map[d.id] = {
+            ...data,
+            verifiedAt: toMillis(data.verifiedAt),
+            updatedAt: toMillis(data.updatedAt)
+          };
+        });
+        onData(map, snap.metadata);
+      },
+      (err) => {
+        if (onError) onError(err);
+      }
+    );
+  },
+
   async fetchSalesOnce() {
     const snap = await getDocs(collection(db, "sales"));
     const list = [];

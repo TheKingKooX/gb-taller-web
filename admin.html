@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script type="module" src="assets/firebase-sync.js?v=14"></script>
+<script type="module" src="assets/firebase-sync.js?v=15"></script>
 <style>
 :root{
   --asfalto:#090A0D;
@@ -268,6 +268,76 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
 .undo-ord-bar small{font-size:11.5px;color:var(--texto-2);display:block;margin-top:2px}
 .undo-ord-acts{display:flex;align-items:center;gap:8px;flex:none}
 
+.rc-pill-adm{
+  padding:3px 8px;border-radius:7px;font-family:var(--mono);font-size:10px;font-weight:800;
+  background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35);color:#86EFAC;
+}
+
+.usr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.usr-card{
+  padding:15px;border-radius:18px;background:var(--pista);border:1px solid var(--linea);
+  display:flex;flex-direction:column;gap:11px;box-shadow:inset 0 1px 0 var(--luz);
+}
+.usr-h{display:flex;align-items:center;gap:11px}
+.usr-av{
+  width:42px;height:42px;border-radius:12px;background:rgba(245,183,0,.15);
+  border:1px solid rgba(245,183,0,.4);color:var(--oro-claro);
+  font-family:var(--display);font-size:16px;font-weight:800;display:grid;place-items:center;flex:none;
+}
+.usr-h-info{min-width:0;flex:1}
+.usr-h-info b{display:block;font-size:14.5px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.usr-h-info small{display:block;font-size:11.5px;color:#86EFAC;font-family:var(--mono);margin-top:2px}
+.usr-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.usr-stat{
+  padding:8px 9px;border-radius:11px;background:var(--asfalto);border:1px solid var(--linea);
+}
+.usr-stat small{display:block;font-size:9.5px;color:var(--texto-3);text-transform:uppercase;font-weight:700}
+.usr-stat b{display:block;font-size:13px;color:#fff;margin-top:2px;font-family:var(--mono)}
+.usr-recent{
+  padding:8px 10px;border-radius:11px;background:var(--asfalto);border:1px solid var(--linea);
+  display:flex;flex-direction:column;gap:5px;
+}
+.usr-rec-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11.5px;color:var(--texto-2)}
+.usr-rec-row b{color:#fff;font-family:var(--mono)}
+.usr-acts{display:flex;gap:8px}
+
+.adm-receipt-card{
+  background:#fff;color:#111827;border-radius:16px;padding:18px 16px;
+  border:1px solid rgba(255,255,255,.2);box-shadow:0 12px 32px rgba(0,0,0,.45);
+  margin-bottom:14px;font-size:12px;
+}
+.adm-receipt-card .rc-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding-bottom:12px;border-bottom:2px dashed #CBD5E1;margin-bottom:12px;
+}
+.adm-receipt-card .rc-brand{display:flex;align-items:center;gap:9px}
+.adm-receipt-card .rc-brand img{width:34px;height:34px;border-radius:8px;object-fit:contain;background:#111827;padding:3px}
+.adm-receipt-card .rc-brand b{display:block;font-size:13px;font-weight:900;color:#0F172A}
+.adm-receipt-card .rc-brand small{display:block;font-size:10px;color:#64748B;font-weight:600}
+.adm-receipt-card .rc-stamp{
+  padding:4px 9px;border-radius:8px;background:#DCFCE7;border:1px solid #86EFAC;
+  color:#166534;font-family:var(--mono);font-size:10px;font-weight:800;text-align:right;
+}
+.adm-receipt-card .rc-rows{display:grid;grid-template-columns:1fr 1fr;gap:7px 12px;margin-bottom:12px}
+.adm-receipt-card .rc-rows div small{display:block;font-size:9.5px;color:#64748B;text-transform:uppercase;font-weight:700}
+.adm-receipt-card .rc-rows div b{display:block;font-size:11.5px;color:#0F172A;word-break:break-word}
+.adm-receipt-card .rc-items{
+  border-top:1px solid #E2E8F0;border-bottom:2px dashed #CBD5E1;
+  padding:9px 0;margin-bottom:10px;display:flex;flex-direction:column;gap:6px;
+}
+.adm-receipt-card .rc-item{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;color:#1E293B}
+.adm-receipt-card .rc-item b{font-family:var(--mono);white-space:nowrap}
+.adm-receipt-card .rc-total{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;font-weight:900;color:#0F172A}
+.adm-receipt-card .rc-total span{font-size:11.5px;color:#475569;font-weight:700;text-transform:uppercase}
+.adm-receipt-card .rc-foot{margin-top:8px;font-size:10px;color:#64748B;text-align:center}
+
+.uh-list{display:flex;flex-direction:column;gap:10px;max-height:62vh;overflow-y:auto;padding-right:2px}
+.uh-item{
+  padding:12px 13px;border-radius:14px;background:var(--asfalto);
+  border:1px solid var(--linea);display:flex;flex-direction:column;gap:8px;
+}
+.uh-item-h{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+
 /* ---------- TOAST DE CONFIRMACIÓN ---------- */
 .toast{
   position:fixed;left:50%;bottom:20px;z-index:120;
@@ -280,9 +350,9 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
 .toast.show{transform:translate(-50%,0);opacity:1}
 .toast span{color:var(--verde)}
 
-/* ---------- NAVEGACIÓN 2 PESTAÑAS ADMIN (INVENTARIO + PEDIDOS) ---------- */
+/* ---------- NAVEGACIÓN 3 PESTAÑAS ADMIN (INVENTARIO + PEDIDOS + USUARIOS) ---------- */
 .adm-tabs{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;
   padding:5px;border-radius:15px;background:var(--pista);
   border:1px solid var(--linea);margin-bottom:16px;
 }
@@ -499,6 +569,10 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
       <span>🛒 Pedidos Tienda</span>
       <b class="t-cnt" id="cntTabPed">3</b>
     </button>
+    <button class="adm-tab" id="tabBtn-usuarios" onclick="switchAdminTab('usuarios')">
+      <span>👥 Usuarios</span>
+      <b class="t-cnt" id="cntTabUsr">0</b>
+    </button>
   </nav>
 
   <!-- ======================================================================
@@ -639,6 +713,45 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
     <section class="ord-grid" id="salesGrid"></section>
   </div><!-- /#pane-pedidos -->
 
+  <!-- ======================================================================
+       PESTAÑA 3 · ADMINISTRACIÓN DE USUARIOS E HISTORIAL DE ÓRDENES
+       ====================================================================== -->
+  <div class="adm-pane" id="pane-usuarios">
+    <section class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr))" aria-label="Resumen de usuarios">
+      <div class="kpi">
+        <small>USUARIOS REGISTRADOS <span>👥</span></small>
+        <strong id="kpiUsrTotal">0</strong>
+        <span class="sub">Clientes con WhatsApp</span>
+      </div>
+      <div class="kpi">
+        <small>CON COMPRAS VALIDADAS <span>✓</span></small>
+        <strong id="kpiUsrPaid" style="color:var(--verde)">0</strong>
+        <span class="sub">Con comprobante emitido</span>
+      </div>
+      <div class="kpi val">
+        <small>FACTURACIÓN DE CLIENTES <span>S/</span></small>
+        <strong id="kpiUsrRev">S/ 0</strong>
+        <span class="sub">Total compras confirmadas</span>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div class="toolbar-row" style="grid-template-columns:1fr">
+        <label class="search">
+          <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="qUser" type="text" placeholder="Buscar usuario por nombre, teléfono WhatsApp o moto..." oninput="renderUsersList()">
+        </label>
+      </div>
+      <div class="pills" id="userFilterPills">
+        <button class="on" data-uf="all" onclick="setUserFilter('all',this)">Todos los usuarios</button>
+        <button data-uf="paid" onclick="setUserFilter('paid',this)">✓ Con compras validadas</button>
+        <button class="warn-p" data-uf="pend" onclick="setUserFilter('pend',this)">⏳ Con orden pendiente</button>
+      </div>
+    </section>
+
+    <section class="usr-grid" id="usersGrid"></section>
+  </div><!-- /#pane-usuarios -->
+
   </div><!-- /#adminWorkspace -->
 </main>
 
@@ -764,6 +877,33 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
       <button class="btn ghost" id="fDeleteBtn" style="flex:0 0 auto;color:#ff6b68" onclick="deleteCurrentItem()">Eliminar</button>
       <button class="btn gold" onclick="saveModalItem()">✓ Guardar en Inventario</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL COMPROBANTE OFICIAL ENTREGADO AL CLIENTE -->
+<div class="sheet-backdrop" id="adminReceiptModal" onclick="if(event.target===this)closeAdminReceiptModal()">
+  <div class="sheet" style="max-width:520px" role="dialog" aria-modal="true" aria-label="Comprobante entregado al usuario">
+    <div class="sheet-h">
+      <h3 id="admReceiptTitle">Comprobante Entregado</h3>
+      <button class="btn ghost" style="height:34px;padding:0 10px" onclick="closeAdminReceiptModal()">✕ Cerrar</button>
+    </div>
+    <div class="adm-receipt-card" id="admReceiptCard"></div>
+    <div class="sheet-f" style="margin-top:0;flex-wrap:wrap">
+      <button class="btn gold" type="button" onclick="downloadAdminReceiptPng()">⬇ Descargar PNG</button>
+      <button class="btn ghost" type="button" onclick="printAdminReceipt()" style="flex:0 0 auto">🖨 Imprimir / PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL HISTORIAL DE ÓRDENES POR USUARIO -->
+<div class="sheet-backdrop" id="userHistoryModal" onclick="if(event.target===this)closeUserHistoryModal()">
+  <div class="sheet" style="max-width:640px" role="dialog" aria-modal="true" aria-label="Historial de órdenes del usuario">
+    <div class="sheet-h">
+      <h3 id="uhModalTitle">Historial del Usuario</h3>
+      <button class="btn ghost" style="height:34px;padding:0 10px" onclick="closeUserHistoryModal()">✕ Cerrar</button>
+    </div>
+    <div id="uhHeader" style="margin-bottom:12px"></div>
+    <div class="uh-list" id="uhOrdersList"></div>
   </div>
 </div>
 
@@ -1272,6 +1412,16 @@ function confirmSaleAndDeductStock(saleId){
     .then(res=>{
       if(res?.receiptCode) sale.receiptCode = res.receiptCode;
       if(res?.verifiedAt) sale.verifiedAt = res.verifiedAt;
+      if(sale._docId){
+        ORDER_STATUSES[sale._docId] = {
+          ...(ORDER_STATUSES[sale._docId] || {}),
+          orderId: sale.id,
+          status: 'Pagado',
+          receiptCode: res?.receiptCode || sale.receiptCode || '',
+          verifiedAt: res?.verifiedAt || Date.now()
+        };
+      }
+      renderSalesList();
       if(SYNC_CH) SYNC_CH.postMessage({ type:'order_verified', docId:sale._docId, orderId:sale.id, status:'Pagado', verifiedAt:res?.verifiedAt || Date.now(), receiptCode:res?.receiptCode || '' });
       showAdmToast(`✓ ${sale.id} validado · Comprobante emitido al cliente y stock descontado`);
     })
@@ -1449,6 +1599,7 @@ function renderSalesList(){
   const grid = document.getElementById('salesGrid');
   if(!list.length){
     grid.innerHTML = `<div class="sale-card" style="grid-column:1/-1;text-align:center;color:var(--texto-2);padding:28px">No hay pedidos con ese filtro.</div>`;
+    renderUsersList();
     return;
   }
 
@@ -1457,6 +1608,8 @@ function renderSalesList(){
     const payCls = /yape|lemon/.test(s.payMethod.toLowerCase()) ? 'yape' : (s.payMethod.toLowerCase().includes('tarj') ? 'card' : '');
     const isFlash = s.id === flashSaleId ? 'new-flash' : '';
     const safeKey = String(s._docId || s.id).replace(/'/g, '');
+    const isValidated = (s.status === 'Pagado' || s.status === 'Entregado');
+    const rcInfo = isValidated ? getOrderReceiptInfo(s) : null;
     return `
       <article class="sale-card ${stCls} ${isFlash}">
         <div class="sale-h">
@@ -1465,6 +1618,7 @@ function renderSalesList(){
               <b style="font-size:15px">${s.id}</b>
               <span class="st-badge ${stCls}">${s.status}</span>
               <span class="pay-tag ${payCls}">${s.payMethod}</span>
+              ${rcInfo ? `<span class="rc-pill-adm" title="Comprobante entregado al usuario">🧾 ${rcInfo.receiptCode}</span>` : ''}
             </div>
             <div class="ord-sub" style="margin-top:4px"><b style="color:#fff">${s.client}</b> · +51 ${fmtPe(s.phone)} · ${s.date}</div>
             <div class="ord-sub">${s.moto} · ${s.delivery}${s.install ? ' · Con instalación' : ''}</div>
@@ -1486,6 +1640,10 @@ function renderSalesList(){
                 ? `<button class="btn ghost act-sm" style="flex:1;color:#93C5FD;border-color:rgba(96,165,250,.4)" onclick="setSaleStatus('${s.id}','Entregado')">📦 Marcar Entregado</button>`
                 : '')
           }
+          ${isValidated
+            ? `<button class="btn ghost act-sm" style="flex:0 0 auto;color:#86EFAC;border-color:rgba(34,197,94,.4)" onclick="openAdminReceiptModal('${safeKey}')" title="Ver comprobante entregado al cliente">🧾 Ver Comprobante</button>`
+            : ''
+          }
           <a class="btn wa-sm" style="flex:0 0 auto" href="${buildSaleWaNotifyLink(s)}" target="_blank">📲 WhatsApp Cliente</a>
           ${s.status === 'Pendiente'
             ? `<button class="btn ghost act-sm" style="flex:0 0 auto;color:#FCA5A5;border-color:rgba(225,29,46,.38)" onclick="deleteSaleOrder('${safeKey}')" title="Eliminar orden pendiente">🗑 Eliminar</button>`
@@ -1495,6 +1653,430 @@ function renderSalesList(){
       </article>
     `;
   }).join('');
+  renderUsersList();
+}
+
+/* ==========================================================================
+   MÓDULO 3: COMPROBANTES ENTREGADOS Y ADMINISTRACIÓN DE USUARIOS
+   ========================================================================== */
+let ORDER_STATUSES = {};
+let userFilter = 'all';
+let activeReceiptSale = null;
+
+function getOrderReceiptInfo(sale){
+  if(!sale) return { receiptCode:'', verifiedAt:null };
+  const stDoc = sale._docId ? ORDER_STATUSES[sale._docId] : null;
+  const fallbackCode = 'COMP-' + String(sale.id || 'GB').replace(/[^A-Z0-9-]/gi, '') + '-OK';
+  return {
+    receiptCode: (stDoc && stDoc.receiptCode) || sale.receiptCode || fallbackCode,
+    verifiedAt: (stDoc && stDoc.verifiedAt) || sale.verifiedAt || sale.updatedAt || sale.createdAt || null
+  };
+}
+
+function formatAdminReceiptDate(ms){
+  const d = ms ? new Date(ms) : new Date();
+  return d.toLocaleString('es-PE', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+
+function openAdminReceiptModal(docOrId){
+  const sale = SALES.find(s => (s._docId && s._docId === docOrId) || s.id === docOrId);
+  if(!sale) return;
+  activeReceiptSale = sale;
+  const info = getOrderReceiptInfo(sale);
+  const verTxt = formatAdminReceiptDate(info.verifiedAt);
+
+  const titleEl = document.getElementById('admReceiptTitle');
+  if(titleEl) titleEl.textContent = `Comprobante · ${sale.id}`;
+
+  const card = document.getElementById('admReceiptCard');
+  if(card){
+    const itemsHtml = (sale.items || []).map(i => `
+      <div class="rc-item">
+        <span><b>${i.qty}x</b> ${i.name} <small style="color:#64748B">[${i.sku}]</small></span>
+        <b>S/ ${(Number(i.qty) * Number(i.price)).toFixed(2)}</b>
+      </div>
+    `).join('');
+    card.innerHTML = `
+      <div class="rc-head">
+        <div class="rc-brand">
+          <img src="assets/logo-gb-marca.png" alt="GB">
+          <div>
+            <b>GB TALLER Y REPUESTOS</b>
+            <small>Comprobante Electrónico · Lima, Perú</small>
+          </div>
+        </div>
+        <div class="rc-stamp">✓ PAGO VERIFICADO<br>${info.receiptCode}</div>
+      </div>
+      <div class="rc-rows">
+        <div><small>N° Pedido</small><b>${sale.id}</b></div>
+        <div><small>Fecha de validación</small><b>${verTxt}</b></div>
+        <div><small>Cliente</small><b>${sale.client || 'Cliente GB'}</b></div>
+        <div><small>WhatsApp</small><b>+51 ${fmtPe(sale.phone)}</b></div>
+        <div><small>Motocicleta</small><b>${sale.moto || '—'}</b></div>
+        <div><small>Pago / Entrega</small><b>${sale.payMethod || 'Lemon Cash QR'} · ${sale.delivery || 'Taller GB'}</b></div>
+      </div>
+      <div class="rc-items">${itemsHtml}</div>
+      <div class="rc-total">
+        <span>Total pagado</span>
+        <b>S/ ${Number(sale.total || 0).toFixed(2)}</b>
+      </div>
+      <div class="rc-foot">Copia exacta del comprobante entregado al usuario en su sesión.${sale.install ? ' Incluye instalación en taller.' : ''}</div>
+    `;
+  }
+  document.getElementById('adminReceiptModal')?.classList.add('open');
+}
+
+function closeAdminReceiptModal(){
+  document.getElementById('adminReceiptModal')?.classList.remove('open');
+}
+
+function admDrawRoundedRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function admWrapText(ctx, text, maxWidth){
+  const words = String(text || '').split(/\s+/);
+  const lines = [];
+  let line = '';
+  for(const w of words){
+    const test = line ? `${line} ${w}` : w;
+    if(ctx.measureText(test).width > maxWidth && line){
+      lines.push(line);
+      line = w;
+    } else {
+      line = test;
+    }
+  }
+  if(line) lines.push(line);
+  return lines.slice(0, 2);
+}
+
+async function downloadAdminReceiptPng(){
+  if(!activeReceiptSale) return;
+  const o = activeReceiptSale;
+  const info = getOrderReceiptInfo(o);
+  const verDate = formatAdminReceiptDate(info.verifiedAt);
+  const items = Array.isArray(o.items) ? o.items : [];
+
+  const extraH = Math.max(0, items.length - 4) * 76;
+  const W = 1080, H = 1480 + extraH;
+  const canvas = document.createElement('canvas');
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = '#090A0D';
+  ctx.fillRect(0, 0, W, H);
+  admDrawRoundedRect(ctx, 48, 48, W - 96, H - 96, 36);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fill();
+
+  ctx.save();
+  admDrawRoundedRect(ctx, 48, 48, W - 96, 230, 36);
+  ctx.clip();
+  ctx.fillStyle = '#0F1117';
+  ctx.fillRect(48, 48, W - 96, 230);
+  ctx.fillStyle = '#F5B700';
+  ctx.fillRect(48, 270, W - 96, 8);
+  ctx.restore();
+
+  await new Promise(resolve => {
+    const img = new Image();
+    let done = false;
+    const finish = () => { if(!done){ done = true; resolve(); } };
+    const timer = setTimeout(finish, 900);
+    img.onload = () => { clearTimeout(timer); try{ ctx.drawImage(img, 96, 98, 120, 120); }catch(_){} finish(); };
+    img.onerror = () => { clearTimeout(timer); finish(); };
+    img.src = 'assets/logo-gb-marca.png';
+  });
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 40px system-ui, -apple-system, Segoe UI, sans-serif';
+  ctx.fillText('GB TALLER Y REPUESTOS', 240, 146);
+  ctx.fillStyle = '#CBD5E1';
+  ctx.font = '600 24px system-ui, -apple-system, Segoe UI, sans-serif';
+  ctx.fillText('COMPROBANTE ELECTRÓNICO DE PAGO VERIFICADO', 240, 192);
+  ctx.fillStyle = '#F5B700';
+  ctx.font = 'bold 22px monospace';
+  ctx.fillText(`CÓDIGO: ${info.receiptCode}`, 240, 232);
+
+  admDrawRoundedRect(ctx, 92, 316, 420, 56, 16);
+  ctx.fillStyle = '#DCFCE7';
+  ctx.fill();
+  ctx.strokeStyle = '#86EFAC';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = '#166534';
+  ctx.font = 'bold 24px system-ui, sans-serif';
+  ctx.fillText('✓ PAGO VERIFICADO EN TALLER GB', 116, 353);
+
+  ctx.fillStyle = '#0F172A';
+  ctx.textAlign = 'right';
+  ctx.font = 'bold 34px monospace';
+  ctx.fillText(String(o.id || '#GB'), W - 92, 355);
+  ctx.textAlign = 'left';
+
+  const metaY = 408;
+  admDrawRoundedRect(ctx, 92, metaY, W - 184, 290, 22);
+  ctx.fillStyle = '#F8FAFC';
+  ctx.fill();
+  ctx.strokeStyle = '#E2E8F0';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  const drawField = (label, val, x, y) => {
+    ctx.fillStyle = '#64748B';
+    ctx.font = 'bold 20px system-ui, sans-serif';
+    ctx.fillText(label.toUpperCase(), x, y);
+    ctx.fillStyle = '#0F172A';
+    ctx.font = 'bold 25px system-ui, sans-serif';
+    admWrapText(ctx, val, 400).forEach((ln, idx) => ctx.fillText(ln, x, y + 32 + idx * 28));
+  };
+
+  drawField('Cliente', o.client || 'Cliente GB', 124, metaY + 46);
+  drawField('WhatsApp', `+51 ${fmtPe(o.phone)}`, 560, metaY + 46);
+  drawField('Fecha de validación', verDate, 124, metaY + 138);
+  drawField('Medio de pago', o.payMethod || 'Lemon Cash QR', 560, metaY + 138);
+  drawField('Motocicleta', o.moto || '—', 124, metaY + 230);
+  drawField('Entrega', o.delivery || 'Taller GB', 560, metaY + 230);
+
+  let y = metaY + 344;
+  ctx.fillStyle = '#64748B';
+  ctx.font = 'bold 21px system-ui, sans-serif';
+  ctx.fillText('DETALLE DE REPUESTOS', 92, y);
+  ctx.textAlign = 'right';
+  ctx.fillText('SUBTOTAL', W - 92, y);
+  ctx.textAlign = 'left';
+
+  y += 20;
+  ctx.strokeStyle = '#CBD5E1';
+  ctx.setLineDash([8, 8]);
+  ctx.beginPath(); ctx.moveTo(92, y); ctx.lineTo(W - 92, y); ctx.stroke();
+  ctx.setLineDash([]);
+  y += 42;
+
+  for(const it of items){
+    const nameLines = admWrapText(ctx, `${it.qty}x ${it.name} [${it.sku}]`, 670);
+    ctx.fillStyle = '#0F172A';
+    ctx.font = 'bold 25px system-ui, sans-serif';
+    nameLines.forEach((ln, idx) => ctx.fillText(ln, 92, y + idx * 30));
+    ctx.textAlign = 'right';
+    ctx.font = 'bold 26px monospace';
+    ctx.fillText(`S/ ${(Number(it.qty) * Number(it.price)).toFixed(2)}`, W - 92, y);
+    ctx.textAlign = 'left';
+    y += Math.max(54, nameLines.length * 32 + 22);
+  }
+
+  ctx.strokeStyle = '#CBD5E1';
+  ctx.setLineDash([8, 8]);
+  ctx.beginPath(); ctx.moveTo(92, y); ctx.lineTo(W - 92, y); ctx.stroke();
+  ctx.setLineDash([]);
+  y += 44;
+
+  admDrawRoundedRect(ctx, 92, y, W - 184, 112, 22);
+  ctx.fillStyle = '#0F1117';
+  ctx.fill();
+  ctx.fillStyle = '#CBD5E1';
+  ctx.font = 'bold 25px system-ui, sans-serif';
+  ctx.fillText('TOTAL PAGADO', 128, y + 66);
+  ctx.fillStyle = '#F5B700';
+  ctx.textAlign = 'right';
+  ctx.font = '900 46px system-ui, sans-serif';
+  ctx.fillText(`S/ ${Number(o.total || 0).toFixed(2)}`, W - 128, y + 72);
+  ctx.textAlign = 'left';
+
+  ctx.fillStyle = '#64748B';
+  ctx.font = '21px system-ui, sans-serif';
+  ctx.fillText('Comprobante oficial emitido tras validación del administrador en GB Taller y Repuestos.', 92, H - 128);
+  ctx.fillText(`WhatsApp oficial del taller: +51 960 628 745 · ${o.install ? 'Incluye instalación en taller.' : 'Solo venta de repuestos.'}`, 92, H - 94);
+
+  const cleanOrderId = String(o.id || 'GB').replace(/[^A-Z0-9-]/gi, '');
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = `Comprobante-${cleanOrderId}.png`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  showAdmToast(`✓ Descargado Comprobante-${cleanOrderId}.png`);
+}
+
+function printAdminReceipt(){
+  const card = document.getElementById('admReceiptCard');
+  if(!card || !activeReceiptSale) return;
+  const win = window.open('', '_blank', 'width=680,height=840');
+  if(!win){ window.print(); return; }
+  win.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Comprobante ${activeReceiptSale.id}</title><style>body{font-family:system-ui,-apple-system,sans-serif;background:#f1f5f9;margin:0;padding:24px;display:flex;justify-content:center}.adm-receipt-card{background:#fff;color:#111827;border-radius:14px;padding:22px;max-width:460px;width:100%}.rc-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:12px;border-bottom:2px dashed #cbd5e1;margin-bottom:12px}.rc-brand{display:flex;align-items:center;gap:9px}.rc-brand img{width:34px;height:34px;border-radius:8px;background:#111827;padding:3px}.rc-brand b{display:block;font-size:13px}.rc-brand small{display:block;font-size:10px;color:#64748b}.rc-stamp{padding:4px 9px;border-radius:8px;background:#dcfce7;border:1px solid #86efac;color:#166534;font-family:monospace;font-size:10px;font-weight:800;text-align:right}.rc-rows{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin-bottom:12px}.rc-rows div small{display:block;font-size:9.5px;color:#64748b;text-transform:uppercase;font-weight:700}.rc-rows div b{display:block;font-size:11.5px}.rc-items{border-top:1px solid #e2e8f0;border-bottom:2px dashed #cbd5e1;padding:9px 0;margin-bottom:10px;display:flex;flex-direction:column;gap:6px}.rc-item{display:flex;justify-content:space-between;gap:10px;font-size:11.5px}.rc-total{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;font-weight:900}.rc-foot{margin-top:8px;font-size:10px;color:#64748b;text-align:center}@media print{body{background:#fff;padding:0}}</style></head><body><div class="adm-receipt-card">${card.innerHTML}</div><script>window.onload=()=>setTimeout(()=>window.print(),250)<\/script></body></html>`);
+  win.document.close();
+}
+
+function buildUsersDirectory(){
+  const map = new Map();
+  for(const s of SALES){
+    const raw9 = String(s.phone || '').replace(/\D/g, '').slice(-9) || '000000000';
+    if(!map.has(raw9)){
+      map.set(raw9, {
+        phone: raw9,
+        name: s.client || 'Cliente GB',
+        motos: new Set(),
+        orders: [],
+        paidCount: 0,
+        pendCount: 0,
+        totalSpent: 0,
+        lastDate: s.date || '',
+        lastTs: s.createdAt || 0
+      });
+    }
+    const u = map.get(raw9);
+    if((s.createdAt || 0) >= u.lastTs && s.client){
+      u.name = s.client;
+      u.lastDate = s.date || u.lastDate;
+      u.lastTs = s.createdAt || u.lastTs;
+    }
+    if(s.moto) u.motos.add(s.moto);
+    u.orders.push(s);
+    if(s.status === 'Pagado' || s.status === 'Entregado'){
+      u.paidCount++;
+      u.totalSpent += Number(s.total || 0);
+    } else if(s.status === 'Pendiente'){
+      u.pendCount++;
+    }
+  }
+  return Array.from(map.values()).sort((a, b) => (b.lastTs || 0) - (a.lastTs || 0));
+}
+
+function setUserFilter(f, btn){
+  userFilter = f;
+  document.querySelectorAll('#userFilterPills button').forEach(b=>{
+    b.classList.toggle('on', btn ? b === btn : b.dataset.uf === f);
+  });
+  renderUsersList();
+}
+
+function renderUsersList(){
+  const users = buildUsersDirectory();
+  const cUsr = document.getElementById('cntTabUsr');
+  if(cUsr) cUsr.textContent = users.length;
+  const kTot = document.getElementById('kpiUsrTotal');
+  const kPaid = document.getElementById('kpiUsrPaid');
+  const kRev = document.getElementById('kpiUsrRev');
+  if(kTot) kTot.textContent = users.length;
+  if(kPaid) kPaid.textContent = users.filter(u => u.paidCount > 0).length;
+  if(kRev) kRev.textContent = 'S/ ' + users.reduce((s, u) => s + u.totalSpent, 0).toLocaleString('es-PE');
+
+  const grid = document.getElementById('usersGrid');
+  if(!grid) return;
+
+  const q = (document.getElementById('qUser')?.value || '').trim().toLowerCase();
+  const list = users.filter(u => {
+    if(userFilter === 'paid' && u.paidCount === 0) return false;
+    if(userFilter === 'pend' && u.pendCount === 0) return false;
+    if(q){
+      const motosTxt = Array.from(u.motos).join(' ').toLowerCase();
+      if(!(u.name.toLowerCase().includes(q) || u.phone.includes(q) || motosTxt.includes(q))) return false;
+    }
+    return true;
+  });
+
+  if(!list.length){
+    grid.innerHTML = `<div class="usr-card" style="grid-column:1/-1;text-align:center;color:var(--texto-2);padding:28px">No hay usuarios registrados con ese filtro.</div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(u => {
+    const initials = u.name.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('') || 'GB';
+    const motosList = Array.from(u.motos).slice(0, 2).join(' · ') || 'Sin moto registrada';
+    const recentHtml = u.orders.slice(0, 3).map(o => {
+      const stCls = o.status==='Pendiente' ? 'pend' : (o.status==='Pagado' ? 'paid' : (o.status==='Entregado' ? 'deliv' : 'canc'));
+      return `<div class="usr-rec-row">
+        <span><b>${o.id}</b> · ${o.date || ''}</span>
+        <span style="display:flex;align-items:center;gap:6px"><span class="st-badge ${stCls}">${o.status}</span><b>S/ ${Number(o.total||0).toLocaleString('es-PE')}</b></span>
+      </div>`;
+    }).join('');
+
+    return `
+      <article class="usr-card">
+        <div class="usr-h">
+          <div class="usr-av">${initials}</div>
+          <div class="usr-h-info">
+            <b>${u.name}</b>
+            <small>+51 ${fmtPe(u.phone)} · Últ. orden: ${u.lastDate || '—'}</small>
+          </div>
+          ${u.pendCount > 0 ? `<span class="st-badge pend">${u.pendCount} pend.</span>` : ''}
+        </div>
+        <div style="font-size:11px;color:var(--texto-2)">🏍 ${motosList}</div>
+        <div class="usr-stats">
+          <div class="usr-stat"><small>Órdenes</small><b>${u.orders.length}</b></div>
+          <div class="usr-stat"><small>Validadas</small><b style="color:var(--verde)">${u.paidCount}</b></div>
+          <div class="usr-stat"><small>Comprado</small><b style="color:var(--oro-claro)">S/ ${u.totalSpent.toLocaleString('es-PE')}</b></div>
+        </div>
+        <div class="usr-recent">${recentHtml}</div>
+        <div class="usr-acts">
+          <button class="btn gold" style="flex:1;height:36px;font-size:12px" onclick="openUserHistoryModal('${u.phone}')">📋 Ver historial (${u.orders.length})</button>
+          <a class="btn wa-sm" style="height:36px" href="https://wa.me/51${u.phone}" target="_blank">📲 WA</a>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+function openUserHistoryModal(phone){
+  const users = buildUsersDirectory();
+  const u = users.find(x => x.phone === phone);
+  if(!u) return;
+
+  const titleEl = document.getElementById('uhModalTitle');
+  const hdrEl = document.getElementById('uhHeader');
+  const listEl = document.getElementById('uhOrdersList');
+  if(titleEl) titleEl.textContent = `Historial · ${u.name}`;
+  if(hdrEl){
+    hdrEl.innerHTML = `
+      <div class="usr-stats">
+        <div class="usr-stat"><small>WhatsApp</small><b style="color:#86EFAC">+51 ${fmtPe(u.phone)}</b></div>
+        <div class="usr-stat"><small>Órdenes totales</small><b>${u.orders.length} (${u.paidCount} val.)</b></div>
+        <div class="usr-stat"><small>Total validado</small><b style="color:var(--oro-claro)">S/ ${u.totalSpent.toLocaleString('es-PE')}</b></div>
+      </div>
+    `;
+  }
+  if(listEl){
+    listEl.innerHTML = u.orders.map(s => {
+      const stCls = s.status==='Pendiente' ? 'pend' : (s.status==='Pagado' ? 'paid' : (s.status==='Entregado' ? 'deliv' : 'canc'));
+      const isVal = (s.status === 'Pagado' || s.status === 'Entregado');
+      const rc = isVal ? getOrderReceiptInfo(s) : null;
+      const safeKey = String(s._docId || s.id).replace(/'/g, '');
+      return `
+        <div class="uh-item">
+          <div class="uh-item-h">
+            <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+              <b style="font-family:var(--mono);font-size:13.5px;color:#fff">${s.id}</b>
+              <span class="st-badge ${stCls}">${s.status}</span>
+              ${rc ? `<span class="rc-pill-adm">🧾 ${rc.receiptCode}</span>` : ''}
+            </div>
+            <b style="font-family:var(--mono);font-size:14px;color:var(--oro-claro)">S/ ${Number(s.total||0).toLocaleString('es-PE')}</b>
+          </div>
+          <div style="font-size:11px;color:var(--texto-2)">${s.date} · ${s.moto} · ${s.payMethod} · ${s.delivery}</div>
+          <div class="sale-items" style="margin:0">
+            ${(s.items||[]).map(i=>`<div class="sale-item-row"><span><b>${i.qty}x</b> ${i.name}</span><b>S/ ${(i.qty*i.price).toLocaleString('es-PE')}</b></div>`).join('')}
+          </div>
+          ${isVal ? `<div style="display:flex;justify-content:flex-end"><button class="btn ghost act-sm" style="color:#86EFAC;border-color:rgba(34,197,94,.4)" onclick="openAdminReceiptModal('${safeKey}')">🧾 Ver Comprobante</button></div>` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+  document.getElementById('userHistoryModal')?.classList.add('open');
+}
+
+function closeUserHistoryModal(){
+  document.getElementById('userHistoryModal')?.classList.remove('open');
 }
 
 /* ==========================================================================
@@ -1504,15 +2086,21 @@ let currentAdminTab = 'inv';
 
 function switchAdminTab(tab){
   currentAdminTab = tab;
-  ['inv','pedidos'].forEach(t=>{
-    document.getElementById('pane-'+t).classList.toggle('active', t===tab);
-    document.getElementById('tabBtn-'+t).classList.toggle('on', t===tab);
+  ['inv','pedidos','usuarios'].forEach(t=>{
+    document.getElementById('pane-'+t)?.classList.toggle('active', t===tab);
+    document.getElementById('tabBtn-'+t)?.classList.toggle('on', t===tab);
   });
   const topBtn = document.getElementById('topPrimaryBtn');
   if(topBtn){
-    topBtn.textContent = (tab === 'pedidos') ? '+ Simular Pedido' : '+ Nuevo Repuesto';
+    if(tab === 'usuarios'){
+      topBtn.style.display = 'none';
+    } else {
+      topBtn.style.display = (window.GBCloud && window.GBCloud.isAdmin()) ? 'inline-flex' : 'none';
+      topBtn.textContent = (tab === 'pedidos') ? '+ Simular Pedido' : '+ Nuevo Repuesto';
+    }
   }
   syncFromStorage(false);
+  if(tab === 'usuarios') renderUsersList();
 }
 
 function onTopPrimaryAction(){
@@ -1602,6 +2190,7 @@ try{
 function checkAdminHash(){
   const h = (location.hash || '').replace('#','');
   if(h === 'pedidos') switchAdminTab('pedidos');
+  if(h === 'usuarios') switchAdminTab('usuarios');
   if(h === 'inventario') switchAdminTab('inv');
   if(h === 'edit') openEditModal('disco');
 }
@@ -1613,6 +2202,7 @@ window.addEventListener('hashchange', checkAdminHash);
    ========================================================================== */
 let unsubCloudInv = null;
 let unsubCloudSales = null;
+let unsubCloudOrderStatuses = null;
 let cloudSalesInitialized = false;
 
 function sortByDefaultOrderAdm(cloudItems){
@@ -1694,6 +2284,14 @@ function initAdminCloudSync(){
         console.warn('Seed inventory:', e);
       }
 
+      if(unsubCloudOrderStatuses) unsubCloudOrderStatuses();
+      if(typeof window.GBCloud.subscribeOrderStatuses === 'function'){
+        unsubCloudOrderStatuses = window.GBCloud.subscribeOrderStatuses((map)=>{
+          ORDER_STATUSES = map || {};
+          renderSalesList();
+        }, err => console.warn('Cloud order_status listener:', err?.message || err));
+      }
+
       if(unsubCloudSales) unsubCloudSales();
       cloudSalesInitialized = false;
       unsubCloudSales = window.GBCloud.subscribeSales((cloudSales)=>{
@@ -1718,6 +2316,8 @@ function initAdminCloudSync(){
       if(topBtn) topBtn.style.display = 'none';
       bar.classList.remove('connected');
       if(unsubCloudSales){ unsubCloudSales(); unsubCloudSales = null; }
+      if(unsubCloudOrderStatuses){ unsubCloudOrderStatuses(); unsubCloudOrderStatuses = null; }
+      ORDER_STATUSES = {};
       SALES = [];
       renderSalesList();
       if(user){
