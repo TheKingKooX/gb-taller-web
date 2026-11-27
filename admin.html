@@ -1316,7 +1316,7 @@ function renderSalesList(){
 
   grid.innerHTML = list.map(s=>{
     const stCls = s.status==='Pendiente' ? 'pend' : (s.status==='Pagado' ? 'paid' : (s.status==='Entregado' ? 'deliv' : 'canc'));
-    const payCls = s.payMethod.toLowerCase().includes('yape') ? 'yape' : (s.payMethod.toLowerCase().includes('tarj') ? 'card' : '');
+    const payCls = /yape|lemon/.test(s.payMethod.toLowerCase()) ? 'yape' : (s.payMethod.toLowerCase().includes('tarj') ? 'card' : '');
     const isFlash = s.id === flashSaleId ? 'new-flash' : '';
     return `
       <article class="sale-card ${stCls} ${isFlash}">

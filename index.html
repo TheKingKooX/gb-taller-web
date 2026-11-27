@@ -819,12 +819,12 @@ select.login-in{-webkit-appearance:none;appearance:none}
       <div class="gb" role="img" aria-label="Logo GB"></div>
       <div class="gb-txt">
         <b style="font-size:22px">TALLER Y VENTA DE REPUESTOS</b>
-        <small>16 REPUESTOS POR MOTO · PASARELA YAPE QR DINÁMICO VERIFICADA</small>
+        <small>16 REPUESTOS POR MOTO · PASARELA QR LEMON CASH VERIFICADA</small>
       </div>
     </div>
     <nav class="desk-nav">
       <a class="on" href="#scr-tienda">Catálogo (16)</a>
-      <a href="#scr-pedido">Checkout Yape QR</a>
+      <a href="#scr-pedido">Checkout QR Lemon Cash</a>
       <a href="#scr-taller">Agendar Cita</a>
       <a href="admin.html" style="color:var(--oro)">⚙ Panel Admin</a>
       <a href="mobile.html">Vista 4 Pantallas</a>
@@ -903,7 +903,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
       </div>
       <div class="pay-badges">
         <span class="lbl-p">Pago inmediato con:</span>
-        <span class="p-chip" style="border-color:rgba(169,75,192,.45);color:#e4b5f2">Yape QR</span>
+        <span class="p-chip" style="border-color:rgba(169,75,192,.45);color:#e4b5f2">Lemon Cash QR</span>
         <span class="p-chip" style="border-color:rgba(245,183,0,.35);color:var(--oro-claro)">Tarjeta Visa/MC</span>
         <span class="p-chip">Plin</span>
         <span class="p-chip">Efectivo</span>
@@ -1017,7 +1017,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
       </button>
 
       <div class="pay-methods">
-        <button class="pay-m yape-m on" id="pmYape" onclick="setPayMethod('Yape QR')">● Yape QR Dinámico</button>
+        <button class="pay-m yape-m on" id="pmYape" onclick="setPayMethod('Yape QR')">● QR Dinámico Lemon Cash</button>
         <button class="pay-m card-m" id="pmCard" onclick="setPayMethod('Tarjeta')">● Tarjeta Crédito / Débito</button>
         <button class="pay-m plin-m" id="pmPlin" onclick="setPayMethod('Plin')">● Plin</button>
         <button class="pay-m cash-m" id="pmCash" onclick="setPayMethod('Efectivo en taller')">Efectivo en taller</button>
@@ -1093,7 +1093,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
       <section class="yape-gateway" id="yapeGatewayBox" aria-label="Pasarela de pago Yape con QR dinámico">
         <div class="yape-gw-h">
           <div class="yape-brand">
-            <span class="yape-logo-pill"><i class="dot-y"></i>Yape QR</span>
+            <span class="yape-logo-pill"><i class="dot-y"></i>Lemon Cash QR</span>
             <small>Taller y Repuestos GB</small>
           </div>
           <span class="yape-live-tag" id="yapeQrBadge">QR ISO Verificado</span>
@@ -1110,18 +1110,18 @@ select.login-in{-webkit-appearance:none;appearance:none}
               <b id="yapeQrAmount">S/ 195.00</b>
               <span id="yapeModeChip">CÁMARA / WA</span>
             </div>
-            <p class="yape-dest" id="yapeHelpDesc">Carga tu captura <b>"Mi QR" de Yape</b> para generar un QR EMVCo con monto exacto, o toca <b>"Abrir Yape + Copiar N°"</b> para pagar directo.</p>
+            <p class="yape-dest" id="yapeHelpDesc">Carga tu captura <b>"Mi QR" de Lemon Cash</b> para generar un QR EMVCo con monto exacto, o toca <b>"Copiar N° Lemon Cash"</b> para pagar directo.</p>
             <div class="yape-gw-acts">
-              <button class="yape-mini-btn teal" onclick="copyAndOpenYape()">Abrir Yape + Copiar N°</button>
+              <button class="yape-mini-btn teal" onclick="copyAndOpenYape()">Copiar N° Lemon Cash</button>
               <button class="yape-mini-btn" onclick="openYapeModal()">Ampliar QR</button>
             </div>
           </div>
         </div>
 
         <div class="yape-op-row">
-          <input class="yape-op-in" id="yapeOpCode" type="text" placeholder="N° de operación Yape (opcional) o envía captura..." oninput="renderCart()">
+          <input class="yape-op-in" id="yapeOpCode" type="text" placeholder="N° de operación (opcional) o envía captura..." oninput="renderCart()">
           <label class="yape-mini-btn" id="uploadYapeLbl" style="cursor:pointer;white-space:nowrap" title="Sube la captura de 'Mi QR' desde tu app Yape para generar QR EMVCo dinámico real">
-            Cargar Mi QR Yape
+            Cambiar QR de cobro
             <input type="file" accept="image/*" style="display:none" onchange="uploadOfficialYapeQr(event)">
           </label>
           <button class="yape-mini-btn" id="clearYapeBtn" style="display:none" onclick="clearOfficialYapeQr()" title="Quitar QR cargado">✕</button>
@@ -1135,11 +1135,11 @@ select.login-in{-webkit-appearance:none;appearance:none}
 
       <div class="cta-wa-box">
         <div class="tot-row">
-          <span id="totPayLabel">Total a pagar con Yape QR</span>
+          <span id="totPayLabel">Total a pagar con Lemon Cash QR</span>
           <b class="price" id="cartTotal">S/ 195</b>
         </div>
         <a class="btn wa" id="waSendBtn" href="#" target="_blank" onclick="return submitCheckoutOrder(event, this)">
-          <i data-i="wa"></i><span id="waSendBtnTxt">Confirmar Yapeo y enviar pedido por WhatsApp</span>
+          <i data-i="wa"></i><span id="waSendBtnTxt">Confirmar pago y enviar pedido por WhatsApp</span>
         </a>
       </div>
     </section>
@@ -1239,7 +1239,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
   <div class="sheet yape-sheet" role="dialog" aria-modal="true">
     <div class="sheet-handle"></div>
     <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:4px">
-      <span class="yape-logo-pill"><i class="dot-y"></i>Pasarela Yape QR Dinámico</span>
+      <span class="yape-logo-pill"><i class="dot-y"></i>Pasarela Lemon Cash QR Dinámico</span>
       <span class="yape-live-tag" id="ymOrderTag">Pedido #GB-1042</span>
     </div>
     <h3 style="font-family:var(--display);font-size:36px;font-weight:900;margin-top:4px" id="ymAmount">S/ 195.00</h3>
@@ -1250,13 +1250,13 @@ select.login-in{-webkit-appearance:none;appearance:none}
     </div>
 
     <div class="yape-steps-box" id="ymStepsBox">
-      <div><b>1. Pago directo en App Yape:</b> pulsa <b>"Abrir Yape y copiar N°"</b> para copiar el número oficial del taller y yapear el monto exacto (<b id="ymInlineAmt">S/ 195.00</b>).</div>
+      <div><b>1. Pago directo en App Lemon Cash:</b> pulsa <b>"Copiar N° Lemon Cash"</b> para copiar el número de pruebas (+51 924 536 653) y enviar el monto exacto (<b id="ymInlineAmt">S/ 195.00</b>).</div>
       <div style="margin-top:5px"><b>2. Escaneo QR:</b> escaneando con la cámara normal abres tu pedido en WhatsApp. Para escaneo directo desde la app Yape con monto automático, carga la captura <b>"Mi QR"</b> del taller.</div>
     </div>
 
     <div class="sheet-actions">
-      <button class="btn yape-btn" id="ymCopyOpenBtn" onclick="copyAndOpenYape()">Abrir Yape y copiar N°</button>
-      <a class="btn wa" id="ymWaBtn" href="#" target="_blank" onclick="return submitCheckoutOrder(event, this)"><i data-i="wa"></i>Ya yapeé · Enviar por WA</a>
+      <button class="btn yape-btn" id="ymCopyOpenBtn" onclick="copyAndOpenYape()">Copiar N° Lemon Cash</button>
+      <a class="btn wa" id="ymWaBtn" href="#" target="_blank" onclick="return submitCheckoutOrder(event, this)"><i data-i="wa"></i>Ya pagué · Enviar por WA</a>
     </div>
   </div>
 </div>
@@ -1412,7 +1412,9 @@ select.login-in{-webkit-appearance:none;appearance:none}
 
 <script>
 const WHATSAPP_NUMBER = '51960628745';
-const YAPE_LOCAL_NUMBER = '960628745';
+const YAPE_LOCAL_NUMBER = '960628745'; // N° del taller (rol admin / contacto)
+const PAY_NUMBER = '924536653';        // N° Lemon Cash para pruebas de pago (+51 924 536 653)
+const PAY_PROVIDER = 'Lemon Cash';
 
 const P={
  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
@@ -1538,7 +1540,7 @@ async function recordCheckoutOrderToAdmin(){
     moto: selectedMoto,
     delivery: deliveryMode + (deliveryMode.includes('domicilio') && cAddr ? ` (${cAddr})` : ''),
     install: wantInstall,
-    payMethod: payMethod === 'Tarjeta' && cardAuthRef ? `Tarjeta ${cardBrand} •••• ${cardLast4}` : payMethod,
+    payMethod: payMethod === 'Tarjeta' && cardAuthRef ? `Tarjeta ${cardBrand} •••• ${cardLast4}` : (payMethod === 'Yape QR' ? 'Lemon Cash QR' : payMethod),
     status: 'Pendiente',
     stockDeducted: false,
     total: totalPrice,
@@ -1704,7 +1706,7 @@ const STAGES = {
   5:{ang:82,  fill:100,step:'Etapa 5 de 5', title:'¡Lista para entrega!', desc:'Prueba de ruta superada. Lista en Taller GB.'}
 };
 
-const YAPE_BASE_EMVCO_QR = ''; // Opcional: pega aquí tu trama 000201... de "Mi QR" Yape para todos los visitantes
+const YAPE_BASE_EMVCO_QR = '000201010211263700028001039030220250627092208930803415204482953036045802PE5910Lemon Cash6004Lima80550003ID10144b9BknMEVRl/UHbIOpu0oHewJmB5lL904Zrfxs6iz/O8=6304D6F2'; // Opcional: pega aquí tu trama 000201... de "Mi QR" Yape para todos los visitantes
 
 let currentCat = 'Todo';
 let currentMotoKey = 'msx';
@@ -1712,7 +1714,7 @@ let selectedMoto = 'Honda MSX 125 (Placa ABC-123)';
 let deliveryMode = 'Recoger en taller GB';
 let wantInstall = true;
 let payMethod = 'Yape QR';
-let baseEmvcoQr = localStorage.getItem('gb_yape_emvco_base') || YAPE_BASE_EMVCO_QR;
+let baseEmvcoQr = YAPE_BASE_EMVCO_QR || localStorage.getItem('gb_yape_emvco_base') || '';
 let customYapeQrDataUrl = localStorage.getItem('gb_custom_yape_qr') || null;
 let cart = { disco: 1, pastillas: 1, aceite: 1 };
 let toastTimer = null;
@@ -1780,7 +1782,7 @@ function buildQrSvgFromText(payload, isEmvco){
       for(let c=0; c<count; c++){
         if(qr.isDark(r, c)){
           const isFinder = (r<7 && c<7) || (r<7 && c>=count-7) || (r>=count-7 && c<7);
-          const color = isFinder ? (isEmvco ? '#742384' : '#5B166B') : '#111111';
+          const color = isFinder ? (isEmvco ? '#111111' : '#5B166B') : '#111111';
           paths += `<rect x="${c+margin}" y="${r+margin}" width="1" height="1" fill="${color}"/>`;
         }
       }
@@ -1857,16 +1859,16 @@ function showCustomToast(smallTxt, titleTxt){
 }
 
 function copyAndOpenYape(){
-  if(navigator.clipboard) navigator.clipboard.writeText(YAPE_LOCAL_NUMBER);
+  if(navigator.clipboard) navigator.clipboard.writeText(PAY_NUMBER);
   const t = document.getElementById('cartToast');
   document.getElementById('toastImg').src = 'assets/logo-gb-marca.png';
-  document.getElementById('toastSmall').textContent = '✓ NÚMERO YAPE COPIADO AL PORTAPAPELES';
-  document.getElementById('toastTitle').textContent = `Pega el número en Yape · Monto: ${document.getElementById('yapeQrAmount').textContent}`;
+  document.getElementById('toastSmall').textContent = '✓ N° LEMON CASH COPIADO (+51 924 536 653)';
+  document.getElementById('toastTitle').textContent = `Pega el número en Lemon Cash · Monto: ${document.getElementById('yapeQrAmount').textContent}`;
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(()=>t.classList.remove('show'), 3800);
   // Intenta abrir el esquema nativo de la app Yape en celulares si está instalada
-  setTimeout(()=>{ window.location.href = 'yape://'; }, 350);
+  /* Lemon Cash no expone esquema público: solo se copia el número */
 }
 
 function switchTab(tab){
@@ -2167,7 +2169,7 @@ function setPayMethod(m){
   document.getElementById('cardGatewayBox').style.display = (m==='Tarjeta') ? 'block' : 'none';
   document.getElementById('totPayLabel').textContent = `Total a pagar (${m})`;
   if(m === 'Yape QR'){
-    document.getElementById('waSendBtnTxt').textContent = 'Confirmar Yapeo y enviar pedido por WhatsApp';
+    document.getElementById('waSendBtnTxt').textContent = 'Confirmar pago y enviar pedido por WhatsApp';
   } else if(m === 'Tarjeta'){
     document.getElementById('waSendBtnTxt').textContent = (cardSubMode === 'online' && cardAuthRef)
       ? 'Enviar pedido con pago confirmado por WhatsApp'
@@ -2206,7 +2208,7 @@ function renderCart(){
   const lines = entries.map(x=>`• ${x.qty}x ${x.name} [${x.sku}] — ${fmt(x.price*x.qty)}`).join('\n');
   let payLine = payMethod;
   if(payMethod === 'Yape QR'){
-    payLine = `Yape QR Dinámico por *${fmtDec(totalPrice)}*${opCode ? ` (Operación N° ${opCode})` : ' (Adjunto constancia de Yapeo)'}`;
+    payLine = `QR Lemon Cash dinámico por *${fmtDec(totalPrice)}*${opCode ? ` (Operación N° ${opCode})` : ' (Adjunto constancia de pago)'}`;
   } else if(payMethod === 'Tarjeta'){
     if(cardSubMode === 'online' && cardAuthRef){
       payLine = `Tarjeta ${cardBrand} •••• ${cardLast4} (${cardInstallments} cuota${cardInstallments>1?'s':''}) · Ref Demo #${cardAuthRef}`;
@@ -2247,10 +2249,10 @@ ${lines || '• (Sin productos seleccionados)'}
   if(dynamicEmvco){
     qrHtml = buildQrSvgFromText(dynamicEmvco, true);
     if(badgeEl) badgeEl.textContent = 'EMVCo Dinámico Activo';
-    if(chipEl) chipEl.textContent = 'YAPE / PLIN';
-    if(helpEl) helpEl.innerHTML = `QR <b>EMVCo verificado</b> con el monto <b>${fmtDec(totalPrice)}</b> incrustado para escanear directo desde Yape o Plin.`;
+    if(chipEl) chipEl.textContent = 'LEMON CASH';
+    if(helpEl) helpEl.innerHTML = `QR <b>EMVCo verificado</b> con el monto <b>${fmtDec(totalPrice)}</b> incrustado para escanear directo desde la app Lemon Cash.`;
     if(clearBtn) clearBtn.style.display = 'inline-flex';
-    if(stepsBox) stepsBox.innerHTML = `<div><b>1. Escanea directo desde Yape / Plin:</b> este QR incluye tu token EMVCo con el monto exacto (<b>${fmtDec(totalPrice)}</b>) pre-cargado.</div><div style="margin-top:5px"><b>2. O paga con el número:</b> pulsa <b>"Abrir Yape y copiar N°"</b> y luego confirma tu envío por WhatsApp.</div>`;
+    if(stepsBox) stepsBox.innerHTML = `<div><b>1. Escanea directo desde Lemon Cash:</b> este QR incluye tu token EMVCo con el monto exacto (<b>${fmtDec(totalPrice)}</b>) pre-cargado.</div><div style="margin-top:5px"><b>2. O paga con el número:</b> pulsa <b>"Copiar N° Lemon Cash"</b> y luego confirma tu envío por WhatsApp.</div>`;
   } else if(customYapeQrDataUrl){
     qrHtml = `<img src="${customYapeQrDataUrl}" alt="QR Yape Oficial">`;
     if(badgeEl) badgeEl.textContent = 'QR Imagen Activo';
@@ -2258,12 +2260,12 @@ ${lines || '• (Sin productos seleccionados)'}
     if(helpEl) helpEl.innerHTML = `Escanea el QR en Yape e ingresa el monto total exacto: <b>${fmtDec(totalPrice)}</b>.`;
     if(clearBtn) clearBtn.style.display = 'inline-flex';
   } else {
-    const shortQrWaText = `Pago Yape Pedido #GB-1042 - Total: ${fmtDec(totalPrice)} (${MOTOS[currentMotoKey].fullShort})`;
+    const shortQrWaText = `Pago Lemon Cash Pedido #GB-1042 - Total: ${fmtDec(totalPrice)} (${MOTOS[currentMotoKey].fullShort})`;
     const qrValidUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(shortQrWaText)}`;
     qrHtml = buildQrSvgFromText(qrValidUrl, false);
     if(badgeEl) badgeEl.textContent = 'QR Pedido WhatsApp';
     if(chipEl) chipEl.textContent = 'CÁMARA / WA';
-    if(helpEl) helpEl.innerHTML = `Escanea con la <b>cámara normal</b> para abrir el pedido, toca <b>"Abrir Yape + Copiar N°"</b>, o carga tu captura <b>"Mi QR" de Yape</b> abajo.`;
+    if(helpEl) helpEl.innerHTML = `Escanea con la <b>cámara normal</b> para abrir el pedido, toca <b>"Copiar N° Lemon Cash"</b>, o carga tu captura <b>"Mi QR" de Lemon Cash</b> abajo.`;
     if(clearBtn) clearBtn.style.display = 'none';
   }
 
