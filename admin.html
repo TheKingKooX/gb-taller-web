@@ -651,8 +651,7 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
             <option value="">Elegir foto de galería GB...</option>
             <option value="assets/productos/disco-freno.jpg">Disco de freno Wave</option>
             <option value="assets/productos/faja-cvt.jpg">Faja / Correa CVT</option>
-            <option value="assets/productos/bujias3.jpg">Kit 3 Bujías</option>
-            <option value="assets/productos/kit-3-bujias.jpg">3 Bujías Iridio</option>
+            <option value="assets/productos/kit-3-bujias.jpg">Kit 3 Bujías Iridio</option>
             <option value="assets/productos/llanta-cocada.jpg">Llanta Cocada Enduro</option>
             <option value="assets/productos/kit-arrastre.jpg">Kit de arrastre Oro</option>
             <option value="assets/productos/rodillos-variador.jpg">Rodillos de variador</option>
@@ -711,6 +710,11 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
       </div>
 
       <div class="f-field">
+        <label>Precio anterior / tachado (opcional, S/)</label>
+        <input class="f-in" id="fWas" type="number" min="0" step="1" placeholder="Ej. 65 (vacío si no tiene oferta)">
+      </div>
+
+      <div class="f-field">
         <label>Stock disponible (unidades)</label>
         <input class="f-in" id="fStock" type="number" min="0" step="1" placeholder="6">
       </div>
@@ -732,6 +736,11 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
       <div class="f-field full">
         <label>Texto corto de compatibilidad en tarjeta</label>
         <input class="f-in" id="fFitText" type="text" placeholder="Ej. Honda MSX 125 · XR 190L">
+      </div>
+
+      <div class="f-field full">
+        <label>Modelos detallados (se muestra al abrir la ficha)</label>
+        <input class="f-in" id="fModels" type="text" placeholder="Ej. Honda MSX 125 (Grom), Honda XR 190L, CB 125F.">
       </div>
 
       <div class="f-field full">
@@ -861,7 +870,7 @@ function quickStock(id, delta){
   if(!p) return;
   p.stock = Math.max(0, (Number(p.stock)||0) + delta);
   saveInventory(`Stock de ${p.sku}: ${p.stock} uds`);
-  window.GBCloud.upsertProduct(p).catch(e=>console.warn('Cloud stock:', e));
+  window.GBCloud.upsertProduct(p).catch(e=>showAdmToast('⚠ Error en nube: ' + (e?.message || e)));
   renderAdminList();
 }
 
@@ -872,7 +881,7 @@ function quickPrice(id, val){
   const num = Math.max(1, Number(val)||p.price);
   p.price = num;
   saveInventory(`Precio ${p.sku}: S/ ${num}`);
-  window.GBCloud.upsertProduct(p).catch(e=>console.warn('Cloud price:', e));
+  window.GBCloud.upsertProduct(p).catch(e=>showAdmToast('⚠ Error en nube: ' + (e?.message || e)));
 }
 
 function renderAdminList(){
@@ -933,7 +942,7 @@ function renderAdminList(){
           </div>
 
           <div class="act-group">
-            <button class="icon-act" onclick="openEditModal('${p.id}')">✎ Ficha</button>
+            <button class="icon-act" style="border-color:rgba(245,183,0,.45);color:var(--oro-claro)" onclick="openEditModal('${p.id}')">✎ Modificar</button>
           </div>
         </div>
       </article>
@@ -947,16 +956,20 @@ function openEditModal(id){
   const p = INVENTORY.find(x=>x.id===id);
   if(!p) return;
   editingId = p.id;
-  document.getElementById('modalTitle').textContent = `Editar · ${p.sku}`;
+  document.getElementById('modalTitle').textContent = `Modificar · ${p.sku}`;
   document.getElementById('fName').value = p.name;
   document.getElementById('fBrand').value = p.brand;
   document.getElementById('fSku').value = p.sku;
   document.getElementById('fCat').value = p.cat;
   document.getElementById('fTag').value = p.tag || '';
   document.getElementById('fPrice').value = p.price;
+  document.getElementById('fWas').value = (p.was && Number(p.was) > 0) ? p.was : '';
   document.getElementById('fStock').value = p.stock;
   document.getElementById('fFitText').value = p.fitText || '';
+  document.getElementById('fModels').value = p.models || p.fitText || '';
   document.getElementById('fSpec').value = p.spec || '';
+  const presetEl = document.getElementById('fPresetImg');
+  if(presetEl) presetEl.value = '';
   formImg = p.img;
   document.getElementById('fImgPrev').src = formImg;
   formMotos = new Set(p.fits || ['msx']);
@@ -976,9 +989,13 @@ function openNewModal(){
   document.getElementById('fCat').value = 'Frenos';
   document.getElementById('fTag').value = 'Nuevo';
   document.getElementById('fPrice').value = 85;
+  document.getElementById('fWas').value = '';
   document.getElementById('fStock').value = 5;
   document.getElementById('fFitText').value = 'Honda MSX 125 · Pulsar NS 200';
+  document.getElementById('fModels').value = 'Honda MSX 125, Bajaj Pulsar NS 200.';
   document.getElementById('fSpec').value = 'Repuesto verificado con garantía en Taller GB.';
+  const presetEl = document.getElementById('fPresetImg');
+  if(presetEl) presetEl.value = '';
   formImg = 'assets/productos/disco-freno.jpg';
   document.getElementById('fImgPrev').src = formImg;
   formMotos = new Set(['msx','pulsar']);
@@ -1060,6 +1077,9 @@ function saveModalItem(){
     return;
   }
   const fitsArr = [...formMotos];
+  const wasVal = Number(document.getElementById('fWas')?.value);
+  const fitTxt = (document.getElementById('fFitText').value || 'Universal').trim();
+  const modelsTxt = (document.getElementById('fModels')?.value || fitTxt || 'Universal').trim();
   const itemData = {
     id: editingId || ('item_' + Date.now()),
     sku: (document.getElementById('fSku').value || 'GB-RP-099').trim(),
@@ -1072,22 +1092,32 @@ function saveModalItem(){
     tagType: fitsArr.length === 1 ? 'excl' : '',
     excl: fitsArr.length === 1,
     fits: fitsArr,
-    fitText: (document.getElementById('fFitText').value || 'Universal').trim(),
+    fitText: fitTxt,
     img: formImg,
     spec: (document.getElementById('fSpec').value || '').trim(),
-    models: (document.getElementById('fFitText').value || 'Universal').trim()
+    models: modelsTxt
   };
+  if(wasVal > 0){
+    itemData.was = wasVal;
+  }
 
-  if(editingId){
+  const isEdit = Boolean(editingId);
+  if(isEdit){
     const idx = INVENTORY.findIndex(x=>x.id===editingId);
-    if(idx >= 0) INVENTORY[idx] = {...INVENTORY[idx], ...itemData};
-    saveInventory(`✓ Actualizado: ${itemData.name}`);
+    if(idx >= 0){
+      const next = {...INVENTORY[idx], ...itemData};
+      if(!(wasVal > 0)) delete next.was;
+      INVENTORY[idx] = next;
+    }
+    saveInventory(`Guardando cambios: ${itemData.name}...`);
   } else {
     INVENTORY.unshift(itemData);
-    saveInventory(`✓ Nuevo repuesto agregado: ${itemData.name}`);
+    saveInventory(`Guardando nuevo repuesto: ${itemData.name}...`);
   }
   if(window.GBCloud && window.GBCloud.isAdmin()){
-    window.GBCloud.upsertProduct(itemData).catch(e=>console.warn('Cloud upsert:', e));
+    window.GBCloud.upsertProduct(itemData)
+      .then(()=>showAdmToast(`✓ ${isEdit ? 'Actualizado' : 'Agregado'} en Firebase: ${itemData.name}`))
+      .catch(e=>showAdmToast('⚠ Error al guardar en nube: ' + (e?.message || e)));
   }
   closeEditModal();
   renderAdminList();
@@ -1241,15 +1271,8 @@ function setSaleStatus(saleId, newStatus){
   if(!requireCloudAdmin()) return;
   const sale = SALES.find(s=>s.id===saleId);
   if(!sale || !sale._docId) return;
-  if((newStatus === 'Pagado' || newStatus === 'Entregado') && !sale.stockDeducted){
-    window.GBCloud.confirmSaleAndDeductStock(sale, INVENTORY).then(res=>{
-      if(res?.receiptCode) sale.receiptCode = res.receiptCode;
-      if(newStatus === 'Entregado') return window.GBCloud.updateSaleStatus(sale._docId, 'Entregado', sale);
-      return res;
-    }).then(res=>{
-      if(SYNC_CH) SYNC_CH.postMessage({ type:'order_verified', docId:sale._docId, orderId:sale.id, status:newStatus, verifiedAt:res?.verifiedAt || Date.now(), receiptCode:res?.receiptCode || sale.receiptCode || '' });
-      showAdmToast(`✓ ${sale.id} actualizado a ${newStatus} en la nube`);
-    }).catch(err=>showAdmToast('⚠ Error en nube: ' + (err?.message || err)));
+  if(newStatus === 'Entregado' && !sale.stockDeducted){
+    showAdmToast('⚠ Primero valida el pago y emite el comprobante');
     return;
   }
   window.GBCloud.updateSaleStatus(sale._docId, newStatus, sale)
@@ -1258,6 +1281,25 @@ function setSaleStatus(saleId, newStatus){
       showAdmToast(`✓ ${sale.id} → ${newStatus} en la nube`);
     })
     .catch(err=>showAdmToast('⚠ Error en nube: ' + (err?.message || err)));
+}
+
+function deleteSaleOrder(saleId){
+  if(!requireCloudAdmin()) return;
+  const sale = SALES.find(s=>s.id===saleId);
+  if(!sale) return;
+  if(!confirm(`¿Eliminar definitivamente la orden ${sale.id} de ${sale.client}? Esta acción no se puede deshacer.`)) return;
+  if(sale._docId && window.GBCloud && window.GBCloud.isAdmin()){
+    window.GBCloud.deleteSaleOrder(sale._docId)
+      .then(()=>{
+        SALES = SALES.filter(s=>s.id!==saleId);
+        renderSalesList();
+        showAdmToast(`🗑 Orden ${sale.id} eliminada de Firebase`);
+      })
+      .catch(err=>showAdmToast('⚠ Error al eliminar orden: ' + (err?.message || err)));
+    return;
+  }
+  SALES = SALES.filter(s=>s.id!==saleId);
+  saveSales(`🗑 Orden ${sale.id} eliminada`);
 }
 
 function buildSaleWaNotifyLink(s){
@@ -1354,7 +1396,7 @@ function renderSalesList(){
           </div>
           <div style="text-align:right">
             <div class="ord-price">S/ ${Number(s.total || 0).toLocaleString('es-PE')}</div>
-            ${s.stockDeducted ? `<span class="stock-ded-pill">✓ Stock descontado</span>` : `<span style="font-size:10.5px;color:var(--oro-claro);font-weight:700">Stock por descontar</span>`}
+            ${s.stockDeducted ? `<span class="stock-ded-pill">✓ Stock descontado</span>` : `<span style="font-size:10.5px;color:var(--oro-claro);font-weight:700">Stock se descuenta al validar pago</span>`}
           </div>
         </div>
 
@@ -1370,6 +1412,7 @@ function renderSalesList(){
                 : '')
           }
           <a class="btn wa-sm" style="flex:0 0 auto" href="${buildSaleWaNotifyLink(s)}" target="_blank">📲 WhatsApp Cliente</a>
+          <button class="btn ghost act-sm" style="flex:0 0 auto;color:#FCA5A5;border-color:rgba(225,29,46,.38)" onclick="deleteSaleOrder('${s.id}')" title="Eliminar esta orden">🗑 Eliminar</button>
         </div>
       </article>
     `;

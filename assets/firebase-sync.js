@@ -321,6 +321,16 @@ const GBCloud = {
     }, { merge: true });
     await batch.commit();
     return { receiptCode, verifiedAt };
+  },
+
+  async deleteSaleOrder(docId) {
+    if (!isAdminUser(currentAuthUser)) throw new Error("Admin auth required");
+    const id = String(docId || "").trim();
+    if (!id) return;
+    const batch = writeBatch(db);
+    batch.delete(doc(db, "sales", id));
+    batch.delete(doc(db, "order_status", id));
+    await batch.commit();
   }
 };
 
