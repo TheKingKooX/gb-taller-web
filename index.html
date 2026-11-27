@@ -188,10 +188,12 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
    BARRA VISUAL DE FILTRO POR MOTOCICLETA EN ESPECÍFICO (TIENDA)
    ========================================================================== */
 .moto-filter-strip{
-  display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
-  margin:10px 0 8px;padding-bottom:2px;
+  display:flex;gap:8px;overflow-x:auto;scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,.16) transparent;
+  margin:10px 0 6px;padding-bottom:6px;
 }
-.moto-filter-strip::-webkit-scrollbar{display:none}
+.moto-filter-strip::-webkit-scrollbar{height:4px}
+.moto-filter-strip::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:4px}
 .mf-btn{
   flex:none;display:flex;align-items:center;gap:8px;
   padding:6px 11px 6px 7px;border-radius:13px;
@@ -204,13 +206,6 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .mf-btn small{display:block;font-size:10px;color:var(--texto-3);font-weight:600;white-space:nowrap}
 .mf-btn.on{border-color:var(--oro);background:rgba(245,183,0,.1)}
 .mf-btn.on small{color:var(--oro-claro)}
-
-.compat-banner{
-  display:flex;align-items:center;justify-content:space-between;gap:8px;
-  padding:8px 12px;border-radius:11px;background:rgba(245,183,0,.07);
-  border:1px solid rgba(245,183,0,.22);font-size:11.5px;color:var(--texto-2);margin-bottom:10px;
-}
-.compat-banner b{color:var(--oro-claro)}
 
 /* ==========================================================================
    TARJETAS BOUTIQUE CON ETIQUETA DE MOTO ESPECÍFICA Y CONTADOR "- 1 +"
@@ -325,9 +320,8 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .search input{flex:1;min-width:0;color:var(--texto);outline:none;font-size:13.5px}
 .search input::placeholder{color:var(--texto-3)}
 
-.cats{display:flex;gap:7px;margin:8px 0 12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
-.cats::-webkit-scrollbar{display:none}
-.cats button{flex:none;height:33px;padding:0 13px;border-radius:999px;font-size:12px;font-weight:600;background:var(--pista);border:1px solid var(--linea);color:var(--texto-2);transition:all .15s}
+.cats{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
+.cats button{flex:none;height:31px;padding:0 11px;border-radius:999px;font-size:11.5px;font-weight:600;background:var(--pista);border:1px solid var(--linea);color:var(--texto-2);transition:all .15s}
 .cats button.on{background:var(--texto);color:var(--asfalto);border-color:var(--texto);font-weight:700}
 
 /* ==========================================================================
@@ -955,11 +949,6 @@ select.login-in{-webkit-appearance:none;appearance:none}
       </button>
     </div>
 
-    <div class="compat-banner" id="compatBanner">
-      <span>Filtro activo: <b id="compatBannerName">Honda MSX 125 (9 piezas específicas)</b></span>
-      <button style="color:var(--oro);font-weight:700;font-size:11px" onclick="changeMoto(currentMotoKey==='all'?'msx':'all')" id="compatResetBtn">Ver todas (16)</button>
-    </div>
-
     <div class="cats" id="catBar">
       <button class="on" onclick="setCat('Todo',this)">Todo</button>
       <button onclick="setCat('Transmisión',this)">Transmisión / CVT</button>
@@ -1275,7 +1264,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
 </div>
 
 <!-- MODAL DE LOGIN CON NÚMERO DE WHATSAPP (+51 PERÚ) Y VERIFICACIÓN OTP -->
-<div class="sheet-backdrop" id="loginModal" onclick="if(event.target===this)closeLoginModal()">
+<div class="sheet-backdrop" id="loginModal" onclick="if(event.target===this)enterAsGuest()">
   <div class="sheet login-sheet" role="dialog" aria-modal="true" aria-label="Iniciar sesión con número de WhatsApp">
     <div class="sheet-handle"></div>
     <div class="login-hdr">
@@ -1326,7 +1315,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
       </div>
 
       <div class="sheet-actions" style="margin-top:10px">
-        <button class="btn ghost" type="button" onclick="closeLoginModal()">Cerrar</button>
+        <button class="btn ghost" id="loginGuestBtn" type="button" onclick="enterAsGuest()">Ojear catálogo</button>
         <button class="btn wa" type="button" onclick="sendWaOtpCode()">
           <i data-i="wa"></i>Recibir código WA
         </button>
@@ -1885,12 +1874,6 @@ function changeMoto(val){
     b.classList.toggle('on', isAct);
     if(isAct && b.scrollIntoView) b.scrollIntoView({inline:'center', block:'nearest'});
   });
-  document.getElementById('compatBannerName').textContent = currentMotoKey === 'all'
-    ? 'Todas las motos (16 repuestos en almacén)'
-    : `${m.fullShort} (${compCount} piezas compatibles)`;
-  document.getElementById('compatResetBtn').textContent = currentMotoKey === 'all'
-    ? 'Filtrar mi MSX 125'
-    : 'Ver todas (16)';
 
   renderCatalog();
   renderCart();
@@ -2511,11 +2494,20 @@ function applyUserSessionToUi(){
 
 function openLoginModal(){
   backToLoginStep1();
+  const gBtn = document.getElementById('loginGuestBtn');
+  if(gBtn) gBtn.textContent = currentUser ? 'Cerrar' : 'Ojear catálogo';
   document.getElementById('loginModal').classList.add('open');
 }
 
 function closeLoginModal(){
   document.getElementById('loginModal').classList.remove('open');
+}
+
+function enterAsGuest(){
+  if(!currentUser){
+    try{ sessionStorage.setItem('gb_guest_browsing', '1'); }catch(_){}
+  }
+  closeLoginModal();
 }
 
 function onWaLoginPhoneInput(el){
@@ -2621,6 +2613,23 @@ function checkHashTab(){
 }
 checkHashTab();
 window.addEventListener('hashchange', checkHashTab);
+
+// Permitir scroll horizontal con rueda del ratón en la barra de motos
+const motoStripEl = document.getElementById('motoFilterStrip');
+if(motoStripEl){
+  motoStripEl.addEventListener('wheel', e => {
+    if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){
+      e.preventDefault();
+      motoStripEl.scrollLeft += e.deltaY;
+    }
+  }, { passive: false });
+}
+
+// Al entrar por primera vez sin sesión de WhatsApp, pedir login con opción "Ojear catálogo"
+const initHash = (location.hash || '').replace('#','');
+if(!currentUser && !sessionStorage.getItem('gb_guest_browsing') && !['tienda','pedido','taller','nmax','pulsar','yape','tarjeta'].includes(initHash)){
+  openLoginModal();
+}
 </script>
 </body>
 </html>
