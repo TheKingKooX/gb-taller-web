@@ -515,7 +515,7 @@ textarea.f-in{height:60px;padding:8px 12px;resize:vertical}
       <div class="gb" role="img" aria-label="Logo GB"></div>
       <div class="gb-txt">
         <b>PANEL ADMINISTRADOR · GB</b>
-        <small id="admWaSession">WHATSAPP ADMIN: +51 960 628 745 · SINCRONIZADO EN VIVO</small>
+        <small id="admWaSession">WHATSAPP ADMIN: +51 924 536 653 · SINCRONIZADO EN VIVO</small>
       </div>
     </div>
     <div class="top-acts">
@@ -1009,10 +1009,32 @@ function setStockFilter(mode){
   renderAdminList();
 }
 
+const ADMIN_WA_PHONE = '924536653';
+let lastAuthUser = null;
+let lastIsFirebaseAdm = false;
+
+function getStoredWaSession(){
+  try{
+    const u = JSON.parse(localStorage.getItem('gb_user_session_v1') || 'null');
+    return (u && u.phone) ? u : null;
+  }catch(_){ return null; }
+}
+
+function isAdminWaSessionActive(){
+  const u = getStoredWaSession();
+  return Boolean(u && String(u.phone || '').replace(/\D/g, '').slice(-9) === ADMIN_WA_PHONE);
+}
+
 function requireCloudAdmin(){
-  if(window.GBCloud && window.GBCloud.isAdmin()) return true;
-  showAdmToast('🔐 Inicia sesión con tu cuenta Google Admin en Firebase para realizar cambios');
-  return false;
+  if(!window.GBCloud || !window.GBCloud.isAdmin()){
+    showAdmToast('🔐 Inicia sesión con tu cuenta Google Admin en Firebase para realizar cambios');
+    return false;
+  }
+  if(!isAdminWaSessionActive()){
+    showAdmToast('⚠ Acceso restringido: solo la sesión +51 924 536 653 puede administrar el panel');
+    return false;
+  }
+  return true;
 }
 
 function quickStock(id, delta){
@@ -2165,11 +2187,17 @@ window.addEventListener('storage', e => {
   if(e.key === 'gb_inventory_v1' || e.key === 'gb_sales_v1'){
     syncFromStorage(true);
   }
+  if(e.key === 'gb_user_session_v1'){
+    if(typeof applyAdminAccessState === 'function') applyAdminAccessState(lastAuthUser, lastIsFirebaseAdm);
+  }
 });
 if(SYNC_CH){
   SYNC_CH.onmessage = () => syncFromStorage(true);
 }
-window.addEventListener('focus', () => syncFromStorage(true));
+window.addEventListener('focus', () => {
+  syncFromStorage(true);
+  if(typeof applyAdminAccessState === 'function') applyAdminAccessState(lastAuthUser, lastIsFirebaseAdm);
+});
 document.addEventListener('visibilitychange', () => {
   if(!document.hidden) syncFromStorage(true);
 });
@@ -2178,14 +2206,6 @@ setInterval(() => syncFromStorage(true), 800);
 renderAdminList();
 document.getElementById('cntTabInv').textContent = INVENTORY.length;
 renderSalesList();
-
-try{
-  const u = JSON.parse(localStorage.getItem('gb_user_session_v1') || 'null');
-  if(u && u.phone){
-    const ph = fmtPe(u.phone);
-    document.getElementById('admWaSession').textContent = `SESIÓN WHATSAPP: ${u.name.toUpperCase()} (+51 ${ph})`;
-  }
-}catch(_){}
 
 function checkAdminHash(){
   const h = (location.hash || '').replace('#','');
@@ -2237,64 +2257,56 @@ async function logoutFirebaseAdmin(){
   showAdmToast('Sesión de nube cerrada');
 }
 
-function initAdminCloudSync(){
-  if(!window.GBCloud) return;
+async function applyAdminAccessState(user, isFirebaseAdm){
+  lastAuthUser = user || null;
+  lastIsFirebaseAdm = Boolean(isFirebaseAdm);
 
-  // Escuchar inventario público en tiempo real siempre
-  if(unsubCloudInv) unsubCloudInv();
-  unsubCloudInv = window.GBCloud.subscribeInventory((cloudItems)=>{
-    if(Array.isArray(cloudItems) && cloudItems.length > 0){
-      INVENTORY = sortByDefaultOrderAdm(cloudItems);
-      const ser = JSON.stringify(INVENTORY);
-      lastInvSnapshot = ser;
-      try{ localStorage.setItem('gb_inventory_v1', ser); }catch(_){}
-      renderAdminList();
+  const gate = document.getElementById('adminAuthGate');
+  const gateErr = document.getElementById('authGateErr');
+  const gateLogin = document.getElementById('authGateLoginBtn');
+  const gateLogout = document.getElementById('authGateLogoutBtn');
+  const workspace = document.getElementById('adminWorkspace');
+  const topBtn = document.getElementById('topPrimaryBtn');
+  const storeLink = document.getElementById('topStoreLink');
+  const bar = document.getElementById('cloudBar');
+  const title = document.getElementById('cloudBarTitle');
+  const sub = document.getElementById('cloudBarSub');
+  const loginBtn = document.getElementById('cloudLoginBtn');
+  const logoutBtn = document.getElementById('cloudLogoutBtn');
+  const badge = document.getElementById('liveSyncBadge');
+  const hdrWa = document.getElementById('admWaSession');
+
+  const waOk = isAdminWaSessionActive();
+  const hasFullAdmin = Boolean(lastIsFirebaseAdm && waOk);
+
+  if(hasFullAdmin){
+    if(gate) gate.style.display = 'none';
+    if(workspace) workspace.style.display = 'block';
+    if(storeLink) storeLink.style.display = 'inline-flex';
+    if(topBtn) topBtn.style.display = (currentAdminTab === 'usuarios') ? 'none' : 'inline-flex';
+    if(hdrWa) hdrWa.textContent = 'WHATSAPP ADMIN: +51 924 536 653 · SINCRONIZADO EN VIVO';
+    bar.classList.add('connected');
+    title.textContent = `● Nube Firebase Conectada en Tiempo Real (${user.email})`;
+    sub.textContent = 'Todos los pedidos desde cualquier celular y cambios de stock/precio se sincronizan al instante.';
+    loginBtn.style.display = 'none';
+    logoutBtn.style.display = 'inline-flex';
+    if(badge) badge.innerHTML = '<i></i>Firebase Cloud En Vivo';
+
+    try{
+      const seeded = await window.GBCloud.seedInventoryIfEmpty(INVENTORY.length ? INVENTORY : DEFAULT_INVENTORY);
+      if(seeded) showAdmToast('☁️ Catálogo inicial (16 repuestos) publicado en Firestore');
+    }catch(e){
+      console.warn('Seed inventory:', e);
     }
-  }, err => console.warn('Cloud inv listener:', err?.message || err));
 
-  // Escuchar autenticación del administrador (thekingkoox@gmail.com)
-  window.GBCloud.onAuthChange(async (user, isAdm) => {
-    const gate = document.getElementById('adminAuthGate');
-    const gateErr = document.getElementById('authGateErr');
-    const gateLogout = document.getElementById('authGateLogoutBtn');
-    const workspace = document.getElementById('adminWorkspace');
-    const topBtn = document.getElementById('topPrimaryBtn');
-    const storeLink = document.getElementById('topStoreLink');
-    const bar = document.getElementById('cloudBar');
-    const title = document.getElementById('cloudBarTitle');
-    const sub = document.getElementById('cloudBarSub');
-    const loginBtn = document.getElementById('cloudLoginBtn');
-    const logoutBtn = document.getElementById('cloudLogoutBtn');
-    const badge = document.getElementById('liveSyncBadge');
+    if(!unsubCloudOrderStatuses && typeof window.GBCloud.subscribeOrderStatuses === 'function'){
+      unsubCloudOrderStatuses = window.GBCloud.subscribeOrderStatuses((map)=>{
+        ORDER_STATUSES = map || {};
+        renderSalesList();
+      }, err => console.warn('Cloud order_status listener:', err?.message || err));
+    }
 
-    if(isAdm){
-      if(gate) gate.style.display = 'none';
-      if(workspace) workspace.style.display = 'block';
-      if(storeLink) storeLink.style.display = 'inline-flex';
-      if(topBtn) topBtn.style.display = (currentAdminTab === 'usuarios') ? 'none' : 'inline-flex';
-      bar.classList.add('connected');
-      title.textContent = `● Nube Firebase Conectada en Tiempo Real (${user.email})`;
-      sub.textContent = 'Todos los pedidos desde cualquier celular y cambios de stock/precio se sincronizan al instante.';
-      loginBtn.style.display = 'none';
-      logoutBtn.style.display = 'inline-flex';
-      if(badge) badge.innerHTML = '<i></i>Firebase Cloud En Vivo';
-
-      try{
-        const seeded = await window.GBCloud.seedInventoryIfEmpty(INVENTORY.length ? INVENTORY : DEFAULT_INVENTORY);
-        if(seeded) showAdmToast('☁️ Catálogo inicial (16 repuestos) publicado en Firestore');
-      }catch(e){
-        console.warn('Seed inventory:', e);
-      }
-
-      if(unsubCloudOrderStatuses) unsubCloudOrderStatuses();
-      if(typeof window.GBCloud.subscribeOrderStatuses === 'function'){
-        unsubCloudOrderStatuses = window.GBCloud.subscribeOrderStatuses((map)=>{
-          ORDER_STATUSES = map || {};
-          renderSalesList();
-        }, err => console.warn('Cloud order_status listener:', err?.message || err));
-      }
-
-      if(unsubCloudSales) unsubCloudSales();
+    if(!unsubCloudSales){
       cloudSalesInitialized = false;
       unsubCloudSales = window.GBCloud.subscribeSales((cloudSales)=>{
         const prevTop = SALES[0]?.id;
@@ -2312,29 +2324,64 @@ function initAdminCloudSync(){
         console.warn('Cloud sales listener:', err?.message || err);
         showAdmToast('⚠ Error leyendo pedidos en nube: ' + (err?.message || err));
       });
-    } else {
-      if(gate) gate.style.display = 'block';
-      if(workspace) workspace.style.display = 'none';
-      if(storeLink) storeLink.style.display = 'none';
-      if(topBtn) topBtn.style.display = 'none';
-      bar.classList.remove('connected');
-      if(unsubCloudSales){ unsubCloudSales(); unsubCloudSales = null; }
-      if(unsubCloudOrderStatuses){ unsubCloudOrderStatuses(); unsubCloudOrderStatuses = null; }
-      ORDER_STATUSES = {};
-      SALES = [];
-      renderSalesList();
-      if(user){
-        if(gateErr){
-          gateErr.textContent = `⚠ Cuenta sin permisos de administrador: ${user.email}`;
-          gateErr.style.display = 'block';
-        }
-        if(gateLogout) gateLogout.style.display = 'inline-flex';
-      } else {
-        if(gateErr) gateErr.style.display = 'none';
-        if(gateLogout) gateLogout.style.display = 'none';
-      }
-      if(badge) badge.innerHTML = '<i></i>Requiere sesión Firebase';
     }
+  } else {
+    if(gate) gate.style.display = 'block';
+    if(workspace) workspace.style.display = 'none';
+    if(storeLink) storeLink.style.display = 'none';
+    if(topBtn) topBtn.style.display = 'none';
+    if(hdrWa) hdrWa.textContent = 'ACCESO RESTRINGIDO · SOLO ADMIN +51 924 536 653';
+    bar.classList.remove('connected');
+    if(unsubCloudSales){ unsubCloudSales(); unsubCloudSales = null; }
+    if(unsubCloudOrderStatuses){ unsubCloudOrderStatuses(); unsubCloudOrderStatuses = null; }
+    ORDER_STATUSES = {};
+    SALES = [];
+    renderSalesList();
+
+    if(lastIsFirebaseAdm && !waOk){
+      const waSess = getStoredWaSession();
+      if(gateErr){
+        gateErr.textContent = waSess
+          ? `⚠ Acceso denegado: la sesión activa (+51 ${fmtPe(waSess.phone)}) pertenece a un cliente. Solo el número administrador (+51 924 536 653) puede acceder al panel.`
+          : '⚠ Acceso restringido: inicia sesión en la tienda con el número administrador (+51 924 536 653) para acceder al panel.';
+        gateErr.style.display = 'block';
+      }
+      if(gateLogin) gateLogin.style.display = 'none';
+      if(gateLogout) gateLogout.style.display = 'inline-flex';
+    } else if(user){
+      if(gateErr){
+        gateErr.textContent = `⚠ Cuenta sin permisos de administrador: ${user.email}`;
+        gateErr.style.display = 'block';
+      }
+      if(gateLogin) gateLogin.style.display = 'inline-flex';
+      if(gateLogout) gateLogout.style.display = 'inline-flex';
+    } else {
+      if(gateErr) gateErr.style.display = 'none';
+      if(gateLogin) gateLogin.style.display = 'inline-flex';
+      if(gateLogout) gateLogout.style.display = 'none';
+    }
+    if(badge) badge.innerHTML = '<i></i>Requiere sesión Admin';
+  }
+}
+
+function initAdminCloudSync(){
+  if(!window.GBCloud) return;
+
+  // Escuchar inventario público en tiempo real siempre
+  if(unsubCloudInv) unsubCloudInv();
+  unsubCloudInv = window.GBCloud.subscribeInventory((cloudItems)=>{
+    if(Array.isArray(cloudItems) && cloudItems.length > 0){
+      INVENTORY = sortByDefaultOrderAdm(cloudItems);
+      const ser = JSON.stringify(INVENTORY);
+      lastInvSnapshot = ser;
+      try{ localStorage.setItem('gb_inventory_v1', ser); }catch(_){}
+      renderAdminList();
+    }
+  }, err => console.warn('Cloud inv listener:', err?.message || err));
+
+  // Escuchar autenticación del administrador (thekingkoox@gmail.com + WhatsApp 924536653)
+  window.GBCloud.onAuthChange((user, isAdm) => {
+    applyAdminAccessState(user, isAdm);
   });
 }
 

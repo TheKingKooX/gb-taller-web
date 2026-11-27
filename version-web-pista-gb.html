@@ -2060,9 +2060,13 @@ async function submitCitaOrder(ev, anchorEl){
   return false;
 }
 
+const ADMIN_WA_PHONE = '924536653';
 let isFirebaseAdmin = false;
+function isAdminWaPhone(phone){
+  return String(phone || '').replace(/\D/g, '').slice(-9) === ADMIN_WA_PHONE;
+}
 function updateAdminSwitchVisibility(){
-  const show = Boolean(isFirebaseAdmin && !currentUser);
+  const show = Boolean(isFirebaseAdmin && currentUser && isAdminWaPhone(currentUser.phone));
   const deskBtn = document.getElementById('deskAdminSwitchBtn');
   const mobBtn = document.getElementById('mobAdminSwitchBtn');
   if(deskBtn) deskBtn.style.display = show ? 'inline-flex' : 'none';
