@@ -886,6 +886,26 @@ select.login-in{-webkit-appearance:none;appearance:none}
 .rc-total span{font-size:11.5px;color:#475569;font-weight:700;text-transform:uppercase}
 .rc-foot{margin-top:8px;font-size:10px;color:#64748B;text-align:center}
 
+.pc.out-of-stock .photo img{opacity:.45;filter:grayscale(.6)}
+.sold-out-pill{
+  padding:5px 9px;border-radius:9px;
+  background:rgba(225,29,46,.14);border:1px solid rgba(225,29,46,.35);
+  color:#FCA5A5;font-size:10.5px;font-weight:800;white-space:nowrap;
+}
+.card-qty button:disabled,.qty button:disabled,#shAddBtn:disabled{opacity:.35;cursor:not-allowed}
+
+.sheet-nav-row{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 12px;
+}
+.sh-nav-btn{
+  width:34px;height:34px;border-radius:10px;background:var(--pista-2);
+  border:1px solid var(--linea);color:var(--texto);font-size:20px;line-height:1;
+  display:grid;place-items:center;flex:none;transition:border-color .15s,background .15s;
+}
+.sh-nav-btn:hover{border-color:rgba(245,183,0,.45);background:rgba(245,183,0,.1);color:var(--oro-claro)}
+.sh-nav-counter{font-size:11px;font-weight:700;color:var(--texto-2);letter-spacing:.2px;text-align:center}
+.sh-swipe-body{touch-action:pan-y;transition:transform .2s ease,opacity .2s ease;will-change:transform}
+
 /* ==========================================================================
    NOTIFICACIÓN TOAST MINIMALISTA
    ========================================================================== */
@@ -977,21 +997,15 @@ select.login-in{-webkit-appearance:none;appearance:none}
     display:grid;grid-template-columns:1.15fr 1fr;gap:16px;align-items:stretch;margin-bottom:8px;
   }
   .home-hero-row .book{margin-top:0;height:100%}
-  #scr-inicio .grid-2{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+  #scr-inicio .grid-2{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
   #scr-inicio .pc .photo{height:170px}
+  #scr-inicio .pc{padding:12px 12px 14px}
+  #scr-inicio .pc h4{font-size:13.5px}
   #scr-inicio .trust-card{
     margin-top:24px;padding:18px 20px;
     display:flex;align-items:center;justify-content:space-between;gap:20px;
   }
   #scr-inicio .trust-card .pay-badges{margin-top:0;padding-top:0;border-top:0}
-
-  #scr-tienda .hdr3{margin-bottom:14px}
-  #scr-tienda .hdr3 .ib{display:none}
-  #scr-tienda .hdr3 h3{font-size:22px}
-  #scr-tienda .grid-2{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-  #scr-tienda .pc .photo{height:170px}
-  #scr-tienda .pc{padding:12px 12px 14px}
-  #scr-tienda .pc h4{font-size:13.5px}
 
   #scr-pedido{
     max-width:760px;margin:0 auto;background:var(--pista);
@@ -1013,7 +1027,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
   #scr-taller .sum,#scr-taller .quote,#scr-taller .svc-card:not(.on),#scr-taller .days button:not(.on),#scr-taller .slots button:not(.on),#scr-taller .cta-wa-box{background:var(--asfalto)}
 }
 @media (min-width:1140px){
-  #scr-tienda .grid-2{grid-template-columns:repeat(4,minmax(0,1fr))}
+  #scr-inicio .grid-2{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 </style>
 </head>
@@ -1030,8 +1044,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
       </div>
     </div>
     <nav class="desk-nav" aria-label="Navegación principal">
-      <button class="on" id="dnav-inicio" type="button" onclick="switchTab('inicio')">Inicio</button>
-      <button id="dnav-tienda" type="button" onclick="switchTab('tienda')">Catálogo</button>
+      <button class="on" id="dnav-inicio" type="button" onclick="switchTab('inicio')">Tienda</button>
       <button id="dnav-pedido" type="button" onclick="switchTab('pedido')">Mi Pedido <b class="d-badge cart-count" style="display:none">0</b></button>
       <button id="dnav-taller" type="button" onclick="switchTab('taller')">Agendar Cita</button>
     </nav>
@@ -1099,36 +1112,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
       </button>
     </div>
 
-    <div class="sec"><h3 id="homeFeatTitle">Compatibles con tu MSX 125</h3><button onclick="switchTab('tienda')">Ver catálogo (16) →</button></div>
-    <div class="grid-2" id="homeFeaturedGrid"></div>
-
-    <div class="trust-card">
-      <div class="trust-top">
-        <img src="assets/motos/taller-box.jpg" alt="Box Taller GB">
-        <div>
-          <b>Taller y Tienda Oficial GB</b>
-          <small>Lun a Sáb: 8:30 am – 7:00 pm · Repuestos verificados e instalación con garantía.</small>
-        </div>
-      </div>
-      <div class="pay-badges">
-        <span class="lbl-p">Pago inmediato con:</span>
-        <span class="p-chip" style="border-color:rgba(169,75,192,.45);color:#e4b5f2">Lemon Cash QR</span>
-        <span class="p-chip" style="border-color:rgba(245,183,0,.35);color:var(--oro-claro)">Tarjeta Visa/MC</span>
-        <span class="p-chip">Plin</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ====================================================================
-       PANTALLA 2 · TIENDA (16 PRODUCTOS CON FILTRO VISUAL POR MOTOCICLETA)
-       ==================================================================== -->
-  <section class="app-screen" id="scr-tienda">
-    <header class="hdr3">
-      <h3>Catálogo por Moto</h3>
-      <button class="ib" onclick="switchTab('pedido')" aria-label="Carrito"><i data-i="cart"></i><b class="cnt cart-count">3</b></button>
-    </header>
-
-    <div class="search-wrap">
+    <div class="search-wrap" style="margin-top:14px">
       <label class="search">
         <i data-i="search"></i>
         <input id="qInput" type="text" autocomplete="off" placeholder="Buscar llanta, neumático, faja, bujías, escape..." oninput="onSearchInput()" onfocus="onSearchInput()">
@@ -1176,7 +1160,27 @@ select.login-in{-webkit-appearance:none;appearance:none}
       </div>
     </div>
 
+    <div class="sec" style="margin-top:14px">
+      <h3 id="homeFeatTitle">Compatibles con tu MSX 125</h3>
+      <span class="pill" id="catalogCountPill">9 disponibles</span>
+    </div>
     <div class="grid-2" id="catalogGrid"></div>
+
+    <div class="trust-card">
+      <div class="trust-top">
+        <img src="assets/motos/taller-box.jpg" alt="Box Taller GB">
+        <div>
+          <b>Taller y Tienda Oficial GB</b>
+          <small>Lun a Sáb: 8:30 am – 7:00 pm · Repuestos verificados e instalación con garantía.</small>
+        </div>
+      </div>
+      <div class="pay-badges">
+        <span class="lbl-p">Pago inmediato con:</span>
+        <span class="p-chip" style="border-color:rgba(169,75,192,.45);color:#e4b5f2">Lemon Cash QR</span>
+        <span class="p-chip" style="border-color:rgba(245,183,0,.35);color:var(--oro-claro)">Tarjeta Visa/MC</span>
+        <span class="p-chip">Plin</span>
+      </div>
+    </div>
   </section>
 
   <!-- COLUMNA DERECHA EN PC / PESTAÑAS 3 Y 4 EN MÓVIL -->
@@ -1432,20 +1436,27 @@ select.login-in{-webkit-appearance:none;appearance:none}
 <div class="sheet-backdrop" id="prodSheet" onclick="if(event.target===this)closeSheet()">
   <div class="sheet" role="dialog" aria-modal="true">
     <div class="sheet-handle"></div>
-    <div class="sheet-top">
-      <img id="shImg" src="assets/productos/disco-freno.jpg" alt="">
-      <div class="sheet-info">
-        <span class="s-sku" id="shBrandSku">HONDA OEM · GB-FR-014</span>
-        <h3 id="shName">Disco de freno delantero Wave 220mm</h3>
-        <div style="display:flex;align-items:baseline;gap:12px">
-          <b class="price" id="shPrice" style="font-size:24px">S/ 95</b>
-          <span style="font-size:12px;color:var(--verde);font-weight:600" id="shStock">● 6 en stock</span>
+    <div class="sheet-nav-row" id="shNavRow">
+      <button class="sh-nav-btn" id="shPrevBtn" type="button" onclick="navigateSheetProduct(-1)" aria-label="Producto anterior">‹</button>
+      <span class="sh-nav-counter" id="shNavCounter">1 / 9 · Desliza para explorar</span>
+      <button class="sh-nav-btn" id="shNextBtn" type="button" onclick="navigateSheetProduct(1)" aria-label="Siguiente producto">›</button>
+    </div>
+    <div class="sh-swipe-body" id="shSwipeBody">
+      <div class="sheet-top">
+        <img id="shImg" src="assets/productos/disco-freno.jpg" alt="">
+        <div class="sheet-info">
+          <span class="s-sku" id="shBrandSku">HONDA OEM · GB-FR-014</span>
+          <h3 id="shName">Disco de freno delantero Wave 220mm</h3>
+          <div style="display:flex;align-items:baseline;gap:12px">
+            <b class="price" id="shPrice" style="font-size:24px">S/ 95</b>
+            <span style="font-size:12px;color:var(--verde);font-weight:600" id="shStock">● 6 en stock</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="sheet-specs">
-      <div><b>Especificación:</b> <span id="shSpec">Acero inoxidable SUS420 ventilado · 220mm · 4 pernos OEM.</span></div>
-      <div style="margin-top:4px"><b>Motocicletas compatibles:</b> <span id="shModels">Honda MSX 125 (Grom), Honda XR 190L.</span></div>
+      <div class="sheet-specs">
+        <div><b>Especificación:</b> <span id="shSpec">Acero inoxidable SUS420 ventilado · 220mm · 4 pernos OEM.</span></div>
+        <div style="margin-top:4px"><b>Motocicletas compatibles:</b> <span id="shModels">Honda MSX 125 (Grom), Honda XR 190L.</span></div>
+      </div>
     </div>
     <div class="sheet-actions">
       <button class="btn ghost" id="shAddBtn"><i data-i="plus"></i>Agregar al pedido</button>
@@ -1666,17 +1677,14 @@ select.login-in{-webkit-appearance:none;appearance:none}
   <button onclick="switchTab('pedido')">Ver QR / Pedido</button>
 </div>
 
-<!-- BARRA INFERIOR FIJA DE 4 PESTAÑAS -->
+<!-- BARRA INFERIOR FIJA DE 3 PESTAÑAS -->
 <nav class="app-tabbar" aria-label="Navegación principal">
   <button class="on" id="nav-inicio" onclick="switchTab('inicio')">
-    <i data-i="home"></i><span>Inicio</span>
-  </button>
-  <button id="nav-tienda" onclick="switchTab('tienda')">
-    <i data-i="store"></i><span>Tienda (16)</span>
+    <i data-i="store"></i><span>Tienda</span>
   </button>
   <button id="nav-pedido" onclick="switchTab('pedido')">
     <i data-i="wa"></i><span>Pedido QR</span>
-    <b class="t-badge cart-count">3</b>
+    <b class="t-badge cart-count" style="display:none">0</b>
   </button>
   <button id="nav-taller" onclick="switchTab('taller')">
     <i data-i="cal"></i><span>Citas</span>
@@ -1959,6 +1967,7 @@ function initStoreCloudSync(){
     if(Array.isArray(cloudItems) && cloudItems.length > 0){
       INVENTORY = sortByDefaultOrder(cloudItems);
       try{ localStorage.setItem('gb_inventory_v1', JSON.stringify(INVENTORY)); }catch(_){}
+      clampCartToInventoryStock();
       changeMoto(currentMotoKey);
     }
   }, (err)=>{
@@ -1970,6 +1979,7 @@ window.addEventListener('gb-cloud-ready', initStoreCloudSync);
 
 function reloadInventoryFromStorage(){
   INVENTORY = loadSharedInventory();
+  clampCartToInventoryStock();
   changeMoto(currentMotoKey);
 }
 window.addEventListener('storage', e => {
@@ -2609,12 +2619,14 @@ function copyAndOpenYape(){
 }
 
 function switchTab(tab){
-  ['inicio','tienda','pedido','taller'].forEach(t=>{
-    document.getElementById('scr-'+t).classList.toggle('active', t===tab);
+  const target = (tab === 'tienda') ? 'inicio' : tab;
+  ['inicio','pedido','taller'].forEach(t=>{
+    const scr = document.getElementById('scr-'+t);
+    if(scr) scr.classList.toggle('active', t===target);
     const btn = document.getElementById('nav-'+t);
-    if(btn) btn.classList.toggle('on', t===tab);
+    if(btn) btn.classList.toggle('on', t===target);
     const dbtn = document.getElementById('dnav-'+t);
-    if(dbtn) dbtn.classList.toggle('on', t===tab);
+    if(dbtn) dbtn.classList.toggle('on', t===target);
   });
   window.scrollTo({top:0, behavior:'smooth'});
 }
@@ -2668,22 +2680,157 @@ function singleWaLink(p){
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 }
 
+function getAvailableStock(p){
+  return Math.max(0, Math.floor(Number(p?.stock) || 0));
+}
+
+function clampCartToInventoryStock(){
+  let changed = false;
+  Object.keys(cart).forEach(id => {
+    const p = INVENTORY.find(x => x.id === id);
+    if(!p) return;
+    const maxStock = getAvailableStock(p);
+    if(maxStock <= 0){
+      delete cart[id];
+      changed = true;
+    } else if(cart[id] > maxStock){
+      cart[id] = maxStock;
+      changed = true;
+    }
+  });
+  if(changed) persistCurrentCart();
+  return changed;
+}
+
 let activeSheetProduct = null;
-function openSheet(id){
+let lastRenderedCatalogList = [];
+
+function getSheetBrowseList(){
+  return (Array.isArray(lastRenderedCatalogList) && lastRenderedCatalogList.length)
+    ? lastRenderedCatalogList
+    : INVENTORY;
+}
+
+function openSheet(id, slideDir = 0){
   const p = INVENTORY.find(x=>x.id===id);
   if(!p) return;
   activeSheetProduct = p;
+
+  const list = getSheetBrowseList();
+  const idx = list.findIndex(x => x.id === p.id);
+  const total = list.length;
+  const maxStock = getAvailableStock(p);
+  const inCart = cart[p.id] || 0;
+
   document.getElementById('shImg').src = p.img;
   document.getElementById('shBrandSku').textContent = `${p.brand.toUpperCase()} · ${p.sku}`;
   document.getElementById('shName').textContent = p.name;
   document.getElementById('shPrice').textContent = fmt(p.price);
-  document.getElementById('shStock').textContent = `● ${p.stock} disponibles en taller`;
+
+  const stockEl = document.getElementById('shStock');
+  if(stockEl){
+    stockEl.textContent = maxStock > 0 ? `● ${maxStock} disponibles en taller` : '● Sin stock disponible';
+    stockEl.style.color = maxStock > 0 ? 'var(--verde)' : '#FCA5A5';
+  }
   document.getElementById('shSpec').textContent = p.spec;
   document.getElementById('shModels').textContent = p.models;
   document.getElementById('shWaBtn').href = singleWaLink(p);
-  document.getElementById('shAddBtn').onclick = () => { addToCart(p.id); closeSheet(); };
+
+  const addBtn = document.getElementById('shAddBtn');
+  if(addBtn){
+    if(maxStock <= 0){
+      addBtn.disabled = true;
+      addBtn.textContent = 'Sin stock disponible';
+      addBtn.onclick = null;
+    } else if(inCart >= maxStock){
+      addBtn.disabled = true;
+      addBtn.textContent = `Máximo en carrito (${maxStock}/${maxStock})`;
+      addBtn.onclick = null;
+    } else {
+      addBtn.disabled = false;
+      addBtn.innerHTML = '<i data-i="plus"></i>Agregar al pedido';
+      hydrateIcons(addBtn);
+      addBtn.onclick = () => { if(addToCart(p.id)) closeSheet(); };
+    }
+  }
+
+  const counterEl = document.getElementById('shNavCounter');
+  const prevBtn = document.getElementById('shPrevBtn');
+  const nextBtn = document.getElementById('shNextBtn');
+  if(counterEl){
+    counterEl.textContent = (idx >= 0 && total > 1)
+      ? `${idx + 1} / ${total} · Desliza para explorar`
+      : `1 / ${Math.max(1, total)}`;
+  }
+  if(prevBtn) prevBtn.style.visibility = total > 1 ? 'visible' : 'hidden';
+  if(nextBtn) nextBtn.style.visibility = total > 1 ? 'visible' : 'hidden';
+
+  const swipeBody = document.getElementById('shSwipeBody');
+  if(swipeBody && slideDir !== 0){
+    swipeBody.style.transition = 'none';
+    swipeBody.style.transform = `translateX(${slideDir > 0 ? 28 : -28}px)`;
+    swipeBody.style.opacity = '0.45';
+    requestAnimationFrame(() => {
+      swipeBody.style.transition = 'transform .2s ease, opacity .2s ease';
+      swipeBody.style.transform = 'translateX(0)';
+      swipeBody.style.opacity = '1';
+    });
+  }
+
   document.getElementById('prodSheet').classList.add('open');
 }
+
+function navigateSheetProduct(dir){
+  const list = getSheetBrowseList();
+  if(!list.length) return;
+  const curIdx = activeSheetProduct ? list.findIndex(x => x.id === activeSheetProduct.id) : 0;
+  const nextIdx = (curIdx === -1)
+    ? 0
+    : (curIdx + dir + list.length) % list.length;
+  openSheet(list[nextIdx].id, dir);
+}
+
+(function bindProductSheetSwipe(){
+  const sheet = document.querySelector('#prodSheet .sheet');
+  if(!sheet) return;
+  let startX = 0, startY = 0, tracking = false;
+
+  sheet.addEventListener('touchstart', e => {
+    if(e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    tracking = true;
+  }, { passive: true });
+
+  sheet.addEventListener('touchmove', e => {
+    if(!tracking || e.touches.length !== 1) return;
+    const dx = e.touches[0].clientX - startX;
+    const dy = e.touches[0].clientY - startY;
+    if(Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 12){
+      tracking = false;
+    }
+  }, { passive: true });
+
+  sheet.addEventListener('touchend', e => {
+    if(!tracking) return;
+    tracking = false;
+    const endX = e.changedTouches[0]?.clientX ?? startX;
+    const endY = e.changedTouches[0]?.clientY ?? startY;
+    const dx = endX - startX;
+    const dy = endY - startY;
+    if(Math.abs(dx) >= 48 && Math.abs(dx) > Math.abs(dy) * 1.2){
+      navigateSheetProduct(dx < 0 ? 1 : -1);
+    }
+  }, { passive: true });
+
+  document.addEventListener('keydown', e => {
+    const backdrop = document.getElementById('prodSheet');
+    if(!backdrop || !backdrop.classList.contains('open')) return;
+    if(e.key === 'ArrowRight'){ e.preventDefault(); navigateSheetProduct(1); }
+    else if(e.key === 'ArrowLeft'){ e.preventDefault(); navigateSheetProduct(-1); }
+    else if(e.key === 'Escape'){ closeSheet(); }
+  });
+})();
 
 function closeSheet(){
   document.getElementById('prodSheet').classList.remove('open');
@@ -2698,17 +2845,24 @@ function closeYapeModal(){
 }
 
 function productCardHtml(p){
+  const maxStock = getAvailableStock(p);
   const qInCart = cart[p.id] || 0;
-  const ctrl = qInCart > 0
-    ? `<div class="card-qty">
+  const atMax = qInCart >= maxStock;
+  let ctrl = '';
+  if(maxStock <= 0){
+    ctrl = '<span class="sold-out-pill">Agotado</span>';
+  } else if(qInCart > 0){
+    ctrl = `<div class="card-qty">
          <button onclick="changeQty('${p.id}',-1)" aria-label="Quitar">−</button>
          <span>${qInCart}</span>
-         <button onclick="addToCart('${p.id}')" aria-label="Agregar">+</button>
-       </div>`
-    : `<button class="add" onclick="addToCart('${p.id}')" aria-label="Agregar al pedido"><i data-i="plus"></i></button>`;
+         <button onclick="addToCart('${p.id}')" aria-label="Agregar" ${atMax ? 'disabled title="Stock máximo alcanzado"' : ''}>+</button>
+       </div>`;
+  } else {
+    ctrl = `<button class="add" onclick="addToCart('${p.id}')" aria-label="Agregar al pedido"><i data-i="plus"></i></button>`;
+  }
 
   return `
-    <article class="pc ${qInCart>0?'in-cart':''}">
+    <article class="pc ${qInCart>0?'in-cart':''} ${maxStock<=0?'out-of-stock':''}">
       <div class="photo" onclick="openSheet('${p.id}')">
         ${p.tag ? `<span class="tag ${p.tagType||''}">${p.tag}</span>` : ''}
         <img src="${p.img}" alt="${p.name}">
@@ -2871,6 +3025,10 @@ function renderCatalog(){
     if(rawQ && !matchProductSearch(p, rawQ).ok) return false;
     return true;
   });
+  lastRenderedCatalogList = list;
+
+  const countPill = document.getElementById('catalogCountPill');
+  if(countPill) countPill.textContent = `${list.length} disponible${list.length===1?'':'s'}`;
 
   const askMsg = rawQ
     ? `Hola Taller GB! Busco el repuesto *"${rawQ}"* para mi *${selectedMoto}*. ¿Tienen stock y precio?`
@@ -2888,13 +3046,6 @@ function renderCatalog(){
   const grid = document.getElementById('catalogGrid');
   grid.innerHTML = list.map(productCardHtml).join('') + askCard;
   hydrateIcons(grid);
-
-  const feat = document.getElementById('homeFeaturedGrid');
-  if(feat){
-    const featList = INVENTORY.filter(p=>isCompatible(p, currentMotoKey)).slice(0,4);
-    feat.innerHTML = featList.map(productCardHtml).join('');
-    hydrateIcons(feat);
-  }
 }
 
 function cMatches(itemCat, selectedCat){
@@ -2919,16 +3070,40 @@ function showToast(p){
 }
 
 function addToCart(id){
-  cart[id] = (cart[id] || 0) + 1;
+  const p = INVENTORY.find(x=>x.id===id);
+  if(!p) return false;
+  const maxStock = getAvailableStock(p);
+  const current = cart[id] || 0;
+  if(maxStock <= 0){
+    showCustomToast('⚠ SIN STOCK DISPONIBLE', `${p.name} está agotado`);
+    return false;
+  }
+  if(current >= maxStock){
+    showCustomToast('⚠ LÍMITE DE STOCK ALCANZADO', `Solo hay ${maxStock} unidad${maxStock===1?'':'es'} disponible${maxStock===1?'':'s'} de ${p.name}`);
+    return false;
+  }
+  cart[id] = current + 1;
   persistCurrentCart();
   renderCatalog();
   renderCart();
-  const p = INVENTORY.find(x=>x.id===id);
-  if(p) showToast(p);
+  showToast(p);
+  return true;
 }
 
 function changeQty(id, delta){
-  cart[id] = (cart[id] || 0) + delta;
+  const p = INVENTORY.find(x=>x.id===id);
+  const maxStock = p ? getAvailableStock(p) : Infinity;
+  const next = (cart[id] || 0) + delta;
+  if(delta > 0 && next > maxStock){
+    if(maxStock <= 0) delete cart[id];
+    else cart[id] = maxStock;
+    persistCurrentCart();
+    renderCatalog();
+    renderCart();
+    showCustomToast('⚠ LÍMITE DE STOCK ALCANZADO', `Stock máximo disponible: ${maxStock} unidad${maxStock===1?'':'es'}`);
+    return;
+  }
+  cart[id] = next;
   if(cart[id] <= 0) delete cart[id];
   persistCurrentCart();
   renderCatalog();
@@ -3065,6 +3240,7 @@ function toggleInstall(){
 }
 
 function renderCart(){
+  clampCartToInventoryStock();
   const entries = Object.entries(cart).map(([id,qty])=>{
     const item = INVENTORY.find(x=>x.id===id);
     return item ? {...item, qty} : null;
@@ -3179,21 +3355,25 @@ ${lines || '• (Sin productos seleccionados)'}
   if(ymInline) ymInline.textContent = fmtDec(totalPrice);
 
   const cl = document.getElementById('cartList');
-  cl.innerHTML = entries.map(x=>`
+  cl.innerHTML = entries.map(x=>{
+    const maxStock = getAvailableStock(x);
+    const atMax = x.qty >= maxStock;
+    return `
     <div class="c-item">
       <img src="${x.img}" alt="${x.name}">
       <div class="c-info">
-        <small>${x.brand} · ${x.sku}</small>
+        <small>${x.brand} · ${x.sku} · Stock: ${maxStock}</small>
         <b>${x.name}</b>
         <span class="price">${fmt(x.price * x.qty)}</span>
       </div>
       <div class="qty">
         <button onclick="changeQty('${x.id}',-1)">−</button>
         <span>${x.qty}</span>
-        <button onclick="changeQty('${x.id}',1)">+</button>
+        <button onclick="changeQty('${x.id}',1)" ${atMax ? 'disabled title="Stock máximo disponible"' : ''}>+</button>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   document.getElementById('waMessagePreview').textContent = waText;
   const waHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waText)}`;
