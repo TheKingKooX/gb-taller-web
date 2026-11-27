@@ -86,24 +86,28 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .gb-txt small{font-size:11.5px;color:var(--texto-2);font-weight:500}
 .hdr-a{display:flex;gap:8px;align-items:center}
 
-/* Selector de Moto con compatibilidad real */
+/* Selector de Moto con compatibilidad real (1 sola flecha, toda la tarjeta clickeable) */
 .moto-bar{
-  width:100%;display:flex;align-items:center;gap:13px;padding:10px 13px;
+  position:relative;width:100%;display:flex;align-items:center;gap:13px;padding:10px 13px;
   background:var(--pista);border:1px solid var(--linea);border-radius:var(--r-m);
-  box-shadow:inset 0 1px 0 var(--luz);
+  box-shadow:inset 0 1px 0 var(--luz);cursor:pointer;transition:border-color .15s;
 }
+.moto-bar:hover,.moto-bar:focus-within{border-color:rgba(245,183,0,.45)}
+.moto-bar > svg{flex:none;color:var(--texto-2);pointer-events:none}
 .moto-thumb{
   width:62px;height:46px;border-radius:10px;object-fit:cover;
-  background:#171A20;flex:none;
+  background:#171A20;flex:none;pointer-events:none;
 }
-.moto-bar-info{flex:1;min-width:0}
-.moto-bar-info select{
-  font-weight:700;font-size:14px;color:var(--texto);
-  background:transparent;outline:none;width:100%;
+.moto-bar-info{flex:1;min-width:0;pointer-events:none}
+.moto-name{
+  display:block;font-weight:700;font-size:14px;color:var(--texto);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  -webkit-appearance:none;-moz-appearance:none;appearance:none;
 }
-.moto-bar-info select option{background:var(--pista);color:var(--texto)}
+.moto-bar select#motoSelect{
+  position:absolute;inset:0;width:100%;height:100%;opacity:0;
+  cursor:pointer;z-index:2;-webkit-appearance:none;-moz-appearance:none;appearance:none;
+}
+.moto-bar select#motoSelect option{background:var(--pista);color:var(--texto)}
 .moto-meta{display:flex;align-items:center;gap:8px;margin-top:4px}
 .plate-pe{
   display:inline-flex;align-items:center;gap:4px;
@@ -826,13 +830,11 @@ select.login-in{-webkit-appearance:none;appearance:none}
       <a class="on" href="#scr-tienda">Catálogo (16)</a>
       <a href="#scr-pedido">Checkout QR Lemon Cash</a>
       <a href="#scr-taller">Agendar Cita</a>
-      <a href="admin.html" style="color:var(--oro)">⚙ Panel Admin</a>
-      <a href="mobile.html">Vista 4 Pantallas</a>
     </nav>
     <div class="hdr-a">
-      <button class="wa-user-pill" id="deskUserPill" onclick="openLoginModal()" style="height:38px;padding:0 13px;font-size:12px;max-width:260px" title="Cambiar cuenta o iniciar sesión con WhatsApp">
+      <button class="wa-user-pill guest" id="deskUserPill" onclick="openLoginModal()" style="height:38px;padding:0 13px;font-size:12px;max-width:260px" title="Cambiar cuenta o iniciar sesión con WhatsApp">
         <i class="wa-dot"></i>
-        <span id="deskUserTxt">Carlos · +51 987 654 321</span>
+        <span id="deskUserTxt">Iniciar sesión con WhatsApp</span>
       </button>
       <a class="btn wa" style="height:40px;font-size:13px" href="https://wa.me/51960628745?text=Hola%20Taller%20GB,%20quiero%20hacer%20una%20consulta" target="_blank">
         <i data-i="wa"></i>Atención directa
@@ -852,15 +854,14 @@ select.login-in{-webkit-appearance:none;appearance:none}
         <div class="gb" role="img" aria-label="Logo GB"></div>
         <div class="gb-txt">
           <b>TALLER Y REPUESTOS</b>
-          <button class="wa-user-pill" id="hdrUserPill" onclick="openLoginModal()" title="Iniciar sesión o cambiar número de WhatsApp">
+          <button class="wa-user-pill guest" id="hdrUserPill" onclick="openLoginModal()" title="Iniciar sesión o cambiar número de WhatsApp">
             <i class="wa-dot"></i>
-            <span id="hdrUserTxt">Carlos · +51 987 654 321</span>
+            <span id="hdrUserTxt">Entrar con WhatsApp</span>
           </button>
         </div>
       </div>
       <div class="hdr-a">
-        <a class="ib" href="admin.html" title="Panel Administrador de Inventario" aria-label="Panel Administrador"><i data-i="gear"></i></a>
-        <button class="ib" onclick="switchTab('pedido')" aria-label="Carrito"><i data-i="cart"></i><b class="cnt cart-count">3</b></button>
+        <button class="ib" onclick="switchTab('pedido')" aria-label="Carrito"><i data-i="cart"></i><b class="cnt cart-count" style="display:none">0</b></button>
       </div>
     </header>
 
@@ -868,20 +869,21 @@ select.login-in{-webkit-appearance:none;appearance:none}
     <div class="moto-bar">
       <img class="moto-thumb" id="motoThumb" src="assets/motos/msx-125.jpg" alt="Mi Moto">
       <div class="moto-bar-info">
-        <select id="motoSelect" onchange="changeMoto(this.value)">
-          <option value="msx">Honda MSX 125 (Grom)</option>
-          <option value="nmax">Yamaha NMAX 155 (Scooter CVT)</option>
-          <option value="pulsar">Bajaj Pulsar NS 200 FI (DTS-i)</option>
-          <option value="xr">Honda XR 190L / Tornado (Enduro)</option>
-          <option value="duke">KTM Duke 200 / 250 NG</option>
-          <option value="all">Todas las motos (16 repuestos)</option>
-        </select>
+        <span class="moto-name" id="motoDisplayName">Honda MSX 125 (Grom)</span>
         <div class="moto-meta">
           <span class="plate-pe" id="motoPlate">ABC-123</span>
           <span class="oil-tag" id="motoKm">18.400 km · 9 piezas compatibles</span>
         </div>
       </div>
       <i data-i="down"></i>
+      <select id="motoSelect" aria-label="Seleccionar motocicleta" onchange="changeMoto(this.value)">
+        <option value="msx">Honda MSX 125 (Grom)</option>
+        <option value="nmax">Yamaha NMAX 155 (Scooter CVT)</option>
+        <option value="pulsar">Bajaj Pulsar NS 200 FI (DTS-i)</option>
+        <option value="xr">Honda XR 190L / Tornado (Enduro)</option>
+        <option value="duke">KTM Duke 200 / 250 NG</option>
+        <option value="all">Todas las motos (16 repuestos)</option>
+      </select>
     </div>
 
     <button class="book" onclick="switchTab('taller')">
@@ -980,14 +982,24 @@ select.login-in{-webkit-appearance:none;appearance:none}
     <section class="app-screen" id="scr-pedido">
       <header class="hdr3">
         <button class="ib" onclick="switchTab('tienda')" aria-label="Volver"><i data-i="back"></i></button>
-        <h3>Pedido #GB-1042</h3>
-        <span class="pill" id="cartItemsPill">3 ítems</span>
+        <h3>Mi Pedido</h3>
+        <span class="pill" id="cartItemsPill">0 ítems</span>
       </header>
       <div id="storeCloudPill" style="display:flex;align-items:center;justify-content:space-between;padding:6px 11px;margin-bottom:10px;border-radius:10px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.28);font-size:11px;color:#A7F3D0;font-weight:700">
         <span id="storeCloudTxt">⏳ Conectando con Nube GB...</span>
-        <span style="font-family:var(--mono);opacity:.8">v3</span>
+        <span style="font-family:var(--mono);opacity:.8">v4</span>
       </div>
 
+      <div id="cartEmptyBox" style="padding:28px 18px;border-radius:18px;background:var(--pista);border:1px solid var(--linea);text-align:center">
+        <div style="font-size:34px;margin-bottom:8px">🛒</div>
+        <b style="display:block;font-size:15px;color:#fff">Tu pedido está vacío</b>
+        <p style="font-size:12.5px;color:var(--texto-2);margin:6px auto 16px;max-width:280px;line-height:1.45">
+          Agrega repuestos compatibles con tu moto desde el catálogo para calcular el total y pagar con QR o tarjeta.
+        </p>
+        <button class="btn primary" style="width:100%" onclick="switchTab('tienda')">Explorar catálogo (16)</button>
+      </div>
+
+      <div id="checkoutBody" style="display:none">
       <div class="c-list" id="cartList"></div>
 
       <div class="deliv">
@@ -1002,17 +1014,17 @@ select.login-in{-webkit-appearance:none;appearance:none}
       </div>
 
       <div class="cust-fields">
-        <input class="cust-in" id="custName" type="text" placeholder="Tu nombre (ej. Carlos Mendoza)" value="Carlos Mendoza" oninput="renderCart()">
+        <input class="cust-in" id="custName" type="text" placeholder="Tu nombre y apellido" value="" oninput="renderCart()">
         <div class="cust-wa-row">
           <span class="cust-wa-prefix"><i class="wa-dot" style="width:6px;height:6px;border-radius:50%;background:var(--verde)"></i>+51</span>
-          <input class="cust-in" id="custPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="Tu WhatsApp (ej. 987 654 321)" value="987 654 321" oninput="onCheckoutPhoneInput(this)">
+          <input class="cust-in" id="custPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="Tu WhatsApp (9 dígitos)" value="" oninput="onCheckoutPhoneInput(this)">
           <button class="cust-wa-btn" type="button" onclick="openLoginModal()">Cuenta WA</button>
         </div>
         <input class="cust-in" id="custAddress" type="text" placeholder="Dirección o distrito de entrega..." style="display:none" oninput="renderCart()">
       </div>
 
       <button class="install-chk" onclick="toggleInstall()">
-        <i class="box" id="instBox">✓</i>
+        <i class="box" id="instBox"></i>
         <span>Deseo <b>instalar estos repuestos</b> en el taller</span>
       </button>
 
@@ -1055,7 +1067,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
 
           <div class="card-form">
             <input class="card-in full" id="ccNum" type="text" inputmode="numeric" maxlength="19" placeholder="Número de tarjeta (16 dígitos)" oninput="onCardInput()">
-            <input class="card-in full" id="ccName" type="text" placeholder="Nombre en la tarjeta" value="Carlos Mendoza" oninput="onCardInput()">
+            <input class="card-in full" id="ccName" type="text" placeholder="Nombre en la tarjeta" value="" oninput="onCardInput()">
             <input class="card-in" id="ccExp" type="text" inputmode="numeric" maxlength="5" placeholder="MM/AA" oninput="onCardInput()">
             <input class="card-in" id="ccCvv" type="password" inputmode="numeric" maxlength="4" placeholder="CVV" oninput="onCardInput()">
           </div>
@@ -1142,6 +1154,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
           <i data-i="wa"></i><span id="waSendBtnTxt">Confirmar pago y enviar pedido por WhatsApp</span>
         </a>
       </div>
+      </div><!-- /#checkoutBody -->
     </section>
 
     <!-- ==================================================================
@@ -1271,22 +1284,16 @@ select.login-in{-webkit-appearance:none;appearance:none}
     </div>
 
     <!-- Tarjeta de sesión activa (si ya inició sesión) -->
-    <div class="login-active-card" id="loginActiveCard">
+    <div class="login-active-card" id="loginActiveCard" style="display:none">
       <div class="la-left">
-        <div class="login-avatar" id="loginAvatar">CM</div>
+        <div class="login-avatar" id="loginAvatar">GB</div>
         <div style="min-width:0">
-          <b id="loginActiveName">Carlos Mendoza</b>
-          <small id="loginActivePhone">+51 987 654 321 · Honda MSX 125 (ABC-123)</small>
+          <b id="loginActiveName"></b>
+          <small id="loginActivePhone"></small>
         </div>
       </div>
       <button class="login-logout-btn" type="button" onclick="logoutWaSession()">Salir</button>
     </div>
-
-    <!-- Banner de acceso directo Admin si el número es el del Taller GB -->
-    <a href="admin.html" id="loginAdminBanner" style="display:none;margin-bottom:11px;padding:9px 12px;border-radius:12px;background:rgba(245,183,0,.14);border:1px solid var(--oro);color:var(--oro-claro);font-size:12px;font-weight:700;align-items:center;justify-content:space-between">
-      <span>⚙ Cuenta Administrador GB detectada</span>
-      <span style="text-decoration:underline">Ir al Inventario →</span>
-    </a>
 
     <!-- PASO 1: INGRESAR NÚMERO DE WHATSAPP Y MOTO -->
     <div id="loginStep1">
@@ -1296,11 +1303,11 @@ select.login-in{-webkit-appearance:none;appearance:none}
 
       <div class="wa-phone-box">
         <div class="wa-cc"><i style="width:7px;height:7px;border-radius:50%;background:var(--verde);display:inline-block"></i>+51 <span>PERÚ</span></div>
-        <input class="wa-phone-in" id="waLoginPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="987 654 321" value="987 654 321" oninput="onWaLoginPhoneInput(this)">
+        <input class="wa-phone-in" id="waLoginPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="987 654 321" value="" oninput="onWaLoginPhoneInput(this)">
       </div>
 
       <div style="margin-bottom:9px">
-        <input class="login-in" id="waLoginName" type="text" placeholder="Tu nombre y apellido (ej. Carlos Mendoza)" value="Carlos Mendoza">
+        <input class="login-in" id="waLoginName" type="text" placeholder="Tu nombre y apellido" value="">
       </div>
 
       <div class="login-grid-2">
@@ -1311,7 +1318,7 @@ select.login-in{-webkit-appearance:none;appearance:none}
           <option value="xr">Honda XR 190L Enduro</option>
           <option value="duke">KTM Duke 200 / 250 NG</option>
         </select>
-        <input class="login-in" id="waLoginPlate" type="text" maxlength="8" placeholder="Placa ABC-123" value="ABC-123" style="font-family:var(--mono);font-weight:700;text-transform:uppercase;text-align:center">
+        <input class="login-in" id="waLoginPlate" type="text" maxlength="8" placeholder="Placa (opc.)" value="" style="font-family:var(--mono);font-weight:700;text-transform:uppercase;text-align:center">
       </div>
 
       <div id="waLoginErr" style="display:none;font-size:11.5px;color:#FCA5A5;margin-bottom:8px;font-weight:600">
@@ -1351,32 +1358,6 @@ select.login-in{-webkit-appearance:none;appearance:none}
         <button class="btn ghost" type="button" onclick="backToLoginStep1()">← Cambiar N°</button>
         <button class="btn wa" type="button" onclick="verifyWaOtpCode()">
           <i data-i="wa"></i>Verificar y entrar
-        </button>
-      </div>
-    </div>
-
-    <!-- PERFILES RÁPIDOS DE PRUEBA (1 TOQUE) -->
-    <div class="demo-users">
-      <div class="demo-users-h">
-        <span>Cambio rápido de cuenta WhatsApp (1 toque)</span>
-        <span style="color:#86EFAC">● 4 perfiles</span>
-      </div>
-      <div class="demo-user-list">
-        <button class="demo-u-btn on" type="button" data-phone="987654321" onclick="quickLoginProfile('987654321')">
-          <b>Carlos Mendoza</b>
-          <small>+51 987 654 321 · MSX</small>
-        </button>
-        <button class="demo-u-btn" type="button" data-phone="945112890" onclick="quickLoginProfile('945112890')">
-          <b>Luis Quispe</b>
-          <small>+51 945 112 890 · NMAX</small>
-        </button>
-        <button class="demo-u-btn" type="button" data-phone="912334567" onclick="quickLoginProfile('912334567')">
-          <b>Marco Paredes</b>
-          <small>+51 912 334 567 · Pulsar</small>
-        </button>
-        <button class="demo-u-btn adm" type="button" data-phone="960628745" onclick="quickLoginProfile('960628745')">
-          <b style="color:var(--oro-claro)">⚙ Admin Taller GB</b>
-          <small>+51 960 628 745 · Admin</small>
         </button>
       </div>
     </div>
@@ -1712,11 +1693,11 @@ let currentCat = 'Todo';
 let currentMotoKey = 'msx';
 let selectedMoto = 'Honda MSX 125 (Placa ABC-123)';
 let deliveryMode = 'Recoger en taller GB';
-let wantInstall = true;
+let wantInstall = false;
 let payMethod = 'Yape QR';
 let baseEmvcoQr = YAPE_BASE_EMVCO_QR || localStorage.getItem('gb_yape_emvco_base') || '';
 let customYapeQrDataUrl = localStorage.getItem('gb_custom_yape_qr') || null;
-let cart = { disco: 1, pastillas: 1, aceite: 1 };
+let cart = {};
 let toastTimer = null;
 
 let citaService = 'Mantenimiento general completo';
@@ -1892,6 +1873,8 @@ function changeMoto(val){
   const compCount = INVENTORY.filter(p=>isCompatible(p, currentMotoKey)).length;
   selectedMoto = currentMotoKey === 'all' ? 'Moto por confirmar' : `${m.name} (Placa ${m.plate})`;
   document.getElementById('motoThumb').src = m.img;
+  const dispName = document.getElementById('motoDisplayName');
+  if(dispName) dispName.textContent = m.name;
   document.getElementById('motoPlate').textContent = m.plate;
   document.getElementById('motoKm').textContent = `${m.km} · ${compCount} piezas compatibles`;
   document.getElementById('homeFeatTitle').textContent = currentMotoKey === 'all' ? 'Destacados del catálogo' : `Compatibles con tu ${m.fullShort}`;
@@ -2043,6 +2026,7 @@ function showToast(p){
 
 function addToCart(id){
   cart[id] = (cart[id] || 0) + 1;
+  persistCurrentCart();
   renderCatalog();
   renderCart();
   const p = INVENTORY.find(x=>x.id===id);
@@ -2052,6 +2036,7 @@ function addToCart(id){
 function changeQty(id, delta){
   cart[id] = (cart[id] || 0) + delta;
   if(cart[id] <= 0) delete cart[id];
+  persistCurrentCart();
   renderCatalog();
   renderCart();
 }
@@ -2195,9 +2180,24 @@ function renderCart(){
   const totalCount = entries.reduce((s,x)=>s+x.qty, 0);
   const totalPrice = entries.reduce((s,x)=>s+x.qty*x.price, 0);
 
-  document.querySelectorAll('.cart-count').forEach(el=>el.textContent = totalCount);
+  document.querySelectorAll('.cart-count').forEach(el=>{
+    el.textContent = totalCount;
+    el.style.display = totalCount > 0 ? 'grid' : 'none';
+  });
   document.getElementById('cartItemsPill').textContent = `${totalCount} ítem${totalCount===1?'':'s'}`;
   document.getElementById('cartTotal').textContent = fmt(totalPrice);
+
+  const emptyBox = document.getElementById('cartEmptyBox');
+  const checkoutBody = document.getElementById('checkoutBody');
+  if(emptyBox && checkoutBody){
+    emptyBox.style.display = entries.length === 0 ? 'block' : 'none';
+    checkoutBody.style.display = entries.length === 0 ? 'none' : 'block';
+  }
+  if(entries.length === 0){
+    const cl = document.getElementById('cartList');
+    if(cl) cl.innerHTML = '';
+    return;
+  }
 
   const cName = (document.getElementById('custName')?.value || 'Cliente').trim();
   const cPhoneRaw = (document.getElementById('custPhone')?.value || '').replace(/\D/g, '').slice(0, 9);
@@ -2363,20 +2363,69 @@ function loadSavedWaSession(){
     const raw = localStorage.getItem('gb_user_session_v1');
     if(raw){
       const parsed = JSON.parse(raw);
-      if(parsed === null) return null;
-      if(parsed && parsed.phone) return parsed;
+      if(parsed && parsed.phone && parsed.phone !== '987654321') return parsed;
     }
   }catch(_){}
-  return { ...WA_USERS_DB['987654321'] };
+  return null;
+}
+
+function cartKeyForPhone(phone){
+  return phone ? ('gb_cart_v2_' + String(phone).replace(/\D/g, '')) : 'gb_cart_v2_guest';
+}
+
+function loadCartForPhone(phone){
+  try{
+    const raw = localStorage.getItem(cartKeyForPhone(phone));
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed;
+    }
+  }catch(_){}
+  return {};
+}
+
+function persistCurrentCart(){
+  try{
+    localStorage.setItem(cartKeyForPhone(currentUser?.phone), JSON.stringify(cart));
+  }catch(_){}
+}
+
+function resetUserInteractions(isFreshNumber){
+  cart = isFreshNumber ? {} : loadCartForPhone(currentUser?.phone);
+  if(isFreshNumber) persistCurrentCart();
+  wantInstall = false;
+  const ib = document.getElementById('instBox');
+  if(ib) ib.textContent = '';
+  const addrEl = document.getElementById('custAddress');
+  if(addrEl){ addrEl.value = ''; addrEl.style.display = 'none'; }
+  setDelivery('Recoger en taller GB');
+  const opEl = document.getElementById('yapeOpCode');
+  if(opEl) opEl.value = '';
+  const qEl = document.getElementById('qInput');
+  if(qEl) qEl.value = '';
+  cardAuthRef = ''; cardLast4 = '';
+  ['ccNum','ccExp','ccCvv'].forEach(id=>{ const el = document.getElementById(id); if(el) el.value = ''; });
+  const okBox = document.getElementById('cardOkBox');
+  if(okBox) okBox.style.display = 'none';
+  const cvN = document.getElementById('cvNumber');
+  if(cvN) cvN.textContent = '•••• •••• •••• ••••';
+  const cvE = document.getElementById('cvExp');
+  if(cvE) cvE.textContent = 'MM/AA';
 }
 
 let currentUser = loadSavedWaSession();
+cart = loadCartForPhone(currentUser?.phone);
 
-function saveWaSession(userObj){
+function saveWaSession(userObj, isNewNumber = false){
+  const prevPhone = currentUser?.phone || null;
   currentUser = userObj;
   try{
     localStorage.setItem('gb_user_session_v1', JSON.stringify(userObj));
   }catch(_){}
+  if(isNewNumber || (userObj?.phone !== prevPhone)){
+    const hasSavedCart = Boolean(userObj?.phone && localStorage.getItem(cartKeyForPhone(userObj.phone)));
+    resetUserInteractions(isNewNumber || !hasSavedCart);
+  }
   applyUserSessionToUi();
 }
 
@@ -2387,38 +2436,28 @@ function applyUserSessionToUi(){
   const deskTxt = document.getElementById('deskUserTxt');
   const activeCard = document.getElementById('loginActiveCard');
   const statusBadge = document.getElementById('loginStatusBadge');
-  const adminBanner = document.getElementById('loginAdminBanner');
 
   if(currentUser){
     const firstName = currentUser.name.split(' ')[0];
     const fmtPhone = formatPePhone(currentUser.phone);
-    const isAdm = currentUser.role === 'admin' || currentUser.phone === YAPE_LOCAL_NUMBER;
-    const pillLabel = isAdm ? `⚙ Admin · +51 ${fmtPhone}` : `${firstName} · +51 ${fmtPhone}`;
+    const pillLabel = `${firstName} · +51 ${fmtPhone}`;
 
     if(hdrTxt) hdrTxt.textContent = pillLabel;
     if(deskTxt) deskTxt.textContent = pillLabel;
-    if(hdrPill){
-      hdrPill.classList.remove('guest');
-      hdrPill.classList.toggle('admin', isAdm);
-    }
-    if(deskPill){
-      deskPill.classList.remove('guest');
-      deskPill.classList.toggle('admin', isAdm);
-    }
+    if(hdrPill){ hdrPill.classList.remove('guest','admin'); }
+    if(deskPill){ deskPill.classList.remove('guest','admin'); }
 
     if(activeCard) activeCard.style.display = 'flex';
     if(statusBadge){
-      statusBadge.textContent = isAdm ? '⚙ Admin Verificado' : '✓ WhatsApp Verificado';
-      statusBadge.style.color = isAdm ? 'var(--oro-claro)' : '#86EFAC';
+      statusBadge.textContent = '✓ WhatsApp Verificado';
+      statusBadge.style.color = '#86EFAC';
     }
-    if(adminBanner) adminBanner.style.display = isAdm ? 'flex' : 'none';
 
     const mInfo = MOTOS[currentUser.motoKey] || MOTOS.msx;
     document.getElementById('loginAvatar').textContent = getInitials(currentUser.name);
     document.getElementById('loginActiveName').textContent = currentUser.name;
-    document.getElementById('loginActivePhone').textContent = `+51 ${fmtPhone} · ${mInfo.fullShort} (${currentUser.plate})`;
+    document.getElementById('loginActivePhone').textContent = `+51 ${fmtPhone} · ${mInfo.fullShort}${currentUser.plate ? ' ('+currentUser.plate+')' : ''}`;
 
-    // Rellenar formulario del modal y del checkout
     const loginPh = document.getElementById('waLoginPhone');
     const loginNm = document.getElementById('waLoginName');
     const loginMt = document.getElementById('waLoginMoto');
@@ -2426,7 +2465,7 @@ function applyUserSessionToUi(){
     if(loginPh) loginPh.value = fmtPhone;
     if(loginNm) loginNm.value = currentUser.name;
     if(loginMt && currentUser.motoKey !== 'all') loginMt.value = currentUser.motoKey;
-    if(loginPl) loginPl.value = currentUser.plate;
+    if(loginPl) loginPl.value = currentUser.plate || '';
 
     const custNameEl = document.getElementById('custName');
     const custPhoneEl = document.getElementById('custPhone');
@@ -2439,28 +2478,33 @@ function applyUserSessionToUi(){
       if(cvH) cvH.textContent = currentUser.name.toUpperCase();
     }
 
-    // Sincronizar moto y placa del cliente
     if(MOTOS[currentUser.motoKey] && currentUser.plate){
       MOTOS[currentUser.motoKey].plate = currentUser.plate;
     }
     changeMoto(currentUser.motoKey || 'msx');
-
-    document.querySelectorAll('.demo-u-btn').forEach(b=>{
-      b.classList.toggle('on', b.dataset.phone === currentUser.phone);
-    });
   } else {
     if(hdrTxt) hdrTxt.textContent = 'Entrar con WhatsApp';
     if(deskTxt) deskTxt.textContent = 'Iniciar sesión con WhatsApp';
     if(hdrPill){ hdrPill.classList.add('guest'); hdrPill.classList.remove('admin'); }
     if(deskPill){ deskPill.classList.add('guest'); deskPill.classList.remove('admin'); }
     if(activeCard) activeCard.style.display = 'none';
-    if(adminBanner) adminBanner.style.display = 'none';
     if(statusBadge){
       statusBadge.textContent = 'Invitado';
       statusBadge.style.color = 'var(--oro-claro)';
     }
-    document.querySelectorAll('.demo-u-btn').forEach(b=>b.classList.remove('on'));
+    const custNameEl = document.getElementById('custName');
+    const custPhoneEl = document.getElementById('custPhone');
+    const ccNameEl = document.getElementById('ccName');
+    if(custNameEl) custNameEl.value = '';
+    if(custPhoneEl) custPhoneEl.value = '';
+    if(ccNameEl){
+      ccNameEl.value = '';
+      const cvH = document.getElementById('cvHolder');
+      if(cvH) cvH.textContent = 'TITULAR';
+    }
+    changeMoto(currentMotoKey || 'msx');
   }
+  renderCatalog();
   renderCart();
   updateCitaWa();
 }
@@ -2478,12 +2522,6 @@ function onWaLoginPhoneInput(el){
   const digits = el.value.replace(/\D/g, '').slice(0, 9);
   el.value = formatPePhone(digits);
   document.getElementById('waLoginErr').style.display = 'none';
-  if(WA_USERS_DB[digits]){
-    const u = WA_USERS_DB[digits];
-    document.getElementById('waLoginName').value = u.name;
-    document.getElementById('waLoginMoto').value = u.motoKey;
-    document.getElementById('waLoginPlate').value = u.plate;
-  }
 }
 
 function onCheckoutPhoneInput(el){
@@ -2505,18 +2543,14 @@ function sendWaOtpCode(){
   errEl.style.display = 'none';
   const name = (document.getElementById('waLoginName').value || 'Cliente GB').trim();
   const motoKey = document.getElementById('waLoginMoto').value || 'msx';
-  const plate = (document.getElementById('waLoginPlate').value || MOTOS[motoKey].plate || 'ABC-123').trim().toUpperCase();
-  const known = WA_USERS_DB[rawPhone];
+  const plate = (document.getElementById('waLoginPlate').value || '').trim().toUpperCase();
 
   pendingWaUser = {
     name,
     phone: rawPhone,
     motoKey,
     plate,
-    orderId: known ? known.orderId : '#0245',
-    stage: known ? known.stage : 3,
-    eta: known ? known.eta : 'Hoy, 6:00 pm',
-    role: (rawPhone === YAPE_LOCAL_NUMBER) ? 'admin' : 'client'
+    role: 'client'
   };
 
   generatedWaOtp = String(4000 + (parseInt(rawPhone.slice(-3), 10) % 900)).slice(0, 4);
@@ -2524,7 +2558,6 @@ function sendWaOtpCode(){
   document.getElementById('waOtpPillCode').textContent = generatedWaOtp;
   document.getElementById('otpTargetPhone').textContent = `+51 ${formatPePhone(rawPhone)}`;
 
-  // Pre-cargar los 4 dígitos para demostración rápida o permitir edición
   ['otp1','otp2','otp3','otp4'].forEach((id, idx)=>{
     document.getElementById(id).value = generatedWaOtp[idx] || '';
   });
@@ -2558,22 +2591,15 @@ function verifyWaOtpCode(){
     autofillWaOtp();
     return;
   }
-  const userToSave = pendingWaUser || { ...WA_USERS_DB['987654321'] };
-  saveWaSession(userToSave);
+  if(!pendingWaUser) return;
+  const isBrandNewNumber = !localStorage.getItem(cartKeyForPhone(pendingWaUser.phone));
+  saveWaSession(pendingWaUser, isBrandNewNumber);
   closeLoginModal();
-  showCustomToast('✓ SESIÓN INICIADA CON WHATSAPP', `${userToSave.name} · +51 ${formatPePhone(userToSave.phone)}`);
-}
-
-function quickLoginProfile(phoneKey){
-  const profile = WA_USERS_DB[phoneKey];
-  if(!profile) return;
-  saveWaSession({ ...profile });
-  backToLoginStep1();
-  showCustomToast('✓ CUENTA WHATSAPP ACTIVA', `${profile.name} · +51 ${formatPePhone(profile.phone)}`);
+  showCustomToast('✓ SESIÓN INICIADA CON WHATSAPP', `${pendingWaUser.name} · +51 ${formatPePhone(pendingWaUser.phone)}`);
 }
 
 function logoutWaSession(){
-  saveWaSession(null);
+  saveWaSession(null, true);
   backToLoginStep1();
   document.getElementById('waLoginPhone').value = '';
   document.getElementById('waLoginName').value = '';
