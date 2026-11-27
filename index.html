@@ -2060,6 +2060,15 @@ async function submitCitaOrder(ev, anchorEl){
   return false;
 }
 
+let isFirebaseAdmin = false;
+function updateAdminSwitchVisibility(){
+  const show = Boolean(isFirebaseAdmin && !currentUser);
+  const deskBtn = document.getElementById('deskAdminSwitchBtn');
+  const mobBtn = document.getElementById('mobAdminSwitchBtn');
+  if(deskBtn) deskBtn.style.display = show ? 'inline-flex' : 'none';
+  if(mobBtn) mobBtn.style.display = show ? 'grid' : 'none';
+}
+
 let storeCloudInitialized = false;
 function initStoreCloudSync(){
   if(!window.GBCloud || storeCloudInitialized) return;
@@ -2076,10 +2085,8 @@ function initStoreCloudSync(){
   });
   if(typeof window.GBCloud.onAuthChange === 'function'){
     window.GBCloud.onAuthChange((user, isAdm)=>{
-      const deskBtn = document.getElementById('deskAdminSwitchBtn');
-      const mobBtn = document.getElementById('mobAdminSwitchBtn');
-      if(deskBtn) deskBtn.style.display = isAdm ? 'inline-flex' : 'none';
-      if(mobBtn) mobBtn.style.display = isAdm ? 'grid' : 'none';
+      isFirebaseAdmin = Boolean(isAdm);
+      updateAdminSwitchVisibility();
     });
   }
 }
@@ -3885,6 +3892,7 @@ function applyUserSessionToUi(){
   renderCart();
   updateCitaWa();
   restoreActiveSessionOrder();
+  updateAdminSwitchVisibility();
 }
 
 function openLoginModal(){
